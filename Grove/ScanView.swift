@@ -3808,6 +3808,7 @@ struct AddPlantView: View {
     @Environment(ConnectivityMonitor.self) private var connectivity
     @Environment(NotificationService.self) private var notifications
     @Environment(GroveToastCenter.self) private var toasts: GroveToastCenter?
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @AppStorage(GroveDefaults.firstPlantActivationPending) private var firstPlantActivationPending = false
     @AppStorage(GroveDefaults.reminderHour) private var reminderHour = NotificationService.reminderHour
     @State private var nickname = ""
@@ -4151,7 +4152,12 @@ struct AddPlantView: View {
 
         let suggestedName = defaultNickname
         nickname = suggestedName
-        focusedField = .nickname
+        // At accessibility sizes the keyboard and the scroll-to-field it
+        // triggers push the plant card under the bar before it is seen; the
+        // name is still prefilled and one tap away.
+        if !dynamicTypeSize.isAccessibilitySize {
+            focusedField = .nickname
+        }
         nicknameSelection = suggestedName.isEmpty
             ? nil
             : TextSelection(range: suggestedName.startIndex..<suggestedName.endIndex)
