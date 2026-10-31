@@ -707,7 +707,7 @@ final class SimScreenshotTests: XCTestCase {
 
     private func stageDemoFirstPlant() async {
         let size = CGSize(width: 800, height: 800)
-        let image = UIGraphicsImageRenderer(size: size).image { context in
+        let image = UIImage(named: "DemoPlantMonstera") ?? UIGraphicsImageRenderer(size: size).image { context in
             UIColor.systemGreen.setFill()
             context.fill(CGRect(origin: .zero, size: size))
         }
@@ -742,8 +742,8 @@ final class SimScreenshotTests: XCTestCase {
             mode: .add,
             createdAt: Date(),
             fileURL: photoURL,
-            pixelWidth: 800,
-            pixelHeight: 800
+            pixelWidth: Int(image.size.width * image.scale),
+            pixelHeight: Int(image.size.height * image.scale)
         )
         _ = try? await PendingFirstPlantStore.shared.stage(
             scanID: UUID(),

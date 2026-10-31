@@ -1809,6 +1809,7 @@ private struct ScanCardHalfPerimeter: Shape {
 }
 
 private func demoScanImage() -> UIImage {
+    if let photo = DemoPlantPhotos.sampleScanImage() { return photo }
     let size = CGSize(width: 900, height: 1200)
     return UIGraphicsImageRenderer(size: size).image { context in
         UIColor(red: 0.09, green: 0.34, blue: 0.18, alpha: 1).setFill()
