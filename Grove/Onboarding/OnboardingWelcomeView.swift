@@ -36,6 +36,7 @@ struct OnboardingWelcomeView: View {
 
                         if dynamicTypeSize.isAccessibilitySize {
                             welcomeActions
+                                .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                                 .padding(.horizontal, GroveTheme.pagePadding + 4)
                                 .padding(.top, 24)
                         }
@@ -103,15 +104,17 @@ struct OnboardingWelcomeView: View {
                 .frame(minHeight: 44)
                 .accessibilityIdentifier("onboardingExplore")
 
-                Link("Privacy", destination: OnboardingLegal.privacyURL)
-                    .foregroundStyle(OnboardingTheme.mutedInk)
-                    .tint(OnboardingTheme.mutedInk)
-                    .frame(minHeight: 44)
+                HStack(spacing: 18) {
+                    Link("Privacy", destination: OnboardingLegal.privacyURL)
+                        .foregroundStyle(OnboardingTheme.mutedInk)
+                        .tint(OnboardingTheme.mutedInk)
+                        .frame(minHeight: 44)
 
-                Link("Terms", destination: OnboardingLegal.termsURL)
-                    .foregroundStyle(OnboardingTheme.mutedInk)
-                    .tint(OnboardingTheme.mutedInk)
-                    .frame(minHeight: 44)
+                    Link("Terms", destination: OnboardingLegal.termsURL)
+                        .foregroundStyle(OnboardingTheme.mutedInk)
+                        .tint(OnboardingTheme.mutedInk)
+                        .frame(minHeight: 44)
+                }
             }
             .padding(.top, 2)
         }
