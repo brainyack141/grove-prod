@@ -153,6 +153,10 @@ final class SimScreenshotTests: XCTestCase {
         // 21–29 — pushed destinations, each from a fresh root.
         await capturePushed("21-care-queue", route: .care)
         await capturePushed("22-plant-detail", route: .plant(UUID(uuidString: "10000000-0000-0000-0000-000000000004")!))
+        // The same page at the bottom of its sheet: the docked Check in bar
+        // must leave the last card readable rather than sitting on it.
+        await scrollMainScrollView(toBottom: true)
+        capture("22-plant-detail-bottom")
         await capturePushed("23-plant-detail-monty", route: .plant(UUID(uuidString: "10000000-0000-0000-0000-000000000001")!))
         await capturePushed("24-add-plant", route: .addPlant)
         await capturePushed("25-settings", route: .settings)
