@@ -3831,6 +3831,8 @@ struct AddPlantView: View {
 
     private enum Field { case nickname, customLocation }
 
+    private enum AddPlantScrollAnchor: Hashable { case hero }
+
     /// Sensible fallbacks for where a plant might live, keyed to where the
     /// person said their plants are during onboarding. The picker used to offer
     /// four indoor rooms to everyone — including someone who had just told the
@@ -3994,34 +3996,51 @@ struct AddPlantView: View {
     // MARK: - Form
 
     private var formView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: GroveTheme.sectionSpacing) {
-                heroCard
-                nameSection
-                locationSection
-                lightSection
-                promiseCard
-                safetyNote
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: GroveTheme.sectionSpacing) {
+                    heroCard
+                        .id(AddPlantScrollAnchor.hero)
+                    nameSection
+                    locationSection
+                    lightSection
+                    promiseCard
+                    safetyNote
+                }
+                .padding(.horizontal, GroveTheme.pagePadding)
+                .padding(.top, 8)
+                .padding(.bottom, 16)
             }
-            .padding(.horizontal, GroveTheme.pagePadding)
-            .padding(.top, 8)
-            .padding(.bottom, 16)
-        }
-        .scrollDismissesKeyboard(.interactively)
-        .safeAreaInset(edge: .bottom) {
-            Button {
-                addPlant()
-            } label: {
-                GroveCTALabel(
-                    title: isAddingPlant ? "Planting…" : addCTATitle,
-                    systemImage: isAddingPlant ? "hourglass" : "arrow.right"
-                )
+            .scrollDismissesKeyboard(.interactively)
+            .safeAreaInset(edge: .bottom) {
+                Button {
+                    addPlant()
+                } label: {
+                    GroveCTALabel(
+                        title: isAddingPlant ? "Planting…" : addCTATitle,
+                        systemImage: isAddingPlant ? "hourglass" : "arrow.right"
+                    )
+                }
+                .buttonStyle(GrovePressStyle())
+                .disabled(isAddingPlant)
+                .opacity(isAddingPlant ? 0.6 : 1)
+                .accessibilityIdentifier("confirmAddPlant")
+                .groveActionBar()
             }
-            .buttonStyle(GrovePressStyle())
-            .disabled(isAddingPlant)
-            .opacity(isAddingPlant ? 0.6 : 1)
-            .accessibilityIdentifier("confirmAddPlant")
-            .groveActionBar()
+            .task {
+                // At accessibility sizes the nickname field can still take focus on
+                // appear (the selection-binding TextField does this on its own), and
+                // the keyboard scroll hides the plant card under the bar. Drop the
+                // focus and bring the card back before anyone sees the first frame
+                // settle; the name stays prefilled and one tap away.
+                guard dynamicTypeSize.isAccessibilitySize else { return }
+                try? await Task.sleep(for: .milliseconds(350))
+                focusedField = nil
+                // The focus can sit in UIKit without `focusedField` ever
+                // having been set, so nil alone would change nothing.
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                proxy.scrollTo(AddPlantScrollAnchor.hero, anchor: .top)
+            }
         }
         .groveBackground()
         .grovePageTitle("Add to my grove")
