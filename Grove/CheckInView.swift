@@ -830,7 +830,9 @@ private struct PhotoStep: View {
                     // generated art remains artwork rather than baked-in UI.
                     RoundedRectangle(cornerRadius: GroveTheme.heroRadius, style: .continuous)
                         .stroke(.white.opacity(0.9), style: StrokeStyle(lineWidth: 3, dash: [8]))
-                        .padding(26)
+                        .padding(.top, 56)
+                        .padding(.bottom, 64)
+                        .padding(.horizontal, 26)
                 }
 
                 VStack(spacing: 0) {

@@ -158,6 +158,7 @@ private struct WatchTaskRow: View {
                 Text(plant?.nickname ?? "A plant")
                     .font(.headline)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.8)
                 Text(task.kind.title)
                     .font(.footnote)
                     .foregroundStyle(WatchTheme.mutedInk)
@@ -182,10 +183,14 @@ struct WatchStreakRow: View {
                 .foregroundStyle(WatchTheme.streak)
             Text("\(streak)-day streak")
                 .font(.headline)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+                .layoutPriority(1)
             if isShielded {
                 Image(systemName: "shield.fill")
                     .font(.footnote)
                     .foregroundStyle(WatchTheme.subtleInk)
+                    .fixedSize()
             }
         }
         .listRowBackground(Color.clear)

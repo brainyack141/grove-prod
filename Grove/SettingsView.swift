@@ -297,19 +297,39 @@ struct SettingsView: View {
     /// The compact row for anyone with nothing to buy: the value reports the
     /// state, and the disclosure appears only when tapping opens something.
     private func premiumStatusLabel(showsDisclosure: Bool) -> some View {
-        HStack(spacing: 8) {
-            SettingsRowLabel("Grove Premium", systemImage: "leaf.fill")
-            Spacer()
-            Text(premiumStatus)
-                .foregroundStyle(GroveTheme.mutedInk)
-            if showsDisclosure {
-                Image(systemName: "chevron.right")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(GroveTheme.subtleInk)
-                    .accessibilityHidden(true)
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 8) {
+                SettingsRowLabel("Grove Premium", systemImage: "leaf.fill")
+                Spacer()
+                premiumStatusText
+                if showsDisclosure {
+                    premiumDisclosure
+                }
+            }
+            HStack(spacing: 8) {
+                VStack(alignment: .leading, spacing: 4) {
+                    SettingsRowLabel("Grove Premium", systemImage: "leaf.fill")
+                    premiumStatusText
+                }
+                Spacer(minLength: 0)
+                if showsDisclosure {
+                    premiumDisclosure
+                }
             }
         }
         .contentShape(Rectangle())
+    }
+
+    private var premiumStatusText: some View {
+        Text(premiumStatus)
+            .foregroundStyle(GroveTheme.mutedInk)
+    }
+
+    private var premiumDisclosure: some View {
+        Image(systemName: "chevron.right")
+            .font(.footnote.weight(.semibold))
+            .foregroundStyle(GroveTheme.subtleInk)
+            .accessibilityHidden(true)
     }
 
     private var premiumStatus: String {

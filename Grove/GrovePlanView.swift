@@ -144,7 +144,7 @@ struct GrovePlanView: View {
     }
 
     private func choiceRow(_ choice: GrovePlanCatalog.Choice, isSelected: Bool) -> some View {
-        HStack(spacing: 12) {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
             Image(systemName: choice.symbol)
                 .font(.body)
                 .foregroundStyle(isSelected ? GroveTheme.accent : GroveTheme.mutedInk)

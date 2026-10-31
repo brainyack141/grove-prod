@@ -204,6 +204,7 @@ struct ScanView: View {
                     leaveTips(perform: resumeSavedScan)
                 } : nil
             )
+            .presentationDetents([.large])
         }
         .sheet(isPresented: $showsAIConsent, onDismiss: finishAIConsent) {
             AIProcessingConsentView(
@@ -583,10 +584,12 @@ struct ScanView: View {
     private func reviewContent(image: UIImage) -> some View {
         GeometryReader { proxy in
             ZStack(alignment: .top) {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: proxy.size.width, height: proxy.size.height)
+                Color.clear
+                    .overlay {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                    }
                     .clipped()
                     .ignoresSafeArea()
 
@@ -4019,7 +4022,9 @@ struct AddPlantView: View {
             .groveActionBar()
         }
         .groveBackground()
-        .groveEditorialPage("Add to my grove")
+        .grovePageTitle("Add to my grove")
+        .toolbarBackground(GroveTheme.background, for: .navigationBar)
+        .toolbarBackground(.automatic, for: .navigationBar)
         .onAppear(perform: prepareNickname)
         .task {
             if heroImage == nil, let url = scanSession.draft?.fileURL {
@@ -4089,17 +4094,16 @@ struct AddPlantView: View {
 
     private var nameSection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack(spacing: 12) {
-                GroveEyebrow(text: "What will you call it?")
-                Spacer(minLength: 0)
-                Button {
-                    chooseRandomPunnyName()
-                } label: {
-                    GrovePill(text: "Surprise me", systemImage: "dice.fill", style: .softGreen)
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 12) {
+                    nameSectionEyebrow
+                    Spacer(minLength: 0)
+                    surpriseNameButton
                 }
-                .buttonStyle(GrovePressStyle())
-                .accessibilityLabel("Choose a random funny plant name")
-                .accessibilityIdentifier("randomPlantNickname")
+                VStack(alignment: .leading, spacing: 8) {
+                    nameSectionEyebrow
+                    surpriseNameButton
+                }
             }
             TextField(
                 "Plant nickname",
@@ -4120,6 +4124,22 @@ struct AddPlantView: View {
                 }
                 .animation(.easeOut(duration: 0.15), value: focusedField)
         }
+    }
+
+    private var nameSectionEyebrow: some View {
+        GroveEyebrow(text: "What will you call it?")
+    }
+
+    private var surpriseNameButton: some View {
+        Button {
+            chooseRandomPunnyName()
+        } label: {
+            GrovePill(text: "Surprise me", systemImage: "dice.fill", style: .softGreen)
+                .fixedSize()
+        }
+        .buttonStyle(GrovePressStyle())
+        .accessibilityLabel("Choose a random funny plant name")
+        .accessibilityIdentifier("randomPlantNickname")
     }
 
     /// Put the identified name in the field rather than using it as placeholder
@@ -4665,7 +4685,7 @@ private struct DiagnosisQuestionsCard: View {
                     .multilineTextAlignment(.leading)
                 Spacer(minLength: 8)
                 Image(systemName: chosen ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(chosen ? GroveTheme.accent : GroveTheme.separator)
+                    .foregroundStyle(chosen ? GroveTheme.accent : GroveTheme.subtleInk)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 11)

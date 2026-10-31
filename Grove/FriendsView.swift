@@ -363,7 +363,7 @@ struct FriendsView: View {
                             Text(handover.cardContext)
                                 .font(.subheadline)
                                 .foregroundStyle(GroveTheme.mapCaption)
-                                .lineLimit(1)
+                                .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 1)
                         }
                     }
                     FriendsHeroTrack(handover: handover)
@@ -720,6 +720,7 @@ private struct FriendPersonRow<Trailing: View>: View {
     /// A sitting headline is a sentence and may take a second line. A name is
     /// a name: it truncates rather than reflowing the row around it.
     var nameLineLimit: Int = 1
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @ViewBuilder var trailing: Trailing
 
     init(
@@ -743,38 +744,58 @@ private struct FriendPersonRow<Trailing: View>: View {
     }
 
     var body: some View {
-        HStack(spacing: FriendRowMetrics.spacing) {
-            AvatarView(
-                initials: initials,
-                seed: seed,
-                size: FriendRowMetrics.avatar,
-                assetName: assetName
-            )
-            VStack(alignment: .leading, spacing: 2) {
-                Text(name)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(GroveTheme.ink)
-                    .lineLimit(nameLineLimit)
-                    .fixedSize(horizontal: false, vertical: true)
-                if let secondary {
-                    Text(secondary)
-                        .font(.footnote)
-                        .foregroundStyle(GroveTheme.mutedInk)
-                        .lineLimit(1)
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: FriendRowMetrics.spacing) {
+                    avatar
+                    identity
                 }
-                if let note {
-                    Text(note)
-                        .font(.caption)
-                        .foregroundStyle(GroveTheme.accentStrong)
-                        .lineLimit(1)
-                }
+                trailing
             }
-            // The identity column claims the leftover width rather than
-            // splitting it with a `Spacer`, which is what left "Noah Williams"
-            // truncated to "Noah Willia…" with 40pt of blank card beside it.
-            .frame(maxWidth: .infinity, alignment: .leading)
-            trailing
+        } else {
+            HStack(spacing: FriendRowMetrics.spacing) {
+                avatar
+                identity
+                trailing
+            }
         }
+    }
+
+    private var avatar: some View {
+        AvatarView(
+            initials: initials,
+            seed: seed,
+            size: FriendRowMetrics.avatar,
+            assetName: assetName
+        )
+    }
+
+    private var identity: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(name)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(GroveTheme.ink)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : Optional(nameLineLimit))
+                .fixedSize(horizontal: false, vertical: true)
+            if let secondary {
+                Text(secondary)
+                    .font(.footnote)
+                    .foregroundStyle(GroveTheme.mutedInk)
+                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            if let note {
+                Text(note)
+                    .font(.caption)
+                    .foregroundStyle(GroveTheme.accentStrong)
+                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        // The identity column claims the leftover width rather than
+        // splitting it with a `Spacer`, which is what left "Noah Williams"
+        // truncated to "Noah Willia…" with 40pt of blank card beside it.
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -897,7 +918,8 @@ private struct FriendInvitationBoardRow: View {
                     Text("@\(invitation.username) · wants to connect")
                         .font(.subheadline)
                         .foregroundStyle(GroveTheme.mutedInk)
-                        .lineLimit(1)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityElement(children: .combine)

@@ -139,47 +139,61 @@ struct AskView: View {
     }
 
     private static let quickScopeLimit = 3
+    private static let composerScrollID = "askComposer"
 
     var body: some View {
-        GroveBoardPage(insetsContent: false) {
-            askHero
-        } sheet: {
-            VStack(alignment: .leading, spacing: 0) {
-                header
-                    .padding(.horizontal, GroveTheme.pagePadding)
-                    .groveReveal(0)
-
-                // The field lives in the sheet, under the title, rather than
-                // docked over the tab bar: the bottom edge belongs to the bar
-                // and the scan disc, and a third floating layer there read as
-                // clutter.
-                composerDock
-                    .padding(.horizontal, GroveTheme.pagePadding)
-                    .padding(.top, 18)
-
-                if showsQuickScopeRail {
-                    quickScopeRail
+        ScrollViewReader { scrollProxy in
+            GroveBoardPage(insetsContent: false) {
+                askHero
+            } sheet: {
+                VStack(alignment: .leading, spacing: 0) {
+                    header
                         .padding(.horizontal, GroveTheme.pagePadding)
-                        .padding(.top, GroveTheme.sectionSpacing)
-                        .groveReveal(1)
-                }
+                        .groveReveal(0)
 
-                if isDraftEmpty {
-                    guidesSection
-                        .padding(.top, GroveTheme.sectionSpacing)
-                        .groveReveal(3)
+                    // The field lives in the sheet, under the title, rather than
+                    // docked over the tab bar: the bottom edge belongs to the bar
+                    // and the scan disc, and a third floating layer there read as
+                    // clutter.
+                    composerDock
+                        .padding(.horizontal, GroveTheme.pagePadding)
+                        .padding(.top, 18)
+                        .id(Self.composerScrollID)
 
-                    if !recentThreads.isEmpty {
-                        recentSection
+                    if showsQuickScopeRail {
+                        quickScopeRail
                             .padding(.horizontal, GroveTheme.pagePadding)
                             .padding(.top, GroveTheme.sectionSpacing)
-                            .groveReveal(4)
+                            .groveReveal(1)
+                    }
+
+                    if isDraftEmpty {
+                        guidesSection
+                            .padding(.top, GroveTheme.sectionSpacing)
+                            .groveReveal(3)
+
+                        if !recentThreads.isEmpty {
+                            recentSection
+                                .padding(.horizontal, GroveTheme.pagePadding)
+                                .padding(.top, GroveTheme.sectionSpacing)
+                                .groveReveal(4)
+                        }
+                    }
+                }
+                .padding(.bottom, 18)
+                .animation(GroveMotion.snap, value: isDraftEmpty)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .onChange(of: isComposerFocused) { _, focused in
+                guard focused else { return }
+                // Let the keyboard finish rising before measuring where the field sits.
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(350))
+                    withAnimation(GroveMotion.snap) {
+                        scrollProxy.scrollTo(Self.composerScrollID, anchor: .center)
                     }
                 }
             }
-            .padding(.bottom, 18)
-            .animation(GroveMotion.snap, value: isDraftEmpty)
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .scrollDismissesKeyboard(.interactively)
         .toolbar {
@@ -410,7 +424,7 @@ struct AskView: View {
         switch store.plants.count {
         case 0: return "Ask Ari about plant care"
         case 1: return store.plants.first.map { "Ask Ari about \($0.nickname)" } ?? "Ask Ari about your plant"
-        default: return "Ask Ari about any of your \(store.plants.count) plants"
+        default: return "Ask Ari about your plants"
         }
     }
 
@@ -3187,6 +3201,8 @@ struct AskPaywallSheet: View {
     /// error, so it is not drawn in the error colour.
     @State private var notice: String?
 
+    @ScaledMetric(relativeTo: .footnote) private var benefitIconWidth: CGFloat = 20
+
     private var isPurchasable: Bool {
         premium.displayPrice(for: .yearly) != nil || premium.displayPrice(for: .monthly) != nil
     }
@@ -3308,7 +3324,7 @@ struct AskPaywallSheet: View {
             Image(systemName: symbol)
                 .font(.footnote.weight(.bold))
                 .foregroundStyle(GroveTheme.accent)
-                .frame(width: 20)
+                .frame(width: benefitIconWidth)
             Text(text)
                 .font(.subheadline)
                 .foregroundStyle(GroveTheme.ink)

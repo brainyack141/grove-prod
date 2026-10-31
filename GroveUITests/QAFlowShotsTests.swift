@@ -57,7 +57,14 @@ final class QAFlowShotsTests: XCTestCase {
             sleep(1)
             shot("01-scan-intent-picker")
             guard tapIfPresent(app.buttons["scanIntent.\(mode)"]) else { continue }
-            sleep(2)
+            // Wait for the tips sheet to finish presenting, not a fixed delay:
+            // two seconds caught it mid-slide with its action bar off screen.
+            let gotIt = app.buttons["scanTipsGotIt"]
+            if gotIt.waitForExistence(timeout: 6) {
+                let deadline = Date().addingTimeInterval(6)
+                while !gotIt.isHittable, Date() < deadline { usleep(200_000) }
+            }
+            sleep(1)
             shot("02-scan-\(mode)-first-open")
             _ = tapIfPresent(app.buttons["scanTipsGotIt"], timeout: 2)
             sleep(1)
@@ -111,6 +118,15 @@ final class QAFlowShotsTests: XCTestCase {
         app.terminate()
 
         app = demoApp(["-GroveForceMoveBanner"])
+        // The move banner sits below the fold on Today; scroll until its
+        // primary action is on screen rather than shooting the top of the page.
+        let stayPut = app.buttons["moveStayPut"]
+        var swipes = 0
+        while !(stayPut.exists && stayPut.isHittable), swipes < 6 {
+            app.swipeUp()
+            sleep(1)
+            swipes += 1
+        }
         shot("22-today-move-banner")
         app.terminate()
     }

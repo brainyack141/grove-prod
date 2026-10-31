@@ -169,7 +169,9 @@ jobs:
             xcrun simctl spawn "$UDID" defaults write "$BUNDLE" grove.watch.cachedSnapshot -data "$HEX"
             for CS in large accessibility-extra-extra-large; do
               xcrun simctl ui "$UDID" content_size "$CS" || true
-              xcrun simctl launch "$UDID" "$BUNDLE"; sleep 6
+              # content_size does not reach watchOS; the Debug build reads this
+              # launch argument and forces the Dynamic Type size itself.
+              xcrun simctl launch "$UDID" "$BUNDLE" -GroveQADynamicType "$CS"; sleep 6
               xcrun simctl io "$UDID" screenshot "shots/watch/$SIZE-02-today-$CS.png"
               xcrun simctl terminate "$UDID" "$BUNDLE" || true
             done

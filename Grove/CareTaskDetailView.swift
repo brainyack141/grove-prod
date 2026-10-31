@@ -45,6 +45,7 @@ struct CareTaskDetailView: View {
                                     .foregroundStyle(GroveTheme.purple)
                             }
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .groveCard()
 
                         VStack(alignment: .leading, spacing: 10) {
@@ -53,6 +54,7 @@ struct CareTaskDetailView: View {
                             Text(safetyPrompt(for: task.kind))
                                 .foregroundStyle(GroveTheme.mutedInk)
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .groveCard()
 
                         // The stroked capsule is Grove's secondary action; a

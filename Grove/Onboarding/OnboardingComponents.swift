@@ -226,6 +226,7 @@ struct OnboardingStepHeader: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.bottom, bottomPadding)
     }
 }
@@ -315,6 +316,7 @@ struct OnboardingChoiceRow: View {
 struct OnboardingInkCapsuleLabel: View {
     let title: String
     var isWorking: Bool = false
+    var isEnabled: Bool = true
 
     var body: some View {
         HStack(spacing: 10) {
@@ -324,14 +326,19 @@ struct OnboardingInkCapsuleLabel: View {
                 .fixedSize(horizontal: false, vertical: true)
             if isWorking {
                 ProgressView()
-                    .tint(OnboardingTheme.onInk)
+                    .tint(isEnabled ? OnboardingTheme.onInk : OnboardingTheme.mutedInk)
             }
         }
-        .foregroundStyle(OnboardingTheme.onInk)
+        .foregroundStyle(isEnabled ? OnboardingTheme.onInk : OnboardingTheme.mutedInk)
         .padding(.horizontal, 24)
         .padding(.vertical, 12)
         .frame(maxWidth: .infinity, minHeight: OnboardingTheme.controlHeight)
-        .background(OnboardingTheme.inkFill, in: Capsule())
+        .background(isEnabled ? OnboardingTheme.inkFill : OnboardingTheme.elevatedStrong, in: Capsule())
+        .overlay {
+            if !isEnabled {
+                Capsule().stroke(OnboardingTheme.stroke, lineWidth: 1)
+            }
+        }
         .contentShape(Capsule())
     }
 }
@@ -379,11 +386,10 @@ struct OnboardingPrimaryButton: View {
 
     var body: some View {
         Button(action: action) {
-            OnboardingInkCapsuleLabel(title: title)
+            OnboardingInkCapsuleLabel(title: title, isEnabled: isEnabled)
         }
         .buttonStyle(GrovePressStyle())
         .disabled(!isEnabled)
-        .opacity(isEnabled ? 1 : 0.4)
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.15), value: isEnabled)
     }
 }

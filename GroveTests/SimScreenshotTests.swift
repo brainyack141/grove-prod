@@ -319,9 +319,41 @@ final class SimScreenshotTests: XCTestCase {
         } else {
             noteMissing("78-learnTopic", reason: "no learn topic")
         }
+        // The live camera is what these two are for, not the once-per-install
+        // tips sheet (the UI flow captures that), so mark the tips seen for
+        // the pair and put the flag back afterwards.
+        let tipsWereSeen = UserDefaults.standard.bool(forKey: GroveDefaults.hasSeenScanTips)
+        UserDefaults.standard.set(true, forKey: GroveDefaults.hasSeenScanTips)
         await capturePushed("79-liveScan-identify", route: .liveScan(.identify, nil))
         await capturePushed("80-liveScan-diagnose-plant", route: .liveScan(.diagnose, monty))
-        await capturePushed("81-plantDiagnosis-monty", route: .plantDiagnosis(monty))
+        UserDefaults.standard.set(tipsWereSeen, forKey: GroveDefaults.hasSeenScanTips)
+        // `.plantDiagnosis` takes a diagnosis id, not a plant id: record one
+        // for Monty first so the screen shows a real diagnosis rather than the
+        // not-found state (38 already covers that).
+        await capturePushedResolved("81-plantDiagnosis-monty") { store in
+            let result = PlantAnalysisResult(
+                identification: PlantIdentificationResult(
+                    commonName: "Swiss cheese plant",
+                    scientificName: "Monstera deliciosa",
+                    confidence: 91,
+                    alternatives: [],
+                    distinguishingTraits: ["Split leaves"]
+                ),
+                condition: PlantConditionResult(
+                    healthScore: 58,
+                    healthBand: .attention,
+                    confidence: 84,
+                    summary: "Yellowing on two lower leaves and soil that stays wet.",
+                    positiveSigns: ["New leaf unfurling"],
+                    concerns: ["Lower leaves yellowing", "Soil stays wet between waterings"],
+                    possibleCauses: ["Overwatering", "Low light"],
+                    nextActions: ["Let the top 5 cm dry out before watering", "Move nearer a bright window"]
+                ),
+                providerName: "Grove demo",
+                limitations: []
+            )
+            return store.addDiagnosis(plantID: monty, result: result, photoURL: nil).map { .plantDiagnosis($0.id) }
+        }
         await capturePushed("82-plantHistory-monty", route: .plantHistory(monty))
         await capturePushedResolved("83-collection") { store in
             store.collections.first.map { .collection($0.id) }

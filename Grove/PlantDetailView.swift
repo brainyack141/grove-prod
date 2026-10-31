@@ -4,6 +4,7 @@ import UIKit
 /// Condition, the next useful action, and evidence of progress for this plant.
 /// Once the inline action scrolls away, the footer preserves the same route.
 struct PlantDetailView: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(GroveStore.self) private var store
     @Environment(SyncEngine.self) private var syncEngine
     @Environment(ConnectivityMonitor.self) private var connectivity
@@ -281,7 +282,8 @@ struct PlantDetailView: View {
     @ViewBuilder
     private func dockedActionBar(for plant: Plant, task: CareTask?) -> some View {
         if Self.docksAction(plant: plant, task: task) {
-            HStack(spacing: 10) {
+            let layout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(spacing: 6)) : AnyLayout(HStackLayout(spacing: 10))
+            layout {
                 NavigationLink(value: AppRoute.checkIn(plant.id)) {
                     GroveInkLabel(title: "Check in", systemImage: "camera.fill")
                 }
@@ -309,6 +311,7 @@ struct PlantDetailView: View {
             }
             .padding(.horizontal, GroveTheme.pagePadding)
             .padding(.vertical, 10)
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .groveActionBar()
         }
     }
@@ -2430,6 +2433,8 @@ enum PlantStoryCheckIns {
 private struct PlantStoryCheckInRow: View {
     let checkIn: PlantObservation
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     private var delta: Int { checkIn.score - checkIn.previousScore }
 
     var body: some View {
@@ -2437,7 +2442,7 @@ private struct PlantStoryCheckInRow: View {
             HealthScoreRing(
                 score: checkIn.score,
                 band: checkIn.band,
-                diameter: 56,
+                diameter: dynamicTypeSize.isAccessibilitySize ? 44 : 56,
                 lineWidth: 4
             )
 
@@ -2445,18 +2450,24 @@ private struct PlantStoryCheckInRow: View {
                 Text(checkIn.createdAt.formatted(.dateTime.day().month(.wide).year()))
                     .font(.headline)
                     .foregroundStyle(GroveTheme.ink)
+                    .fixedSize(horizontal: false, vertical: true)
 
-                HStack(spacing: 7) {
+                let bandLayout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 2)) : AnyLayout(HStackLayout(spacing: 7))
+                bandLayout {
                     Text(checkIn.band.shortTitle)
                         .foregroundStyle(checkIn.band.color)
 
-                    Text("·")
+                    if !dynamicTypeSize.isAccessibilitySize {
+                        Text("·")
+                    }
 
                     Text(deltaText)
                         .monospacedDigit()
 
                     if checkIn.isEstimated {
-                        Text("·")
+                        if !dynamicTypeSize.isAccessibilitySize {
+                            Text("·")
+                        }
                         Text("Estimated")
                     }
                 }

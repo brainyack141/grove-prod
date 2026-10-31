@@ -97,6 +97,7 @@ struct OnboardingRoomStepView: View {
 struct OnboardingHomeStepView: View {
     @Bindable var model: OnboardingModel
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var plant: OnboardingFirstPlantPresentation?
     @State private var locationManager = GroveLocationManager()
     @State private var weather = WeatherService()
@@ -137,6 +138,10 @@ struct OnboardingHomeStepView: View {
                             .padding(12)
                             .background(.black.opacity(0.24), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                     }
+                    if dynamicTypeSize.isAccessibilitySize {
+                        footer
+                            .padding(.top, 8)
+                    }
                 }
                 .padding(.horizontal, GroveTheme.pagePadding + 4)
                 .padding(.top, 14)
@@ -146,14 +151,19 @@ struct OnboardingHomeStepView: View {
             .scrollBounceBehavior(.basedOnSize)
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            footer
-                .padding(.horizontal, GroveTheme.pagePadding + 4)
-                .padding(.bottom, 8)
-                .padding(.top, 12)
-                .background {
-                    LinearGradient(colors: [.black.opacity(0), .black.opacity(0.32)], startPoint: .top, endPoint: .bottom)
+            if !dynamicTypeSize.isAccessibilitySize {
+                footer
+                    .padding(.horizontal, GroveTheme.pagePadding + 4)
+                    .padding(.bottom, 8)
+                    .padding(.top, 12)
+                    .background {
+                        ZStack {
+                            sky.colors.last ?? .black
+                            LinearGradient(colors: [.black.opacity(0), .black.opacity(0.32)], startPoint: .top, endPoint: .bottom)
+                        }
                         .ignoresSafeArea(edges: .bottom)
-                }
+                    }
+            }
         }
         .background {
             ZStack {

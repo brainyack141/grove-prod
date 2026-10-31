@@ -145,6 +145,12 @@ struct CareTaskRow: View {
 
     // MARK: - Row
 
+    private var nameLayout: AnyLayout {
+        dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
+            : AnyLayout(HStackLayout(spacing: 7))
+    }
+
     private func rowContent(for plant: Plant) -> some View {
         HStack(spacing: 12) {
             if !dynamicTypeSize.isAccessibilitySize {
@@ -157,11 +163,11 @@ struct CareTaskRow: View {
             }
 
             VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 7) {
+                nameLayout {
                     Text(plant.nickname)
                         .font(.headline)
                         .foregroundStyle(GroveTheme.ink)
-                        .lineLimit(1)
+                        .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
                     if task.isSittingTask {
                         Text("Sitting")
                             .font(.caption2.weight(.bold))
@@ -183,7 +189,7 @@ struct CareTaskRow: View {
                 // one fact, so they are now one sentence, and the sentence that
                 // explains the work stays on the task's own page where there is
                 // room to finish it.
-                GroveStatusLabel(status: status, lineLimit: 1)
+                GroveStatusLabel(status: status, lineLimit: dynamicTypeSize.isAccessibilitySize ? nil : 1)
             }
 
             Spacer(minLength: 8)
