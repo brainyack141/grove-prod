@@ -314,7 +314,7 @@ final class SimScreenshotTests: XCTestCase {
         await capturePushed("75-sittingFriend", route: .sittingFriend)
         await capturePushed("76-sittingLinkForPlant", route: .sittingLinkForPlant(monty))
         await capturePushed("77-askAbout", route: .askAbout(monty))
-        if let topic = LearnTopic.all.first {
+        if let topic = LearnLibrary.all.first {
             await capturePushed("78-learnTopic", route: .learnTopic(topic.id))
         } else {
             noteMissing("78-learnTopic", reason: "no learn topic")
