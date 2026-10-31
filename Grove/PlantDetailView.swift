@@ -2442,12 +2442,13 @@ private struct PlantStoryCheckInRow: View {
             HealthScoreRing(
                 score: checkIn.score,
                 band: checkIn.band,
-                diameter: dynamicTypeSize.isAccessibilitySize ? 44 : 56,
+                diameter: 56,
                 lineWidth: 4
             )
+            .dynamicTypeSize(...DynamicTypeSize.xLarge)
 
             VStack(alignment: .leading, spacing: 5) {
-                Text(checkIn.createdAt.formatted(.dateTime.day().month(.wide).year()))
+                Text(dynamicTypeSize.isAccessibilitySize ? checkIn.createdAt.formatted(.dateTime.day().month(.abbreviated).year()) : checkIn.createdAt.formatted(.dateTime.day().month(.wide).year()))
                     .font(.headline)
                     .foregroundStyle(GroveTheme.ink)
                     .fixedSize(horizontal: false, vertical: true)
