@@ -3324,7 +3324,7 @@ struct AskPaywallSheet: View {
             Image(systemName: symbol)
                 .font(.footnote.weight(.bold))
                 .foregroundStyle(GroveTheme.accent)
-                .frame(width: benefitIconWidth)
+                .frame(width: benefitIconWidth, alignment: .leading)
             Text(text)
                 .font(.subheadline)
                 .foregroundStyle(GroveTheme.ink)
