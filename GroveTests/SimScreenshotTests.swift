@@ -352,7 +352,14 @@ final class SimScreenshotTests: XCTestCase {
                 providerName: "Grove demo",
                 limitations: []
             )
-            return store.addDiagnosis(plantID: monty, result: result, photoURL: nil).map { .plantDiagnosis($0.id) }
+            let diagnosis = store.addDiagnosis(plantID: monty, result: result, photoURL: nil)
+            // A new diagnosis counts as today's look, so the store queues the
+            // first-day streak flame (and any badge) over the page. Drain them so
+            // the shot shows the diagnosis itself.
+            store.pendingStreakMoment = nil
+            store.pendingBadges = []
+            store.pendingLevelUp = nil
+            return diagnosis.map { .plantDiagnosis($0.id) }
         }
         await capturePushed("82-plantHistory-monty", route: .plantHistory(monty))
         await capturePushedResolved("83-collection") { store in
