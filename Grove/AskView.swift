@@ -3201,7 +3201,8 @@ struct AskPaywallSheet: View {
     /// error, so it is not drawn in the error colour.
     @State private var notice: String?
 
-    @ScaledMetric(relativeTo: .footnote) private var benefitIconWidth: CGFloat = 20
+    @ScaledMetric(relativeTo: .footnote) private var benefitIconWidth: CGFloat = 24
+    @ScaledMetric(relativeTo: .footnote) private var benefitIconSpacing: CGFloat = 10
 
     private var isPurchasable: Bool {
         premium.displayPrice(for: .yearly) != nil || premium.displayPrice(for: .monthly) != nil
@@ -3320,7 +3321,7 @@ struct AskPaywallSheet: View {
     }
 
     private func benefit(_ text: String, symbol: String) -> some View {
-        HStack(alignment: .top, spacing: 10) {
+        HStack(alignment: .top, spacing: benefitIconSpacing) {
             Image(systemName: symbol)
                 .font(.footnote.weight(.bold))
                 .foregroundStyle(GroveTheme.accent)

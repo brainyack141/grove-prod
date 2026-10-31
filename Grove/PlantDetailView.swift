@@ -2707,11 +2707,15 @@ private struct PlantHero: View {
             // photo, and a photo shot against a bright window would swallow
             // both of them.
             LinearGradient(
-                colors: [.black.opacity(0.45), .clear],
+                stops: [
+                    .init(color: .black.opacity(0.62), location: 0),
+                    .init(color: .black.opacity(0.38), location: 0.55),
+                    .init(color: .clear, location: 1)
+                ],
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .frame(height: 168)
+            .frame(height: 220)
             .frame(maxHeight: .infinity, alignment: .top)
             .allowsHitTesting(false)
 
@@ -2877,7 +2881,7 @@ private struct PlantChromeIcon: View {
             .foregroundStyle(onPhoto ? AnyShapeStyle(Color.white) : AnyShapeStyle(GroveTheme.ink))
             .frame(width: 44, height: 44)
             .background {
-                Circle().fill(onPhoto ? AnyShapeStyle(Color.black.opacity(0.35)) : AnyShapeStyle(GroveTheme.surface))
+                Circle().fill(onPhoto ? AnyShapeStyle(Color.black.opacity(0.5)) : AnyShapeStyle(GroveTheme.surface))
             }
             .overlay {
                 Circle().stroke(
