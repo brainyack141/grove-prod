@@ -78,7 +78,13 @@ final class SimScreenshotTests: XCTestCase {
         GrovePremiumOffer.complete()
         UserDefaults.standard.set(0, forKey: GroveDefaults.premiumOfferMeaningfulUseCount)
 
-        for appearance in Variant.allCases {
+        // QA runs can ask for a subset, e.g. GROVE_SIMSHOT_VARIANTS=light,dark.
+        let requested = Set(
+            (environment["GROVE_SIMSHOT_VARIANTS"] ?? "")
+                .split(separator: ",")
+                .map { $0.trimmingCharacters(in: .whitespaces) }
+        )
+        for appearance in Variant.allCases where requested.isEmpty || requested.contains(appearance.prefix) {
             variant = appearance
             await captureAllScreens()
         }
@@ -117,7 +123,11 @@ final class SimScreenshotTests: XCTestCase {
             ("13-onb-location", .location, .newAccount),
             ("14-onb-signIn", .signIn, .newAccount),
             ("15-onb-emailEntry", .emailEntry, .newAccount),
-            ("16-onb-explore", .explore, .manual)
+            ("16-onb-explore", .explore, .manual),
+            ("17-onb-welcome", .welcome, .newAccount),
+            ("18-onb-accountNotFound", .accountNotFound, .returning),
+            ("19-onb-emailVerification", .emailVerification, .newAccount),
+            ("19b-onb-name", .name, .manual)
         ]
         for (name, step, route) in onboardingSteps {
             resetRouter()
@@ -263,7 +273,140 @@ final class SimScreenshotTests: XCTestCase {
         )
         capture("52-ai-consent")
 
+        await captureQAExtras()
+
         window?.isHidden = true
+    }
+
+    // MARK: - QA extras (visual-bug sweep)
+
+    /// Every other route the app can push, the long screens scrolled, and the
+    /// sheets that can be hosted on their own.
+    private func captureQAExtras() async {
+        let monty = UUID(uuidString: "10000000-0000-0000-0000-000000000001")!
+        let fern = UUID(uuidString: "10000000-0000-0000-0000-000000000004")!
+
+        // Long screens: scrolled one screen, then to the bottom.
+        await capturePushedScrolled("60-plant-detail", route: .plant(fern))
+        await capturePushedScrolled("61-plant-detail-monty", route: .plant(monty))
+        await capturePushedScrolled("62-settings", route: .settings)
+        await capturePushedScrolled("63-journey", route: .journey)
+        await capturePushedScrolled("64-achievements", route: .achievements)
+        await capturePushedScrolled("65-plan", route: .plan)
+        await capturePushedScrolled("66-checkIn", route: .checkIn(monty))
+        await capturePushedScrolled("67-plantStory", route: .plantStory(fern))
+        await captureTab("68-today-scrolled", tab: .today) { [self] in
+            await scrollMainScrollView(toBottom: false)
+        }
+        await scrollMainScrollView(toBottom: true)
+        capture("69-today-bottom")
+        await captureTab("70-friends-scrolled", tab: .friends) { [self] in
+            await scrollMainScrollView(toBottom: true)
+        }
+        await captureTab("71-ask-bottom", tab: .ask) { [self] in
+            await scrollMainScrollView(toBottom: true)
+        }
+
+        // Routes not covered above.
+        await capturePushed("72-friends-route", route: .friends)
+        await capturePushed("73-inviteFriend", route: .inviteFriend(nil))
+        await capturePushed("74-friendGrove-maya", route: .friendGrove("demo-maya"))
+        await capturePushed("75-sittingFriend", route: .sittingFriend)
+        await capturePushed("76-sittingLinkForPlant", route: .sittingLinkForPlant(monty))
+        await capturePushed("77-askAbout", route: .askAbout(monty))
+        if let topic = LearnTopic.all.first {
+            await capturePushed("78-learnTopic", route: .learnTopic(topic.id))
+        } else {
+            noteMissing("78-learnTopic", reason: "no learn topic")
+        }
+        await capturePushed("79-liveScan-identify", route: .liveScan(.identify, nil))
+        await capturePushed("80-liveScan-diagnose-plant", route: .liveScan(.diagnose, monty))
+        await capturePushed("81-plantDiagnosis-monty", route: .plantDiagnosis(monty))
+        await capturePushed("82-plantHistory-monty", route: .plantHistory(monty))
+        await capturePushedResolved("83-collection") { store in
+            store.collections.first.map { .collection($0.id) }
+        }
+        await capturePushedResolved("84-careTask") { store in
+            store.tasks.first(where: { !$0.isCompleted }).map { .careTask($0.id) }
+        }
+
+        // Sheets hosted on their own.
+        resetRouter()
+        let (sheetSession, sheetStore) = makeDemoContext()
+        await show(hosted(StreakDetailSheet(), session: sheetSession, store: sheetStore), wait: 4)
+        capture("85-streak-detail-sheet")
+
+        resetRouter()
+        let (collectionSession, collectionStore) = makeDemoContext()
+        await show(hosted(CreateCollectionView(), session: collectionSession, store: collectionStore), wait: 4)
+        capture("86-create-collection-sheet")
+
+        resetRouter()
+        let (tipsSession, tipsStore) = makeDemoContext()
+        await show(hosted(ScanTipsView(mode: .add, onDismiss: {}), session: tipsSession, store: tipsStore), wait: 3)
+        capture("87-scan-tips-add")
+
+        resetRouter()
+        let (diagTipsSession, diagTipsStore) = makeDemoContext()
+        await show(hosted(ScanTipsView(mode: .diagnose, onDismiss: {}), session: diagTipsSession, store: diagTipsStore), wait: 3)
+        capture("88-scan-tips-diagnose")
+
+        resetRouter()
+        let (setupSession, setupStore) = makeDemoContext()
+        await show(
+            hosted(NavigationStack { ProfileSetupView(isOnboarding: true) }, session: setupSession, store: setupStore),
+            wait: 4
+        )
+        capture("89-profile-setup-onboarding")
+
+        resetRouter()
+        let (primerSession, primerStore) = makeDemoContext()
+        await show(hosted(RootView(pendingFirstPlantStore: .shared), session: primerSession, store: primerStore), wait: 5)
+        if let plant = primerStore.plants.first {
+            await show(
+                hosted(
+                    OnboardingNotificationPrimerView(
+                        plant: plant,
+                        task: primerStore.tasks.first(where: { $0.plantID == plant.id }),
+                        reminderHour: 9,
+                        isRequesting: false,
+                        onEnable: {},
+                        onSkip: {}
+                    ),
+                    session: primerSession,
+                    store: primerStore
+                ),
+                wait: 3
+            )
+            capture("90-notification-primer")
+        } else {
+            noteMissing("90-notification-primer", reason: "demo store has no plants")
+        }
+    }
+
+    private func capturePushedScrolled(_ name: String, route: AppRoute) async {
+        resetRouter()
+        await show(demoRoot(), wait: 5)
+        router.pushedRoute = route
+        try? await Task.sleep(for: .seconds(3))
+        await scrollMainScrollView(toBottom: false)
+        capture("\(name)-scrolled")
+        await scrollMainScrollView(toBottom: true)
+        capture("\(name)-bottom")
+    }
+
+    /// Pushes a route whose id only exists once the demo fixtures are in.
+    private func capturePushedResolved(_ name: String, route: (GroveStore) -> AppRoute?) async {
+        resetRouter()
+        let (session, store) = makeDemoContext()
+        await show(hosted(RootView(pendingFirstPlantStore: .shared), session: session, store: store), wait: 5)
+        guard let resolved = route(store) else {
+            noteMissing(name, reason: "demo store has nothing to open")
+            return
+        }
+        router.pushedRoute = resolved
+        try? await Task.sleep(for: .seconds(3))
+        capture(name)
     }
 
     // MARK: - Hosting
@@ -422,6 +565,14 @@ final class SimScreenshotTests: XCTestCase {
             OnboardingEmailEntryView(model: model)
         case .explore:
             OnboardingExploreView(model: model)
+        case .welcome:
+            OnboardingWelcomeView(model: model)
+        case .accountNotFound:
+            OnboardingAccountNotFoundView(model: model)
+        case .emailVerification:
+            OnboardingVerificationView(model: model)
+        case .name:
+            OnboardingNameStepView(model: model)
         default:
             EmptyView()
         }

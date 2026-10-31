@@ -1,0 +1,189 @@
+# QA-only: builds Grove for the simulator and captures every screen we can reach
+# (hosted SwiftUI renders + XCUITest flows + the watch app) for a visual-bug
+# sweep. Runs only on qa-visual/** branches. Needs no secrets: everything runs
+# against the DEBUG demo account and fixture analysis.
+name: QA screens
+
+on:
+  push:
+    branches: ['qa-visual/**']
+  workflow_dispatch:
+
+concurrency:
+  group: qa-screens-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ios:
+    name: iOS screens (${{ matrix.size }})
+    runs-on: macos-26
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - size: standard
+            pattern: '^iPhone 1[6-9]$|^iPhone 2[0-9]$'
+            hosted_variants: light,dark,ax
+            flow_passes: light dark
+          - size: small
+            pattern: '^iPhone SE|^iPhone 1[3-9] mini|^iPhone 16e|^iPhone 17e'
+            hosted_variants: light,ax
+            flow_passes: light ax
+          - size: large
+            pattern: 'Pro Max$|Plus$'
+            hosted_variants: light,dark
+            flow_passes: light
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select newest Xcode 26
+        run: |
+          sudo xcode-select -s "$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)/Contents/Developer"
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: rm -rf Grove.xcodeproj && xcodegen generate
+
+      - name: Pick a simulator
+        id: sim
+        run: |
+          xcrun simctl list devices available
+          UDID=$(xcrun simctl list devices available --json | PATTERN='${{ matrix.pattern }}' python3 -c "
+          import json, os, re, sys
+          d = json.load(sys.stdin)['devices']
+          pat = re.compile(os.environ['PATTERN'])
+          cands = [(rt, x) for rt in d if 'iOS' in rt for x in d[rt] if pat.search(x['name'])]
+          if not cands:
+              cands = [(rt, x) for rt in d if 'iOS' in rt for x in d[rt] if x['name'].startswith('iPhone')]
+          rt, x = sorted(cands, key=lambda c: (c[0], c[1]['name']))[-1]
+          print(x['udid'])
+          print(x['name'] + ' / ' + rt, file=sys.stderr)
+          ")
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl status_bar "$UDID" override --time "9:41" --batteryState charged --batteryLevel 100 --cellularBars 4 || true
+
+      - name: Build for testing
+        run: |
+          set -o pipefail
+          xcodebuild -project Grove.xcodeproj -scheme Grove -configuration Debug \
+            -destination "platform=iOS Simulator,id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath dd -skipPackagePluginValidation \
+            build-for-testing | tail -n 200
+
+      - name: Hosted screen renders
+        continue-on-error: true
+        run: |
+          mkdir -p "$PWD/shots/${{ matrix.size }}"
+          TEST_RUNNER_GROVE_SIMSHOT_DIR="$PWD/shots/${{ matrix.size }}" \
+          TEST_RUNNER_GROVE_SIMSHOT_VARIANTS="${{ matrix.hosted_variants }}" \
+          xcodebuild -project Grove.xcodeproj -scheme Grove -configuration Debug \
+            -destination "platform=iOS Simulator,id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath dd -resultBundlePath results/hosted.xcresult \
+            -only-testing:GroveTests/SimScreenshotTests \
+            test-without-building 2>&1 | grep -E "SIMSHOT|error|Test Case|failed|passed" | tail -n 400
+
+      - name: XCUITest flow screenshots
+        continue-on-error: true
+        run: |
+          UDID=${{ steps.sim.outputs.udid }}
+          for pass in ${{ matrix.flow_passes }}; do
+            case $pass in
+              dark) xcrun simctl ui "$UDID" appearance dark; xcrun simctl ui "$UDID" content_size large ;;
+              ax)   xcrun simctl ui "$UDID" appearance light; xcrun simctl ui "$UDID" content_size accessibility-extra-extra-large ;;
+              *)    xcrun simctl ui "$UDID" appearance light; xcrun simctl ui "$UDID" content_size large ;;
+            esac
+            TEST_RUNNER_GROVE_QA_SHOT_DIR="$PWD/shots/${{ matrix.size }}" \
+            TEST_RUNNER_GROVE_QA_PREFIX="$pass" \
+            xcodebuild -project Grove.xcodeproj -scheme Grove -configuration Debug \
+              -destination "platform=iOS Simulator,id=$UDID" \
+              -derivedDataPath dd -resultBundlePath "results/flows-$pass.xcresult" \
+              -only-testing:GroveUITests/QAFlowShotsTests \
+              test-without-building 2>&1 | grep -E "error|Test Case|failed|passed" | tail -n 200
+          done
+
+      - name: Export xcresult attachments (fallback)
+        if: always()
+        run: |
+          for r in results/*.xcresult; do
+            [ -d "$r" ] || continue
+            out="shots/${{ matrix.size }}/xcresult-$(basename "$r" .xcresult)"
+            mkdir -p "$out"
+            xcrun xcresulttool export attachments --path "$r" --output-path "$out" || true
+          done
+          echo "device: $(xcrun simctl list devices | grep ${{ steps.sim.outputs.udid }})" > "shots/${{ matrix.size }}/DEVICE.txt"
+          find shots -name '*.png' | wc -l
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shots-${{ matrix.size }}
+          path: shots
+          if-no-files-found: warn
+
+  watch:
+    name: watchOS screens
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select newest Xcode 26
+        run: sudo xcode-select -s "$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)/Contents/Developer"
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        run: rm -rf Grove.xcodeproj && xcodegen generate
+      - name: Build watch app for simulator
+        run: |
+          set -o pipefail
+          xcodebuild -project Grove.xcodeproj -scheme GroveWatch -configuration Debug \
+            -destination 'generic/platform=watchOS Simulator' -derivedDataPath dd \
+            CODE_SIGNING_ALLOWED=NO build | tail -n 100
+      - name: Screenshot watch states
+        run: |
+          set -x
+          mkdir -p shots/watch
+          APP=$(find dd/Build/Products -maxdepth 2 -name 'GroveWatch.app' -path '*watchsimulator*' | head -1)
+          BUNDLE=nz.co.thinkingai.Grove.watchkitapp
+          for SIZE in small large; do
+            if [ $SIZE = small ]; then PAT='41mm|40mm|42mm'; else PAT='Ultra|49mm|46mm|45mm'; fi
+            UDID=$(xcrun simctl list devices available --json | PATTERN="$PAT" python3 -c "
+          import json, os, re, sys
+          d = json.load(sys.stdin)['devices']
+          pat = re.compile(os.environ['PATTERN'])
+          c = [x for rt in d if 'watchOS' in rt for x in d[rt] if pat.search(x['name'])]
+          c = c or [x for rt in d if 'watchOS' in rt for x in d[rt]]
+          print(c[-1]['udid'])")
+            xcrun simctl boot "$UDID" || true
+            xcrun simctl bootstatus "$UDID" -b
+            xcrun simctl install "$UDID" "$APP"
+            xcrun simctl launch "$UDID" "$BUNDLE"; sleep 6
+            xcrun simctl io "$UDID" screenshot "shots/watch/$SIZE-01-awaiting-sync.png"
+            xcrun simctl terminate "$UDID" "$BUNDLE" || true
+            HEX=$(python3 scripts/qa-watch-snapshot.py)
+            xcrun simctl spawn "$UDID" defaults write "$BUNDLE" grove.watch.cachedSnapshot -data "$HEX"
+            for CS in large accessibility-extra-extra-large; do
+              xcrun simctl ui "$UDID" content_size "$CS" || true
+              xcrun simctl launch "$UDID" "$BUNDLE"; sleep 6
+              xcrun simctl io "$UDID" screenshot "shots/watch/$SIZE-02-today-$CS.png"
+              xcrun simctl terminate "$UDID" "$BUNDLE" || true
+            done
+            # Empty grove snapshot.
+            HEX=$(python3 scripts/qa-watch-snapshot.py empty)
+            xcrun simctl spawn "$UDID" defaults write "$BUNDLE" grove.watch.cachedSnapshot -data "$HEX"
+            xcrun simctl ui "$UDID" content_size large || true
+            xcrun simctl launch "$UDID" "$BUNDLE"; sleep 6
+            xcrun simctl io "$UDID" screenshot "shots/watch/$SIZE-03-today-empty.png"
+            xcrun simctl shutdown "$UDID" || true
+            echo "$SIZE: $(xcrun simctl list devices | grep $UDID)" >> shots/watch/DEVICE.txt
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shots-watch
+          path: shots
