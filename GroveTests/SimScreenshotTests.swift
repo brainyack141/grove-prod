@@ -159,6 +159,15 @@ final class SimScreenshotTests: XCTestCase {
         capture("22-plant-detail-bottom")
         await capturePushed("23-plant-detail-monty", route: .plant(UUID(uuidString: "10000000-0000-0000-0000-000000000001")!))
         await capturePushed("24-add-plant", route: .addPlant)
+        if let window {
+            func firstResponder(in view: UIView) -> UIView? {
+                if view.isFirstResponder { return view }
+                for subview in view.subviews { if let found = firstResponder(in: subview) { return found } }
+                return nil
+            }
+            let responder = firstResponder(in: window)
+            print("SIMSHOT-DEBUG 24-add-plant firstResponder=\(responder.map { String(describing: type(of: $0)) } ?? "none") id=\(responder?.accessibilityIdentifier ?? "-")")
+        }
         await capturePushed("25-settings", route: .settings)
         await capturePushed("26-journey", route: .journey)
         await capturePushed("27-achievements", route: .achievements)
