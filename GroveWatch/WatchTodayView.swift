@@ -174,16 +174,17 @@ private struct WatchTaskRow: View {
 }
 
 struct WatchStreakRow: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let streak: Int
     let isShielded: Bool
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(alignment: .firstTextBaseline, spacing: 6) {
             Image(systemName: "flame.fill")
                 .foregroundStyle(WatchTheme.streak)
             Text("\(streak)-day streak")
                 .font(.headline)
-                .lineLimit(1)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? 2 : 1)
                 .minimumScaleFactor(0.7)
                 .layoutPriority(1)
             if isShielded {
