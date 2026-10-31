@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en-NZ">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy policy — Grove</title>
+<meta name="description" content="What Grove collects, where it goes, and how to get it back or have it deleted. ThinkingAI Limited, Auckland, New Zealand.">
+<meta name="robots" content="index, follow">
+<link rel="icon" href="/assets/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/assets/grove-icon.png">
+<meta name="theme-color" content="#FAFBF8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14130F" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <a class="brand" href="/">
+      <img src="/assets/grove-mark.png" alt="Grove" width="30">
+    </a>
+    <nav>
+      <a href="/">The app</a>
+      <a href="mailto:privacy@thinkingai.co.nz">Contact</a>
+    </nav>
+    <a class="cta cta--small" href="/">Back to Grove</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <main class="policy">
+    <div class="policy-head">
+      <h1>Privacy policy</h1>
+      <p class="effective">Effective 4 September 2026</p>
+    </div>
+    <p class="lead">Grove is a companion for looking after houseplants. This page explains, in plain terms, what it collects and where that goes.</p>
+    <p>Grove is made by ThinkingAI Limited, a company registered in New Zealand and based in Auckland. ThinkingAI Limited decides what Grove collects and why, which makes it the agency responsible for your information under New Zealand’s Privacy Act 2020, and the data controller under the UK and EU GDPR. “We” below means ThinkingAI Limited.</p>
+    <h2>THE SHORT VERSION</h2>
+    <ul><li>Grove works offline. Before sign-in, your setup answers stay on your iPhone. Grove sends privacy-minimised setup diagnostics. If you choose to scan a first plant, Grove creates a random guest security identifier and sends only that chosen photo for identification.</li><li>We do not sell your data, and we do not use it for advertising.</li><li>There are no third-party advertising or tracking SDKs in the app.</li><li>Your plant photos are used to answer your question about that plant, and are not used to train anyone’s models.</li></ul>
+    <h2>WHAT GROVE STORES ON YOUR DEVICE</h2>
+    <p>Plant photos, nicknames, rooms, check-ins, care history, reminders, and the answers you gave during setup are written to your iPhone’s app storage, protected by iOS file encryption. Deleting the app removes that app storage; on a later reinstall Grove clears any orphaned sign-in credential that iOS Keychain retained, including a credential used to secure a first scan.</p>
+    <h2>WHAT GROVE SENDS TO ITS OWN SERVERS</h2>
+    <p>If you sign in with Apple, Google, or an email code, Grove creates an account so your grove can sync between your devices and survive a lost phone. That account holds your display name, username, region and unit preference, an optional location label you choose, your trusted-person connections and invitations, the plant records above, and Journey progress such as your streak, XP, badges, rewards and daily quests. It is stored in a Supabase-hosted PostgreSQL database and object store in the EU (Ireland).</p>
+    <p>If you enable notifications, Grove stores the device token Apple gives this installation, the production or sandbox environment it belongs to, whether you want plant-sitting updates, and when the token was last seen. If you report an account, Grove stores who reported whom, the reason and optional details, the related connection, review status, and the time of the report. Reporting also blocks that account.</p>
+    <p>If you choose “This iPhone only”, no account is created and nothing in this paragraph applies.</p>
+    <p>Before account creation—and later if a device-only Grove chooses another server-backed scan—a plant scan uses a random anonymous Supabase Auth identifier. This lets Grove verify the request, keep one person’s scan private from another, resume the same scan safely, and enforce a strict usage limit without trusting an identifier supplied by the app. The identifier is not an account and receives no Grove, profile, plants, email address, or name. Grove stores only its security purpose, small job-status records, and usage counters; the scan photo is passed through in memory and is not stored on Grove’s server.</p>
+    <p>When you are signed in and ask Ari, Grove’s botanist, a question, Grove keeps a privacy-minimised advice record under your account. Anonymous first-scan and device-only identifiers cannot use Ari. The record contains the answer, its confidence and bounded evidence labels, the answering provider and model, source ids, review status, follow-up date, and any “helpful” or plant-improvement result you choose to send. For a photo question it may also retain a bounded text description of the visible evidence so an interrupted response can be replayed safely; it never contains the photo itself. Grove does not store the raw Ask conversation or the plant-context summary in that server record. Results are used to make later advice about the same plant more useful and to measure whether Ari is helping.</p>
+    <h2>WHAT GROVE SENDS TO OTHER COMPANIES</h2>
+    <div class="entry"><p class="entry-title">Google (Gemini API)</p><p><b>Sent for Scan and check-ins:</b> up to four plant photos you chose, which may include today’s whole-plant and symptom/detail views and one earlier photo for comparison; the scan purpose, broad region, bounded observation answers, and the plant identity, room and recent summary when you scan a plant already in your grove.</p><p><b>Sent for Ask:</b> your question and recent Ask messages, plus the plant-record and reviewed-reference summaries needed to answer it. If you attach or reuse photos in that conversation, up to two chosen plant photos are also sent. For complex advice, a second bounded Gemini request receives the same text context, visual findings and proposed answer for a safety review.</p><p><b>Why:</b> to inspect chosen photos, identify or assess the plant, compare a check-in when an earlier photo exists, write Ari’s text or photo-aware answer, and review complex advice before Grove shows it. Photos are passed through — Grove’s server does not keep a copy.</p></div>
+    <div class="entry"><p class="entry-title">GBIF</p><p><b>Sent:</b> a species name you search for.</p><p><b>Why:</b> to look up scientific names. No personal data is attached.</p></div>
+    <div class="entry"><p class="entry-title">Open-Meteo</p><p><b>Sent:</b> the coordinates of the location you pinned for your grove.</p><p><b>Why:</b> to show local daylight and weather. Requested by your iPhone directly, without an account or identifier.</p></div>
+    <div class="entry"><p class="entry-title">Apple / Google sign-in</p><p><b>Sent:</b> what their sign-in screens send when you choose to use them.</p><p><b>Why:</b> to verify who you are.</p></div>
+    <div class="entry"><p class="entry-title">Apple Push Notification service (APNs)</p><p><b>Sent:</b> the device token Apple issued for Grove and the notification payload. A trusted-person notification can contain a gardener’s display name and the fact that they sent or accepted a connection request. Plant-sitting notifications can contain a sitter or plant name and the relevant event.</p><p><b>Why:</b> to deliver the notifications you enabled to this iPhone.</p></div>
+    <p>These companies receive only what is listed beside them, for the purpose described and under their own terms. Grove does not send them the rest of your grove.</p>
+    <h2>WHERE YOUR DATA IS HELD, AND WHERE IT TRAVELS</h2>
+    <p>Your account and your grove are stored in the EU (Ireland). ThinkingAI Limited runs Grove from New Zealand, which the European Commission has formally recognised as providing an adequate level of data protection, so that access needs no further safeguard.</p>
+    <p>The processors above receive only what is listed beside their name, and they receive it wherever they operate. Google processes the photos you scan and the questions you ask Ari on its global infrastructure. If you would rather nothing of yours were processed there, do not use Scan or Ask — every other part of Grove works without them.</p>
+    <h2>LOCATION</h2>
+    <p>Location is optional and off until you pin a spot for your grove. It is used for daylight and weather only. You can remove it at any time in My Grove, and iOS’s own location permission can be withdrawn in Settings.</p>
+    <h2>PHOTOS AND THE CAMERA</h2>
+    <p>Grove asks for the camera to scan plants, and for the photo library only when you pick an image. It does not read your library in the background, and it does not upload photos you have not chosen to scan.</p>
+    <h2>TRUSTED PEOPLE AND PLANT-SITTING</h2>
+    <p>If you invite another gardener or accept their invitation, each of you can see the other’s display name and username. Connecting does not reveal either grove. Plant access exists only when an owner creates a separate plant-sitting link for specific plants, dates and permissions. Anyone holding that bearer link can use it until it expires or is revoked — no account required, which is the point of it. A link created for a connected account is also revoked if the owner blocks or reports that account.</p>
+    <p>You can remove or block a connected account. A blocked account cannot start a new connection with you. Reports are sent to ThinkingAI Limited for safety review and include the reason and any details you chose to write.</p>
+    <h2>DIAGNOSTICS</h2>
+    <p>Grove records which setup screens were reached and how long they took, so the first-run experience can be improved. These events carry a random identifier for the install, not your name or email, and they are stored alongside the rest of Grove’s data in the EU. They are not shared with anyone.</p>
+    <h2>CHILDREN</h2>
+    <p>Grove is not directed at children under 13, and we do not knowingly collect data from them. If you believe a child has given us information, write to the address at the end of this page and we will delete it.</p>
+    <h2>HOW GROVE IS PROTECTED</h2>
+    <p>Everything Grove sends travels over TLS. The database and the photo store encrypt what they hold at rest, and row-level rules inside the database mean a signed-in account can read its own grove and whatever has deliberately been shared with it, and nothing else. Access to production is limited to the people at ThinkingAI Limited who need it.</p>
+    <p>No system is perfect. If a breach ever puts you at risk of serious harm, we will tell you and notify the Office of the Privacy Commissioner, as the Privacy Act 2020 requires, and the relevant supervisory authority where the GDPR applies.</p>
+    <h2>HOW LONG WE KEEP THINGS</h2>
+    <p>Account data, including safety reports, is kept until you ask us to delete it. Device tokens are removed when you sign out, delete the account, or Apple says the token is no longer valid. Diagnostic events are deleted after 12 months. Completed scan-job status is normally deleted after one hour and every scan job after one day. Scan usage counters are deleted after 60 days. An anonymous scan identity is scheduled for deletion once it is 30 days old, together with its guest usage record. Deleting the app removes its app storage; Grove also clears any orphaned Keychain credential if the app is installed and opened again.</p>
+    <h2>YOUR RIGHTS</h2>
+    <p>Wherever you live, you can ask for a copy of the information Grove holds about you, ask us to correct it, or ask us to delete it. You do not have to write to us for the last one: Settings › Delete account removes the account and everything in it, and the app can export your grove to a file on your iPhone at any time.</p>
+    <div class="entry"><p><b>New Zealand.</b> Principles 6 and 7 of the Privacy Act 2020 give you the right to see your information and to have it corrected. We answer within 20 working days. If you are not satisfied with how we handled a request, you can complain to the Office of the Privacy Commissioner — <a href="https://www.privacy.org.nz">privacy.org.nz</a>.</p></div>
+    <div class="entry"><p><b>UK and EU.</b> You also have rights to erasure, portability, restriction, and objection, and we answer within one month. The legal bases we rely on are performance of a contract (running the account you asked for), consent (location, camera, and photo library — each withdrawable in iOS Settings), and legitimate interests (keeping the service working, keeping it secure, and improving first-run setup). You can complain to your national supervisory authority, or to the Information Commissioner’s Office in the UK.</p></div>
+    <p>We do not sell personal information, and we do not share it for advertising or profiling of any kind.</p>
+    <h2>CHANGES</h2>
+    <p>If this policy changes materially, the date at the top changes and the app will point at the updated page. Grove does not quietly widen what it collects.</p>
+    <h2>CONTACT</h2>
+    <address>ThinkingAI Limited<br>Auckland, New Zealand<br><a href="mailto:privacy@thinkingai.co.nz">privacy@thinkingai.co.nz</a></address>
+    <p>Write to us about anything on this page. We answer every message from a person about their own data.</p>
+    <p>This policy is governed by New Zealand law, and nothing in it takes away a right you have under the law where you live.</p>
+    <p class="colophon">— Grove. This page sets no cookies and loads no advertising or tracking code.</p>
+  </main>
+</div>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div>
+      <a class="brand" href="/">
+        <img src="/assets/grove-mark.png" alt="Grove" width="26">
+      </a>
+      <p class="footer-org">Made by ThinkingAI&nbsp;Limited<br>Auckland, New Zealand</p>
+    </div>
+    <div class="footer-links">
+      <a href="/">The app</a>
+      <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">Terms</a>
+      <a href="mailto:privacy@thinkingai.co.nz">privacy@thinkingai.co.nz</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

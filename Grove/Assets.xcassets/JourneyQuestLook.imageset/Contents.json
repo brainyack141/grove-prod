@@ -1,0 +1,8 @@
+{
+  "images" : [
+    { "filename" : "JourneyQuestLook.png", "idiom" : "universal", "scale" : "1x" },
+    { "filename" : "JourneyQuestLook@2x.png", "idiom" : "universal", "scale" : "2x" },
+    { "filename" : "JourneyQuestLook@3x.png", "idiom" : "universal", "scale" : "3x" }
+  ],
+  "info" : { "author" : "xcode", "version" : 1 }
+}

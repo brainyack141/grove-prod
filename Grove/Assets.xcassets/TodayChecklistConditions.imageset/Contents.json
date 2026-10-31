@@ -1,0 +1,8 @@
+{
+  "images" : [
+    { "filename" : "TodayChecklistConditions.png", "idiom" : "universal", "scale" : "1x" },
+    { "filename" : "TodayChecklistConditions@2x.png", "idiom" : "universal", "scale" : "2x" },
+    { "filename" : "TodayChecklistConditions@3x.png", "idiom" : "universal", "scale" : "3x" }
+  ],
+  "info" : { "author" : "xcode", "version" : 1 }
+}

@@ -1,0 +1,2080 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		016DD05C8EA77ACE130696BC /* ScanEvidencePipelineRegressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B9ADCBD3805393D31E7433 /* ScanEvidencePipelineRegressionTests.swift */; };
+		020C14009A502A71D83212C7 /* EditPlantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 423EC0072608BEDCE9550B03 /* EditPlantView.swift */; };
+		0265EF1DC992744D0FC57EE7 /* LivingRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C4A33F34278AFA1D4A673D /* LivingRecordView.swift */; };
+		03271619BD3CD98BE5884903 /* PlantChangeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714F749AC3A0A125EC04C9AE /* PlantChangeCard.swift */; };
+		045F55666F8226FD445E6DB4 /* PremiumOfferTimingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D9793BE730293DEA1F9E8D6 /* PremiumOfferTimingTests.swift */; };
+		05FC1D5C3213A4236BCBD757 /* OnboardingFirstPlantViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C352CA0570444B2AE2C08FA /* OnboardingFirstPlantViews.swift */; };
+		06B6CDCB577CA13A6732627F /* StreakDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358360B6E6FD438B9F898829 /* StreakDetailSheet.swift */; };
+		0841CCF0EFBED2867CE50150 /* JourneyHeroCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7733228390CF82B042B451 /* JourneyHeroCard.swift */; };
+		087293C2738E13653A6D3F74 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D40792C58309CF16501D0D /* WeatherService.swift */; };
+		09781FB274B70A89A0C4898B /* GroveLocationPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B41B4B19FC4BFC788E16EF0 /* GroveLocationPickerView.swift */; };
+		0CEF2619C1D2B6ABDB227261 /* CareTaskRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BBD027F5A4C74D1BD71311 /* CareTaskRow.swift */; };
+		0CFE711B1F477C16F4AC342C /* SoilMoistureGauge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E446FFD7F88BBD9AC65865C /* SoilMoistureGauge.swift */; };
+		105C22DE654C7C5D1B43E51A /* LivingRecordFilm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B6043539F44E86CE92E1F6 /* LivingRecordFilm.swift */; };
+		11161705F3130E92B2B1D585 /* WatchGroveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5456EBF482C36FA5E998A482 /* WatchGroveView.swift */; };
+		1308FA06F1638119F0870E36 /* StreakSummaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295E6322DBC43B87BBA72703 /* StreakSummaryTests.swift */; };
+		13546CF82CB6767CAB4A2E49 /* GroveScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988E5CE24418FA7BA71A464B /* GroveScore.swift */; };
+		14300E5E64D133DE4E4F6211 /* ScanPipelineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 500CEF2AC3404DA50F64BA9A /* ScanPipelineTests.swift */; };
+		1468F1A1A2A08D0574D13084 /* SupabaseSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA20A4EE70F9C56138226805 /* SupabaseSessionStore.swift */; };
+		165647875A32FECE47D65D7D /* JourneyChest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0CFBF35131A8F7290CC794A /* JourneyChest.swift */; };
+		188AAFFF82A51137570CFD6A /* PlantSafety.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE63308FDE9DFA55A9FD33C2 /* PlantSafety.swift */; };
+		18C067E8B2A6E9AB22654258 /* PlantCareProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE104CF472EB413CA0D83106 /* PlantCareProfile.swift */; };
+		194F9347C50881359C65C3E3 /* DialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5E004E40FCD8F5693062DE25 /* DialKit */; };
+		195DEC52E264966C4B0907F9 /* ObservationMediaStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602024518419EB5CBB4B75B9 /* ObservationMediaStore.swift */; };
+		1AA5621529ECAC7FBEAA5C2B /* FriendSlotsPaywallSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08BB5F3F21870670BA71B0F /* FriendSlotsPaywallSheet.swift */; };
+		1D8D3C692E2FD41CDE132513 /* TodayBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5A56DF55A4334AE0624D358 /* TodayBoard.swift */; };
+		1E60E4F2BF9D9116AA86B1F4 /* SkyAdvisoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C19463490259A2BAC5130C95 /* SkyAdvisoryTests.swift */; };
+		2011E5798DF5468D21031749 /* JourneyBadgeUnlockOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863A9DC3BF9DE4234802D19A /* JourneyBadgeUnlockOverlay.swift */; };
+		2433C28909EF8C65A3F1ADA9 /* GrovePlanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D145BF0C6D723AE4D72CD3 /* GrovePlanTests.swift */; };
+		246CAA177BCA2ACE6595884E /* ScanLiveIntelligence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FD2BE4CD4DE3C4D550803A /* ScanLiveIntelligence.swift */; };
+		2701CE091C63CF82E5096F6F /* GroveStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4541D22F87A02B99AD3449 /* GroveStoreTests.swift */; };
+		2769A285421F5F7513DE89DD /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 1DCB5391D9A0F4E7628A2557 /* RevenueCat */; };
+		281CD81A76A6ED746D20B8CD /* PlantWateringEstimate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D629A3B9FAFE231F10FCED /* PlantWateringEstimate.swift */; };
+		28726D478DFB3960CD45B3FE /* ScanImageQuality.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2EA7589A01D3A3BC476E97 /* ScanImageQuality.swift */; };
+		2CDC04FC4E79A6C28840587D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 213CD6A27FB6E1BAE72EFCBF /* LaunchScreen.storyboard */; };
+		2E329085168B01F178D0AAF5 /* FriendGroveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2451756BD27E638BD0C919A4 /* FriendGroveView.swift */; };
+		2F16374CD4F16780CC21EDC1 /* JourneyParticles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89E0C477189F6DBF92E791D0 /* JourneyParticles.swift */; };
+		2F2324D8D31DD5909AD20628 /* GroveStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F3FCA87EE8036298AF4187 /* GroveStatus.swift */; };
+		318CD17C858F6D83337D29B5 /* WatchTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31AFBF9D45780DC5D26DF9D /* WatchTheme.swift */; };
+		320D4FC28FBA7A312BBE4D2C /* GroveIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E3F652D687A0BB8457524C /* GroveIntents.swift */; };
+		325CABEDB8ABFA7309B37B35 /* JourneyWorldProgression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52C78A0F40075B2D06C31C5 /* JourneyWorldProgression.swift */; };
+		327B15512D503D72597DBB0A /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 55F88180E7C9B7543D89F012 /* GoogleSignIn */; };
+		334B150B5924693E85FE4A43 /* GroveSkyAdvisory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4D0017291D38CF91510791 /* GroveSkyAdvisory.swift */; };
+		347511048FABAA28F61DDC05 /* GroveToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226CF14FE5CF63174F232ACA /* GroveToast.swift */; };
+		37D1955F1D3E567CA32012CE /* BotanistAskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B222EBF9104DF1EA67A6FB5 /* BotanistAskTests.swift */; };
+		396B274A7B7BEDAD07C099CC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 538C3EDD3272C289AF7A361C /* Assets.xcassets */; };
+		39897A26713B7D21E494B50C /* GroveWateringLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F6654D18961167B9065C75 /* GroveWateringLiveActivity.swift */; };
+		3AB4157DB68A648829A5DBDC /* GroveUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E08E6AAA1DA5350B75C466C6 /* GroveUITests.swift */; };
+		3B01FA6371B575E7E65FACC4 /* GroveStatusBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF70EB5674C4002EBE1B7B4A /* GroveStatusBar.swift */; };
+		3CBC2183E6928A3211A88229 /* PlantPortrait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EFBF6FA9DD8C710001DC080 /* PlantPortrait.swift */; };
+		3D9B12B2D7B86A72803DD81C /* TodayMastheadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F51D7928D6593878373F42B /* TodayMastheadTests.swift */; };
+		3DA14E592427079E38AEE9D1 /* PremiumPaywallBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2FE207F2E4D3124145EE01E /* PremiumPaywallBoard.swift */; };
+		3DF4793C089523160F91785B /* GroveAtmosphere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852E1CB96D7F38E1C7AC6549 /* GroveAtmosphere.swift */; };
+		3EB9D2AD32322C88E9B9F986 /* TodayMasthead.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598FC9AF9F2F372BE2112E4E /* TodayMasthead.swift */; };
+		3F354624FA1B5317ABFB75E0 /* SoilMoistureReadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE362460E0F30136608513AA /* SoilMoistureReadTests.swift */; };
+		403D2CDA9C8B469E94FAC368 /* GroveWatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2398CDF08F2B0627A173D7 /* GroveWatchTests.swift */; };
+		41EFA277935BC1F6758F4458 /* GroveMotionKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7FD970311790F53000E075 /* GroveMotionKit.swift */; };
+		42D853CDB84B3D2AF4E9D9C6 /* GroveBackSwipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A47223165467889B48D68D2 /* GroveBackSwipe.swift */; };
+		45A760AE9C74999C7D71AE11 /* OnboardingComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 986857A12A016C815A3D4B81 /* OnboardingComponents.swift */; };
+		474E5CCAE324BF65B3A5A4D1 /* GroveApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1132DF3EFAC79E057EDE7337 /* GroveApp.swift */; };
+		48D65FD45706A52DB5C72386 /* ScanSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A413A81810DAEEAFF215C177 /* ScanSession.swift */; };
+		4A4A2F4A6F7DCB44AB2E39F9 /* GroveLiveActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8F3597C50330EB1AFC0951 /* GroveLiveActivityAttributes.swift */; };
+		4A9E49C7B038678D2B35FF9F /* PlantSafetyCatalogue.json in Resources */ = {isa = PBXBuildFile; fileRef = B045EB983F80751AD50866BD /* PlantSafetyCatalogue.json */; };
+		4BD948C2AA8CAE43062BB61A /* JourneyAchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C714BD227CE495D24E91BF35 /* JourneyAchievementsView.swift */; };
+		4DF3ED299572BF43985D324A /* PlantBoardDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47525FB1BED203A627C352CE /* PlantBoardDetails.swift */; };
+		5081A7A3D47680851350D32D /* AppIntentsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E06D1EF2B2AB5158C852C1B /* AppIntentsTests.swift */; };
+		520333205D58E74CB18C492B /* GroveStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3523C257731F699BA460088C /* GroveStore.swift */; };
+		5251700211C47B2CDA6933D7 /* GroveRegionPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77CC99D042DB9CA3A137FD3E /* GroveRegionPicker.swift */; };
+		547737821BF67459E6924D34 /* CheckInHealthCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949E5EE87F0F7836CA9A8B81 /* CheckInHealthCard.swift */; };
+		5680671201F18D992A34211E /* GroveWateringTourTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12A8ECAB207C7B032388605 /* GroveWateringTourTests.swift */; };
+		5814FFC5E63EF71F3A779D5F /* JourneyMilestoneDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB644C3CE674C6B53A5EE0EA /* JourneyMilestoneDetailView.swift */; };
+		5A6B6C9023DA309472296076 /* WateringRhythm.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4504AD15977E1E18B7891F3 /* WateringRhythm.swift */; };
+		5B45191F772DCFB97991DD48 /* GroveLiveActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872FC6F6B833928664DF8600 /* GroveLiveActivityBundle.swift */; };
+		5CDDF556D1B28B1AC50AED77 /* TravelBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E56221D8F195C5EA08217E69 /* TravelBanner.swift */; };
+		5D428E6259A11EA3F5329CC2 /* GroveCensus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF606D6ED1DA5B921676BE /* GroveCensus.swift */; };
+		5D91F566A7F1E6782381D0D9 /* WatchTodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A95E3FBF0F12FDE72C03B37 /* WatchTodayView.swift */; };
+		5D97D854E6C864266F014EDF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84041DF02A62C8528B7EA0A8 /* Assets.xcassets */; };
+		5EB5AEB4E17102F31ADA9C8F /* DailyQuestCreditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66004A4D0B53CDDE62719FE /* DailyQuestCreditTests.swift */; };
+		6060485ED3550D41CDDD63BA /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87946D0350BB8F24CE09F633 /* Components.swift */; };
+		60A8AE3CB353107B92C9F656 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A07D97BA99EAFC0A78FAEA2 /* TodayView.swift */; };
+		6107C3B1655E136F0AAF98FB /* SittingLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDC93C0DBE1481030153AE1 /* SittingLinkView.swift */; };
+		614F3237D2F03265A35FC4A5 /* GroveDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E48B0E50FE39E2564A1CCE /* GroveDefaults.swift */; };
+		639EBD53C3855FCBB72B2D6F /* ScanMediaStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDB7B4E1CEDBB699D5980CA /* ScanMediaStore.swift */; };
+		64731C2D30ABB2FC82D873CB /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C3C07E7ABCE560B591D484 /* RootView.swift */; };
+		64D0278199C32197AC0AD970 /* MediaUploadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EF479CFD3B7636F8CA91CB7 /* MediaUploadService.swift */; };
+		672CE899AC84E2DE996B8515 /* JourneyLockedMilestoneSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BC7D7B6F522E02D6F030070 /* JourneyLockedMilestoneSheet.swift */; };
+		69ED8D163E57AF82C09BF10C /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8DEDF2549B959A99AB49E94 /* ProfileView.swift */; };
+		6A2DC89249B8E44B08AFCA00 /* JourneyBadgeShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3227AF66A1F29C2C1454A268 /* JourneyBadgeShelf.swift */; };
+		6A30F90765B06567E0C77991 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AF30FE157DFBA8A3F4CD31 /* ActivityView.swift */; };
+		6C24869ED526419CE57901D1 /* GroveWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B340C7E17E69E7E241503FED /* GroveWatchApp.swift */; };
+		6F8374F10F4BF3DEB7EC1AD0 /* CheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59266CA0B6175BFB73DD52D /* CheckInView.swift */; };
+		6FE051210C8D3BF6EBA92ADD /* OnboardingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13384A4C2F9697952766CB88 /* OnboardingModel.swift */; };
+		70A2ACC92EFED27E3D6C402C /* ScanHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A71F9C2963B39291AC5630 /* ScanHistoryView.swift */; };
+		71F679EA54D9AF749C34EABB /* SupabaseAuthClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AD067CBF200763666F1727 /* SupabaseAuthClient.swift */; };
+		72F3E3FDAC216B544B21FD77 /* JourneyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0297BCAE72D4B1932ABEB128 /* JourneyModels.swift */; };
+		74055C367F76E2FB87E34B7D /* PlantPageAuditRegressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA7941243BDAF80475601C4 /* PlantPageAuditRegressionTests.swift */; };
+		74691505FBB3C975BF5FAB78 /* GroveVisualTourTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95501BCD695AF0BA8BA65598 /* GroveVisualTourTests.swift */; };
+		74F5E429D94A3CE174FFEAA0 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 17221138D7CC56F75D0A1752 /* PrivacyInfo.xcprivacy */; };
+		7712BDAE15801EE022E7EB4F /* GroveCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75B40FAC14EFC440C9DEE036 /* GroveCameraView.swift */; };
+		78A8C3B8FCB9FD603A7065F5 /* PlantBoardDetailsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E6C2FE3D9BD0822BF3562C /* PlantBoardDetailsTests.swift */; };
+		79463F9C5D9C01644FDC04DF /* WatchStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85D4DA4CB4FA3022915B848 /* WatchStore.swift */; };
+		7A98D56F3135A2607E535D7F /* NotificationServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC169799F470CD40A4E1E37 /* NotificationServiceTests.swift */; };
+		7AA4F837C58A1944EDCDC62F /* GrovePlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DF36B7A487A6E4F0C38A07 /* GrovePlanView.swift */; };
+		813F52B642F0B5E0A8EB7AF5 /* SunlightCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C750F3F5E1C318CD3E881B7 /* SunlightCard.swift */; };
+		8260B495498B11DCB9CCF53C /* OnboardingContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388C1947E8815C60DE08949A /* OnboardingContainerView.swift */; };
+		839AAE1BC75840B4CB2B3EAA /* BotanistService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D531E21CAA92CFF99C42D427 /* BotanistService.swift */; };
+		86E329E27F24E6B9B87E81B9 /* Academy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38956428D64CD95EEAC48F6 /* Academy.swift */; };
+		89D5F99A1F3CEF927D643F1D /* GroveSittingLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = D235177AFC5D6356948A1A71 /* GroveSittingLiveActivity.swift */; };
+		8A4E8AA50845F0818AA16C81 /* GroveWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 7ABCA9E105EED20497962277 /* GroveWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8CAC10424B60092ABDE99672 /* PlantAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94165E6A221FEA22DD9C8D2A /* PlantAnalysisService.swift */; };
+		8CE8AEDD04638226B5EB0240 /* SettingsBehaviourTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03CE136FD58E00454D6D57EB /* SettingsBehaviourTests.swift */; };
+		8DCD656CA3D0360244FDD0E0 /* GroveLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5611706D7737595B47CEE600 /* GroveLaunchView.swift */; };
+		8FAE7E9424C414F42B5DD1A0 /* DomainModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC360D528FB898E922BBF2 /* DomainModels.swift */; };
+		91003E98B9470989A7004A79 /* GroveFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEE789D4333ACA5DAD41474 /* GroveFlowLayout.swift */; };
+		91CD8AB91CF5CBD8603E3070 /* OnboardingQuizViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9F0E2500B8856067A68B4 /* OnboardingQuizViews.swift */; };
+		92693B1363A5CB2CB77980EB /* CaptureBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3552FDA33EC1E468B4E0731 /* CaptureBoard.swift */; };
+		949BE3533E9E969D5372BCBC /* PlantDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD28E9D9931D7F8E76CB4020 /* PlantDetailView.swift */; };
+		961C847EF2C326FD4E7C31F4 /* AskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0EBBFF9F9530A304719E94 /* AskView.swift */; };
+		98D29C72BF51BDAF2D361182 /* SoilCheckCadenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6B290152155CBFB82E10BCA /* SoilCheckCadenceTests.swift */; };
+		98F4C1137C80D3757C30E0C7 /* PlantStateReadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C116370B635E367666E2306 /* PlantStateReadTests.swift */; };
+		9A1893E3ACF7B3D93DCF4D69 /* WeeklyHealthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9095E1D495BFC3714A855E0D /* WeeklyHealthTests.swift */; };
+		9C15038D5F5E08B95B04B2B2 /* GroveLiveActivity.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6EBAEC9C698A49F745AAE732 /* GroveLiveActivity.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9CF82B6C7FB890237A6C3CB6 /* PlantShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D8F08E2B4F214D3F5A1B3B /* PlantShareView.swift */; };
+		9FFCA98657F78905765BB288 /* WatchSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54FAD3F3C140F78E1528085 /* WatchSyncTests.swift */; };
+		A0E42DFF83D9156FCBC5A2FB /* SignInRecoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3FF82129ECFC47BA8E47BB /* SignInRecoveryTests.swift */; };
+		A18F01A2B794145978A87DED /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00707C889B471E288EC60151 /* SettingsView.swift */; };
+		A20341ED60F873C833D40A5D /* AskPrompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3654E7BD1966DB187751D05 /* AskPrompts.swift */; };
+		A377F3253B39F89890E23204 /* GroveJourneyTourTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE0E0C5BDAFBC9AF0D1EE48 /* GroveJourneyTourTests.swift */; };
+		A6BA5E2C75792A8647C7446B /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF2AC60795BD92CBAB44E3A /* APIClient.swift */; };
+		A6EF0E741D096304654A71DB /* CareTaskDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90223259B40706DC9F085FA /* CareTaskDetailView.swift */; };
+		A7365B16C8E62BC1BCB49A09 /* JourneyLevelUpTakeover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F22054EE000FB4E97421D2 /* JourneyLevelUpTakeover.swift */; };
+		A77B4EBCBB47F0ABF4E6F90D /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = 6C456B1822A62F6B554EBB2B /* Inject */; };
+		A78368CD88D49906B6F1A821 /* GroveScoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8A3808FB44B11674B5A930 /* GroveScoreTests.swift */; };
+		A9D466B26B36B74D54E15A7F /* Fraunces-OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = AC0D91A659750FB53B0A2CC6 /* Fraunces-OFL.txt */; };
+		AAEF7AE5D812C924A2FFD5FA /* WatchSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960F7C4401805DAE67717ECC /* WatchSync.swift */; };
+		AB27DE35700C538B453000B0 /* JourneyMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B631B84DB2259E0EF51850 /* JourneyMapView.swift */; };
+		AB962E10202D9E1DD74BFF75 /* Vortex in Frameworks */ = {isa = PBXBuildFile; productRef = A8E1AB6A82969007C35B6620 /* Vortex */; };
+		ABBA482C736F1C2F090AEC10 /* InjectionNext in Frameworks */ = {isa = PBXBuildFile; productRef = 2247AEA0A7AAA72C7A1CEC00 /* InjectionNext */; };
+		AD056B12C5C65EC56E2F08A4 /* OnboardingAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FD4C3F064CB5EC790109DE /* OnboardingAnalytics.swift */; };
+		AF847CF2F4BEFA27FEDED70F /* WatchSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F46AF766937ADD90DA3D02 /* WatchSyncService.swift */; };
+		AFF346325FC1A9B6ADD1BE92 /* CareQueueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6788F127B580D36568D6547A /* CareQueueView.swift */; };
+		B047ACC3AFBDF3DE2BDF14FD /* PendingFirstPlantStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964B8809BC4AAE50000AE7F8 /* PendingFirstPlantStoreTests.swift */; };
+		B2BB155D8F27E9CA4F07441A /* PlantBoardPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41945C36EBC16D9682BC8264 /* PlantBoardPage.swift */; };
+		B2DA0A8D7987B62F0D107B0C /* PremiumStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6788251DFACC0E6B24A75AEA /* PremiumStoreTests.swift */; };
+		B392C06F86EF97CA51CCEBA0 /* GroveWatchWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AB2E3AF68928C59B42487B60 /* GroveWatchWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B47CD3F7D42FDB159770AD93 /* JourneyBadgeFlourish.swift in Sources */ = {isa = PBXBuildFile; fileRef = D161264A0CBEA66ACF7FBCFF /* JourneyBadgeFlourish.swift */; };
+		B54015071E71ADC8A382AAE9 /* PlantWateringSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1463F98B0935718DE32B1FC9 /* PlantWateringSheet.swift */; };
+		B5AB392781CB042B0119B2B6 /* AppRoutes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282DB7705F67F1E4FF51BB5D /* AppRoutes.swift */; };
+		B5BD87606C5590283056809E /* JourneyQuests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CC0383AD5BB08133AD299 /* JourneyQuests.swift */; };
+		B6194DF60AC5B6C0115E8753 /* GroveScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8180B4ADB4C32F0AADA83299 /* GroveScoreView.swift */; };
+		B69C17E4E2B3923C70D6F8FE /* JourneyKeepsakes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A61D3286B21CE4A1F61C36 /* JourneyKeepsakes.swift */; };
+		B8BFAE5917C9C687CAB0DC02 /* GroveRemoteRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12D86E3766A5137C9453AA48 /* GroveRemoteRepository.swift */; };
+		BACA06F147D48D98FC3825A5 /* ICPJourneyRegressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FD71CEBBCA0CEBD6A5BD9E /* ICPJourneyRegressionTests.swift */; };
+		BC07B2644B78EA3E00AAFE93 /* WateringRhythmTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D59F9E048126A7F14503BFE /* WateringRhythmTests.swift */; };
+		BE49A57C0180D0D5B92B3BAE /* GroveWatchWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDF0CBA4A292EF6644586FB /* GroveWatchWidget.swift */; };
+		BE51FD09929D9A2CDDB3F3D0 /* DataExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E597D0A7AFCCC5C833DF5220 /* DataExportService.swift */; };
+		BE70E93FEE8483B5805B9BDD /* SyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F098CB1FDC726C1FEAA43A /* SyncEngine.swift */; };
+		C1466CE0706DE06251407A22 /* GroveServiceFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE134188ABB153D7019EC62 /* GroveServiceFactory.swift */; };
+		C1D9E84E1757A8152E241F4B /* GroveMotionDials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69861ABB4913C8B09A774AE3 /* GroveMotionDials.swift */; };
+		C36F0BEFE3D6F758C2769C97 /* APIClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DE73F47CDD1225D6A31F9C6 /* APIClientTests.swift */; };
+		C37BEC000D98FB1411AD2684 /* IntentRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4B1D76B70BB09256365DAA /* IntentRouter.swift */; };
+		C3D5BD058B81F37091C76C1B /* OnboardingSproutSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEED96B5E2CA76587B8DC352 /* OnboardingSproutSteps.swift */; };
+		C45834BA498A0410F9FE6CC0 /* AppShellChromePolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3C859DE750D52476578D61 /* AppShellChromePolicyTests.swift */; };
+		C52A55E7ED5ED532F90AB4FC /* ScanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA7D3DEA0C77F0111541020 /* ScanView.swift */; };
+		C553DFD8A38B849C73FE5E50 /* FriendsBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2679138939BE4EFDDC43ACBD /* FriendsBoard.swift */; };
+		C690365D2A447C9ED1474EDC /* WatchSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960F7C4401805DAE67717ECC /* WatchSync.swift */; };
+		C87E94D62005A65585A83F28 /* CreateCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF017EE61215AD02A0BC4D6 /* CreateCollectionView.swift */; };
+		C8D20C1E83D3ACD16293516A /* AccountDeletionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AABA21FF730EB0EABCF8132 /* AccountDeletionTests.swift */; };
+		C92B455A8955EEA1FB2A599E /* MyGroveBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FD431E613BD77AB978800AD /* MyGroveBoard.swift */; };
+		C9D7A9D5BC181DDC76810848 /* TravelWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C3E13BA4B2616AFC944CC8 /* TravelWatcher.swift */; };
+		CB5CB2FD5EE92CDBF8554BF3 /* GroveEmptyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5B2A9346F11EB3D8C17E552 /* GroveEmptyState.swift */; };
+		CC31ED6197845DDA2E912AF4 /* PlantProfileViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D330A14E931189187C354192 /* PlantProfileViews.swift */; };
+		CC37F54FAEC2FF90B7488482 /* PlantSafetyCatalogue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3DEDB8966735AD6C472A56 /* PlantSafetyCatalogue.swift */; };
+		CD4C320DFFB46D70F1874358 /* GroveScanButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BC4D711E8328670A7D99DB8 /* GroveScanButton.swift */; };
+		CE55AE94D8129BDEBD915F9B /* PlantChangeStoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EC8A5EF8BE636498526F08F /* PlantChangeStoryTests.swift */; };
+		CF913B3633E2D1F3099793CF /* OnboardingSprout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D4FF2280955B7EF1B87C6EE /* OnboardingSprout.swift */; };
+		D22121B9DC23F48787E76FF0 /* BotanistFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74C4E2997169F3630AC2AFB4 /* BotanistFormatting.swift */; };
+		D222A18D0B9EFE9226C8B02A /* GroveMediaPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959103A16A150174A9055F00 /* GroveMediaPath.swift */; };
+		D323082E2260AF904CB20459 /* SkyCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB1951AC57C098514AAC3C8 /* SkyCard.swift */; };
+		D3F218B11E0D8CA3FD55B847 /* GroveImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F79A227C5B815FD42F0176 /* GroveImageLoader.swift */; };
+		D55D80B69E825074847D4E41 /* GrovePremiumOffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCBEE587E5A1765571CE3142 /* GrovePremiumOffer.swift */; };
+		D66036542C67EE8AFD96E259 /* WelcomeDew.metal in Sources */ = {isa = PBXBuildFile; fileRef = 726AC662CFEE690EA17CBA2E /* WelcomeDew.metal */; };
+		D69D68CDA5821CDDE0F2FDC1 /* DataExportServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33644443E7A0D55150FD0FDF /* DataExportServiceTests.swift */; };
+		D7F2B530FBBB7B6D4F207339 /* OnboardingWelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED8389DF19A4E7A86C37BC1E /* OnboardingWelcomeView.swift */; };
+		D81BE158B19C5C6D2B12D3D0 /* GroveHaptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE40247C1AACC7340C0645FA /* GroveHaptics.swift */; };
+		D82FDCFACF2F5A89EC38749A /* StreakCelebration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7E9412045399A3964FE4E0C /* StreakCelebration.swift */; };
+		D85B29A57ADF446DFB210331 /* WateringRhythmChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = E196CF8380F49E1DE6BC3CC2 /* WateringRhythmChart.swift */; };
+		D8E97179588F525584CE5632 /* GroveSwipeTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF6FD4CFB0C439954A9184D /* GroveSwipeTabs.swift */; };
+		D906BE3402F065421BF3A527 /* AppTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = E815EF62FBE83C7F264D3C96 /* AppTab.swift */; };
+		DA809EA553CA9AF76F4883DE /* WatchSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960F7C4401805DAE67717ECC /* WatchSync.swift */; };
+		DC000FA6F755D750B7EEF4CE /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B4EDC5989ED54F32DCDC02 /* DesignSystem.swift */; };
+		DC3258B3D6FE130C854C375D /* GroveLegal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273AF407E4BA8D23BFEA2285 /* GroveLegal.swift */; };
+		DC63C302B5FF451B0E403CD3 /* OnboardingNotificationPrimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964AF91ED188D06E5B84D9BB /* OnboardingNotificationPrimerView.swift */; };
+		DDC2C17DCF18745E6D5CA2ED /* Fraunces72ptSoft-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2BA78583F1BD8DF11E7840A1 /* Fraunces72ptSoft-Bold.ttf */; };
+		DE87E18AF69457E407F70C70 /* SyncEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED597A51865B87963421C58 /* SyncEngineTests.swift */; };
+		DEE03B5B4881CFE83EC664CB /* GrovePremiumStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6DBE583F986E40BC4DDE95 /* GrovePremiumStore.swift */; };
+		DFC214A772999522C0704641 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 922467EE801C658765CEDF37 /* ProfileSetupView.swift */; };
+		DFEBF464350778E726C028F4 /* CollectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FFDB16C6301E8ACD3B36B5C /* CollectionDetailView.swift */; };
+		E598784BEE6AA2326264F339 /* FriendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6068DCB7A686B680042DB616 /* FriendsView.swift */; };
+		E5D86373148D4A7F1F95D075 /* AccountStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B7D1D7427E8F936093A250 /* AccountStorage.swift */; };
+		E63F6DE9850E21215D6B46A9 /* AskSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A0EFE0AC3B23AD1B667F30A /* AskSession.swift */; };
+		E8B2B675AEF0673DD7B0793C /* GroveLiveActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E005969557B9CAA905836F8F /* GroveLiveActivityController.swift */; };
+		ECE35C09510CC7ABC2C947FD /* JourneyEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BF6E275E2CCAB9192B7FB09 /* JourneyEffects.swift */; };
+		ECF224461AD501EBB7E0D6CC /* GroveLiveActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8F3597C50330EB1AFC0951 /* GroveLiveActivityAttributes.swift */; };
+		EDAA95CBC79B5C829F056C9E /* SoilMoistureRead.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21DDCCBEEEC81D8D639B6605 /* SoilMoistureRead.swift */; };
+		EDF3703F6DA099A98A80AF44 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10CBC52CE47AD4A42A9E5060 /* NotificationService.swift */; };
+		EE0FF1E7578409FBBA6F8FD4 /* PendingFirstPlantStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0ADF798C704E78D153BD55F /* PendingFirstPlantStore.swift */; };
+		EE3054F08E0ABD79D7A1A351 /* GroveEmptyArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = D191E290129C6D8A1949C14B /* GroveEmptyArt.swift */; };
+		EE5DF61EF1D0A5E628B5CD26 /* SessionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71D8D1498E0CD24FE3BE3F8 /* SessionServiceTests.swift */; };
+		EEB3B8DF6E92E90629E50E4D /* PlantSittingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 711BADB37AF7C55F1381DC86 /* PlantSittingView.swift */; };
+		EEDA619B8CA56FF5A39756C7 /* GrovePlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A64D0E727CE8C5F26A2C4B /* GrovePlan.swift */; };
+		EF46018EE88075D5DFFA544C /* OnboardingAuthViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A349FAEC4FDC6EBBFA4754C3 /* OnboardingAuthViews.swift */; };
+		EFFA2FB27940E87E644947BF /* TravelWatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15AF9FECDD1BC96F6CB82744 /* TravelWatcherTests.swift */; };
+		F0095A16B0FE580CE98067A9 /* GroveGuidesTourTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA93030ED457544DDC500C2 /* GroveGuidesTourTests.swift */; };
+		F1F7334C56D0B105A1141EC4 /* GoogleAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82CF1161B80288D3F3DD9836 /* GoogleAuthenticator.swift */; };
+		F1FA597751D74958C0078CB6 /* JourneyLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C368895ECAAAC9189E3040A /* JourneyLibrary.swift */; };
+		F3A98975B2670FF9EF73E186 /* ScanTipsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0562CEDCF3B1F43DC0799AD2 /* ScanTipsView.swift */; };
+		F4C01F595B9DE23DFD810741 /* GroveAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C38B2AED6CDD251C319C4FD /* GroveAnalytics.swift */; };
+		FC61A85F440B2E4B69C1BF7B /* JourneyProgressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A270789AB6A3D45E06A30A1F /* JourneyProgressionTests.swift */; };
+		FEE34EA4F68A73161FA6B13D /* GroveDiag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 398B6322F28B4E2933E99771 /* GroveDiag.swift */; };
+		FEEE92374E87655BB2170633 /* GroveCensusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98E5161E53333B13451B2A7 /* GroveCensusTests.swift */; };
+		FF4D13E7AED853D545C088E0 /* SessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5583816DC046D9D48A9C6611 /* SessionService.swift */; };
+		FF5DE52F57FFA877F16C5270 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 73BED7F8172B48B57D9BC236 /* Pow */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1C54BF806FCF3BE63C029168 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 599B316DC08150787CABFED5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2F853B5054DBF8672BB4BE98;
+			remoteInfo = GroveWatch;
+		};
+		422501CE9174281C5650EFD3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 599B316DC08150787CABFED5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FF561F15368CF6DE9AFAF446;
+			remoteInfo = GroveLiveActivity;
+		};
+		65A595D080E7E6C44DC4EF50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 599B316DC08150787CABFED5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2F853B5054DBF8672BB4BE98;
+			remoteInfo = GroveWatch;
+		};
+		7858789F818D5343D6B72992 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 599B316DC08150787CABFED5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9C57E594A837DC8048757E52;
+			remoteInfo = Grove;
+		};
+		81CAB6783DC288772F157BFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 599B316DC08150787CABFED5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9C57E594A837DC8048757E52;
+			remoteInfo = Grove;
+		};
+		A39E15237A65EEAD712F342A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 599B316DC08150787CABFED5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5864D1C0E61F375A273F7C19;
+			remoteInfo = GroveWatchWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		655700AE24EB28C200F6EE4D /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				9C15038D5F5E08B95B04B2B2 /* GroveLiveActivity.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		730879F5E900CB0FACA9A7E8 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				8A4E8AA50845F0818AA16C81 /* GroveWatch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF8FFFE334448848E321237A /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B392C06F86EF97CA51CCEBA0 /* GroveWatchWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		C0F16A0E5EC2E7A1D9B3F401 /* Grove.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Grove.xcconfig; sourceTree = "<group>"; };
+		00707C889B471E288EC60151 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		01B6043539F44E86CE92E1F6 /* LivingRecordFilm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivingRecordFilm.swift; sourceTree = "<group>"; };
+		0297BCAE72D4B1932ABEB128 /* JourneyModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyModels.swift; sourceTree = "<group>"; };
+		03CE136FD58E00454D6D57EB /* SettingsBehaviourTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsBehaviourTests.swift; sourceTree = "<group>"; };
+		0562CEDCF3B1F43DC0799AD2 /* ScanTipsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanTipsView.swift; sourceTree = "<group>"; };
+		05AD067CBF200763666F1727 /* SupabaseAuthClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseAuthClient.swift; sourceTree = "<group>"; };
+		09FD2BE4CD4DE3C4D550803A /* ScanLiveIntelligence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanLiveIntelligence.swift; sourceTree = "<group>"; };
+		0A7FD970311790F53000E075 /* GroveMotionKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveMotionKit.swift; sourceTree = "<group>"; };
+		0B41B4B19FC4BFC788E16EF0 /* GroveLocationPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveLocationPickerView.swift; sourceTree = "<group>"; };
+		0BE0E0C5BDAFBC9AF0D1EE48 /* GroveJourneyTourTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveJourneyTourTests.swift; sourceTree = "<group>"; };
+		0FFDB16C6301E8ACD3B36B5C /* CollectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDetailView.swift; sourceTree = "<group>"; };
+		10CBC52CE47AD4A42A9E5060 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		1132DF3EFAC79E057EDE7337 /* GroveApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveApp.swift; sourceTree = "<group>"; };
+		11E3F652D687A0BB8457524C /* GroveIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveIntents.swift; sourceTree = "<group>"; };
+		12D86E3766A5137C9453AA48 /* GroveRemoteRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveRemoteRepository.swift; sourceTree = "<group>"; };
+		13384A4C2F9697952766CB88 /* OnboardingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingModel.swift; sourceTree = "<group>"; };
+		1463F98B0935718DE32B1FC9 /* PlantWateringSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantWateringSheet.swift; sourceTree = "<group>"; };
+		14F46AF766937ADD90DA3D02 /* WatchSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSyncService.swift; sourceTree = "<group>"; };
+		15AF9FECDD1BC96F6CB82744 /* TravelWatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelWatcherTests.swift; sourceTree = "<group>"; };
+		15F098CB1FDC726C1FEAA43A /* SyncEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngine.swift; sourceTree = "<group>"; };
+		17221138D7CC56F75D0A1752 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		1A3FF82129ECFC47BA8E47BB /* SignInRecoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInRecoveryTests.swift; sourceTree = "<group>"; };
+		1BFF606D6ED1DA5B921676BE /* GroveCensus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveCensus.swift; sourceTree = "<group>"; };
+		1D59F9E048126A7F14503BFE /* WateringRhythmTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WateringRhythmTests.swift; sourceTree = "<group>"; };
+		1D9793BE730293DEA1F9E8D6 /* PremiumOfferTimingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumOfferTimingTests.swift; sourceTree = "<group>"; };
+		1EF479CFD3B7636F8CA91CB7 /* MediaUploadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaUploadService.swift; sourceTree = "<group>"; };
+		1EFBF6FA9DD8C710001DC080 /* PlantPortrait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantPortrait.swift; sourceTree = "<group>"; };
+		1FF2AC60795BD92CBAB44E3A /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		213CD6A27FB6E1BAE72EFCBF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		21DDCCBEEEC81D8D639B6605 /* SoilMoistureRead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilMoistureRead.swift; sourceTree = "<group>"; };
+		226CF14FE5CF63174F232ACA /* GroveToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveToast.swift; sourceTree = "<group>"; };
+		22D145BF0C6D723AE4D72CD3 /* GrovePlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrovePlanTests.swift; sourceTree = "<group>"; };
+		2451756BD27E638BD0C919A4 /* FriendGroveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendGroveView.swift; sourceTree = "<group>"; };
+		2679138939BE4EFDDC43ACBD /* FriendsBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsBoard.swift; sourceTree = "<group>"; };
+		273AF407E4BA8D23BFEA2285 /* GroveLegal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveLegal.swift; sourceTree = "<group>"; };
+		27E6C2FE3D9BD0822BF3562C /* PlantBoardDetailsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantBoardDetailsTests.swift; sourceTree = "<group>"; };
+		282DB7705F67F1E4FF51BB5D /* AppRoutes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRoutes.swift; sourceTree = "<group>"; };
+		295E6322DBC43B87BBA72703 /* StreakSummaryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakSummaryTests.swift; sourceTree = "<group>"; };
+		2A07D97BA99EAFC0A78FAEA2 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
+		2A47223165467889B48D68D2 /* GroveBackSwipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveBackSwipe.swift; sourceTree = "<group>"; };
+		2A95E3FBF0F12FDE72C03B37 /* WatchTodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchTodayView.swift; sourceTree = "<group>"; };
+		2AABA21FF730EB0EABCF8132 /* AccountDeletionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDeletionTests.swift; sourceTree = "<group>"; };
+		2BA78583F1BD8DF11E7840A1 /* Fraunces72ptSoft-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Fraunces72ptSoft-Bold.ttf"; sourceTree = "<group>"; };
+		2C352CA0570444B2AE2C08FA /* OnboardingFirstPlantViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFirstPlantViews.swift; sourceTree = "<group>"; };
+		31B9ADCBD3805393D31E7433 /* ScanEvidencePipelineRegressionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanEvidencePipelineRegressionTests.swift; sourceTree = "<group>"; };
+		3227AF66A1F29C2C1454A268 /* JourneyBadgeShelf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyBadgeShelf.swift; sourceTree = "<group>"; };
+		32C3E13BA4B2616AFC944CC8 /* TravelWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelWatcher.swift; sourceTree = "<group>"; };
+		33644443E7A0D55150FD0FDF /* DataExportServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExportServiceTests.swift; sourceTree = "<group>"; };
+		33FD4C3F064CB5EC790109DE /* OnboardingAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingAnalytics.swift; sourceTree = "<group>"; };
+		3523C257731F699BA460088C /* GroveStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveStore.swift; sourceTree = "<group>"; };
+		358360B6E6FD438B9F898829 /* StreakDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakDetailSheet.swift; sourceTree = "<group>"; };
+		37F22054EE000FB4E97421D2 /* JourneyLevelUpTakeover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyLevelUpTakeover.swift; sourceTree = "<group>"; };
+		388C1947E8815C60DE08949A /* OnboardingContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingContainerView.swift; sourceTree = "<group>"; };
+		398B6322F28B4E2933E99771 /* GroveDiag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveDiag.swift; sourceTree = "<group>"; };
+		3A8A3808FB44B11674B5A930 /* GroveScoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveScoreTests.swift; sourceTree = "<group>"; };
+		3ABE038753FE982B33C15FE0 /* Grove.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Grove.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3BF6FD4CFB0C439954A9184D /* GroveSwipeTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveSwipeTabs.swift; sourceTree = "<group>"; };
+		3C38B2AED6CDD251C319C4FD /* GroveAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveAnalytics.swift; sourceTree = "<group>"; };
+		41945C36EBC16D9682BC8264 /* PlantBoardPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantBoardPage.swift; sourceTree = "<group>"; };
+		41D8F08E2B4F214D3F5A1B3B /* PlantShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantShareView.swift; sourceTree = "<group>"; };
+		423EC0072608BEDCE9550B03 /* EditPlantView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPlantView.swift; sourceTree = "<group>"; };
+		44A64D0E727CE8C5F26A2C4B /* GrovePlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrovePlan.swift; sourceTree = "<group>"; };
+		47525FB1BED203A627C352CE /* PlantBoardDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantBoardDetails.swift; sourceTree = "<group>"; };
+		4A0EFE0AC3B23AD1B667F30A /* AskSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AskSession.swift; sourceTree = "<group>"; };
+		4B3DEDB8966735AD6C472A56 /* PlantSafetyCatalogue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantSafetyCatalogue.swift; sourceTree = "<group>"; };
+		4B4D0017291D38CF91510791 /* GroveSkyAdvisory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveSkyAdvisory.swift; sourceTree = "<group>"; };
+		4C116370B635E367666E2306 /* PlantStateReadTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantStateReadTests.swift; sourceTree = "<group>"; };
+		4DE73F47CDD1225D6A31F9C6 /* APIClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClientTests.swift; sourceTree = "<group>"; };
+		4FB1951AC57C098514AAC3C8 /* SkyCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyCard.swift; sourceTree = "<group>"; };
+		500CEF2AC3404DA50F64BA9A /* ScanPipelineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanPipelineTests.swift; sourceTree = "<group>"; };
+		50AF30FE157DFBA8A3F4CD31 /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
+		538C3EDD3272C289AF7A361C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5456EBF482C36FA5E998A482 /* WatchGroveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchGroveView.swift; sourceTree = "<group>"; };
+		545A3F4D2713F4CEF8FF4C4E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		5583816DC046D9D48A9C6611 /* SessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionService.swift; sourceTree = "<group>"; };
+		5611706D7737595B47CEE600 /* GroveLaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveLaunchView.swift; sourceTree = "<group>"; };
+		57A61D3286B21CE4A1F61C36 /* JourneyKeepsakes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyKeepsakes.swift; sourceTree = "<group>"; };
+		598FC9AF9F2F372BE2112E4E /* TodayMasthead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayMasthead.swift; sourceTree = "<group>"; };
+		5B222EBF9104DF1EA67A6FB5 /* BotanistAskTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotanistAskTests.swift; sourceTree = "<group>"; };
+		5F2398CDF08F2B0627A173D7 /* GroveWatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveWatchTests.swift; sourceTree = "<group>"; };
+		5F6DBE583F986E40BC4DDE95 /* GrovePremiumStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrovePremiumStore.swift; sourceTree = "<group>"; };
+		602024518419EB5CBB4B75B9 /* ObservationMediaStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservationMediaStore.swift; sourceTree = "<group>"; };
+		6068DCB7A686B680042DB616 /* FriendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsView.swift; sourceTree = "<group>"; };
+		65F6654D18961167B9065C75 /* GroveWateringLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveWateringLiveActivity.swift; sourceTree = "<group>"; };
+		6788251DFACC0E6B24A75AEA /* PremiumStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumStoreTests.swift; sourceTree = "<group>"; };
+		6788F127B580D36568D6547A /* CareQueueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareQueueView.swift; sourceTree = "<group>"; };
+		69861ABB4913C8B09A774AE3 /* GroveMotionDials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveMotionDials.swift; sourceTree = "<group>"; };
+		6BF6E275E2CCAB9192B7FB09 /* JourneyEffects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyEffects.swift; sourceTree = "<group>"; };
+		6EBAEC9C698A49F745AAE732 /* GroveLiveActivity.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = GroveLiveActivity.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		711BADB37AF7C55F1381DC86 /* PlantSittingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantSittingView.swift; sourceTree = "<group>"; };
+		714F749AC3A0A125EC04C9AE /* PlantChangeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantChangeCard.swift; sourceTree = "<group>"; };
+		726AC662CFEE690EA17CBA2E /* WelcomeDew.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = WelcomeDew.metal; sourceTree = "<group>"; };
+		73BBD027F5A4C74D1BD71311 /* CareTaskRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareTaskRow.swift; sourceTree = "<group>"; };
+		73D40792C58309CF16501D0D /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
+		74C4E2997169F3630AC2AFB4 /* BotanistFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotanistFormatting.swift; sourceTree = "<group>"; };
+		75B40FAC14EFC440C9DEE036 /* GroveCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveCameraView.swift; sourceTree = "<group>"; };
+		75C5FA320B4C7F08BAA48835 /* GroveWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GroveWatch.entitlements; sourceTree = "<group>"; };
+		77CC99D042DB9CA3A137FD3E /* GroveRegionPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveRegionPicker.swift; sourceTree = "<group>"; };
+		79A9F0E2500B8856067A68B4 /* OnboardingQuizViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingQuizViews.swift; sourceTree = "<group>"; };
+		7A900F284180708652483DFC /* GroveWatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GroveWatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7ABCA9E105EED20497962277 /* GroveWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GroveWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C368895ECAAAC9189E3040A /* JourneyLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyLibrary.swift; sourceTree = "<group>"; };
+		7C750F3F5E1C318CD3E881B7 /* SunlightCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunlightCard.swift; sourceTree = "<group>"; };
+		7E446FFD7F88BBD9AC65865C /* SoilMoistureGauge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilMoistureGauge.swift; sourceTree = "<group>"; };
+		7EA7941243BDAF80475601C4 /* PlantPageAuditRegressionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantPageAuditRegressionTests.swift; sourceTree = "<group>"; };
+		7ED597A51865B87963421C58 /* SyncEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngineTests.swift; sourceTree = "<group>"; };
+		7F51D7928D6593878373F42B /* TodayMastheadTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayMastheadTests.swift; sourceTree = "<group>"; };
+		80B4EDC5989ED54F32DCDC02 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
+		8180B4ADB4C32F0AADA83299 /* GroveScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveScoreView.swift; sourceTree = "<group>"; };
+		82C3C07E7ABCE560B591D484 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		82CF1161B80288D3F3DD9836 /* GoogleAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAuthenticator.swift; sourceTree = "<group>"; };
+		84041DF02A62C8528B7EA0A8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		852E1CB96D7F38E1C7AC6549 /* GroveAtmosphere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveAtmosphere.swift; sourceTree = "<group>"; };
+		855CC0383AD5BB08133AD299 /* JourneyQuests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyQuests.swift; sourceTree = "<group>"; };
+		858DC48D43C9BE32CFB3011F /* GroveUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = GroveUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		863A9DC3BF9DE4234802D19A /* JourneyBadgeUnlockOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyBadgeUnlockOverlay.swift; sourceTree = "<group>"; };
+		872FC6F6B833928664DF8600 /* GroveLiveActivityBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveLiveActivityBundle.swift; sourceTree = "<group>"; };
+		87946D0350BB8F24CE09F633 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		89E0C477189F6DBF92E791D0 /* JourneyParticles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyParticles.swift; sourceTree = "<group>"; };
+		8A7733228390CF82B042B451 /* JourneyHeroCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyHeroCard.swift; sourceTree = "<group>"; };
+		8B107C2FF3D6579DCE8EBD97 /* GroveWatchWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GroveWatchWidget.entitlements; sourceTree = "<group>"; };
+		8BC4D711E8328670A7D99DB8 /* GroveScanButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveScanButton.swift; sourceTree = "<group>"; };
+		8BC7D7B6F522E02D6F030070 /* JourneyLockedMilestoneSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyLockedMilestoneSheet.swift; sourceTree = "<group>"; };
+		8CA93030ED457544DDC500C2 /* GroveGuidesTourTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveGuidesTourTests.swift; sourceTree = "<group>"; };
+		8D4FF2280955B7EF1B87C6EE /* OnboardingSprout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSprout.swift; sourceTree = "<group>"; };
+		8E06D1EF2B2AB5158C852C1B /* AppIntentsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntentsTests.swift; sourceTree = "<group>"; };
+		8FD431E613BD77AB978800AD /* MyGroveBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyGroveBoard.swift; sourceTree = "<group>"; };
+		9095E1D495BFC3714A855E0D /* WeeklyHealthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyHealthTests.swift; sourceTree = "<group>"; };
+		922467EE801C658765CEDF37 /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
+		94165E6A221FEA22DD9C8D2A /* PlantAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantAnalysisService.swift; sourceTree = "<group>"; };
+		949E5EE87F0F7836CA9A8B81 /* CheckInHealthCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInHealthCard.swift; sourceTree = "<group>"; };
+		95501BCD695AF0BA8BA65598 /* GroveVisualTourTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveVisualTourTests.swift; sourceTree = "<group>"; };
+		959103A16A150174A9055F00 /* GroveMediaPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveMediaPath.swift; sourceTree = "<group>"; };
+		960F7C4401805DAE67717ECC /* WatchSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSync.swift; sourceTree = "<group>"; };
+		964AF91ED188D06E5B84D9BB /* OnboardingNotificationPrimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingNotificationPrimerView.swift; sourceTree = "<group>"; };
+		964B8809BC4AAE50000AE7F8 /* PendingFirstPlantStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingFirstPlantStoreTests.swift; sourceTree = "<group>"; };
+		96A2F8BE048B621CB7185C41 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		986857A12A016C815A3D4B81 /* OnboardingComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingComponents.swift; sourceTree = "<group>"; };
+		988E5CE24418FA7BA71A464B /* GroveScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveScore.swift; sourceTree = "<group>"; };
+		9AF017EE61215AD02A0BC4D6 /* CreateCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCollectionView.swift; sourceTree = "<group>"; };
+		9D4B1D76B70BB09256365DAA /* IntentRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentRouter.swift; sourceTree = "<group>"; };
+		9DE134188ABB153D7019EC62 /* GroveServiceFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveServiceFactory.swift; sourceTree = "<group>"; };
+		9EC8A5EF8BE636498526F08F /* PlantChangeStoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantChangeStoryTests.swift; sourceTree = "<group>"; };
+		9F3C859DE750D52476578D61 /* AppShellChromePolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShellChromePolicyTests.swift; sourceTree = "<group>"; };
+		9FBC360D528FB898E922BBF2 /* DomainModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomainModels.swift; sourceTree = "<group>"; };
+		9FDF0CBA4A292EF6644586FB /* GroveWatchWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveWatchWidget.swift; sourceTree = "<group>"; };
+		A08BB5F3F21870670BA71B0F /* FriendSlotsPaywallSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendSlotsPaywallSheet.swift; sourceTree = "<group>"; };
+		A270789AB6A3D45E06A30A1F /* JourneyProgressionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyProgressionTests.swift; sourceTree = "<group>"; };
+		A349FAEC4FDC6EBBFA4754C3 /* OnboardingAuthViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingAuthViews.swift; sourceTree = "<group>"; };
+		A3654E7BD1966DB187751D05 /* AskPrompts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AskPrompts.swift; sourceTree = "<group>"; };
+		A413A81810DAEEAFF215C177 /* ScanSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanSession.swift; sourceTree = "<group>"; };
+		A4504AD15977E1E18B7891F3 /* WateringRhythm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WateringRhythm.swift; sourceTree = "<group>"; };
+		A9F79A227C5B815FD42F0176 /* GroveImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveImageLoader.swift; sourceTree = "<group>"; };
+		AA0EBBFF9F9530A304719E94 /* AskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AskView.swift; sourceTree = "<group>"; };
+		AB2E3AF68928C59B42487B60 /* GroveWatchWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = GroveWatchWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		ABC169799F470CD40A4E1E37 /* NotificationServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationServiceTests.swift; sourceTree = "<group>"; };
+		AC0D91A659750FB53B0A2CC6 /* Fraunces-OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Fraunces-OFL.txt"; sourceTree = "<group>"; };
+		AD28E9D9931D7F8E76CB4020 /* PlantDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantDetailView.swift; sourceTree = "<group>"; };
+		AE104CF472EB413CA0D83106 /* PlantCareProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantCareProfile.swift; sourceTree = "<group>"; };
+		B00DEF4BC07AB1D16F260763 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B045EB983F80751AD50866BD /* PlantSafetyCatalogue.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PlantSafetyCatalogue.json; sourceTree = "<group>"; };
+		B340C7E17E69E7E241503FED /* GroveWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveWatchApp.swift; sourceTree = "<group>"; };
+		B3FD71CEBBCA0CEBD6A5BD9E /* ICPJourneyRegressionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICPJourneyRegressionTests.swift; sourceTree = "<group>"; };
+		B5B2A9346F11EB3D8C17E552 /* GroveEmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveEmptyState.swift; sourceTree = "<group>"; };
+		B66004A4D0B53CDDE62719FE /* DailyQuestCreditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyQuestCreditTests.swift; sourceTree = "<group>"; };
+		B7E9412045399A3964FE4E0C /* StreakCelebration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakCelebration.swift; sourceTree = "<group>"; };
+		BA8BD1E4B6B1BD935036E905 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		BE2EA7589A01D3A3BC476E97 /* ScanImageQuality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanImageQuality.swift; sourceTree = "<group>"; };
+		BE40247C1AACC7340C0645FA /* GroveHaptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveHaptics.swift; sourceTree = "<group>"; };
+		BE63308FDE9DFA55A9FD33C2 /* PlantSafety.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantSafety.swift; sourceTree = "<group>"; };
+		C19463490259A2BAC5130C95 /* SkyAdvisoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyAdvisoryTests.swift; sourceTree = "<group>"; };
+		C1E48B0E50FE39E2564A1CCE /* GroveDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveDefaults.swift; sourceTree = "<group>"; };
+		C52C78A0F40075B2D06C31C5 /* JourneyWorldProgression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyWorldProgression.swift; sourceTree = "<group>"; };
+		C714BD227CE495D24E91BF35 /* JourneyAchievementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyAchievementsView.swift; sourceTree = "<group>"; };
+		C90223259B40706DC9F085FA /* CareTaskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareTaskDetailView.swift; sourceTree = "<group>"; };
+		CEA7D3DEA0C77F0111541020 /* ScanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanView.swift; sourceTree = "<group>"; };
+		D161264A0CBEA66ACF7FBCFF /* JourneyBadgeFlourish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyBadgeFlourish.swift; sourceTree = "<group>"; };
+		D191E290129C6D8A1949C14B /* GroveEmptyArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveEmptyArt.swift; sourceTree = "<group>"; };
+		D235177AFC5D6356948A1A71 /* GroveSittingLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveSittingLiveActivity.swift; sourceTree = "<group>"; };
+		D2F3FCA87EE8036298AF4187 /* GroveStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveStatus.swift; sourceTree = "<group>"; };
+		D330A14E931189187C354192 /* PlantProfileViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantProfileViews.swift; sourceTree = "<group>"; };
+		D3552FDA33EC1E468B4E0731 /* CaptureBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureBoard.swift; sourceTree = "<group>"; };
+		D3C4A33F34278AFA1D4A673D /* LivingRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivingRecordView.swift; sourceTree = "<group>"; };
+		D531E21CAA92CFF99C42D427 /* BotanistService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotanistService.swift; sourceTree = "<group>"; };
+		D54FAD3F3C140F78E1528085 /* WatchSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSyncTests.swift; sourceTree = "<group>"; };
+		D59266CA0B6175BFB73DD52D /* CheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInView.swift; sourceTree = "<group>"; };
+		D5DF36B7A487A6E4F0C38A07 /* GrovePlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrovePlanView.swift; sourceTree = "<group>"; };
+		D6D629A3B9FAFE231F10FCED /* PlantWateringEstimate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlantWateringEstimate.swift; sourceTree = "<group>"; };
+		D7A71F9C2963B39291AC5630 /* ScanHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanHistoryView.swift; sourceTree = "<group>"; };
+		D85D4DA4CB4FA3022915B848 /* WatchStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchStore.swift; sourceTree = "<group>"; };
+		D98E5161E53333B13451B2A7 /* GroveCensusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveCensusTests.swift; sourceTree = "<group>"; };
+		DA20A4EE70F9C56138226805 /* SupabaseSessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseSessionStore.swift; sourceTree = "<group>"; };
+		DB644C3CE674C6B53A5EE0EA /* JourneyMilestoneDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyMilestoneDetailView.swift; sourceTree = "<group>"; };
+		DEED96B5E2CA76587B8DC352 /* OnboardingSproutSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSproutSteps.swift; sourceTree = "<group>"; };
+		DF4541D22F87A02B99AD3449 /* GroveStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveStoreTests.swift; sourceTree = "<group>"; };
+		DF70EB5674C4002EBE1B7B4A /* GroveStatusBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveStatusBar.swift; sourceTree = "<group>"; };
+		E005969557B9CAA905836F8F /* GroveLiveActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveLiveActivityController.swift; sourceTree = "<group>"; };
+		E08E6AAA1DA5350B75C466C6 /* GroveUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveUITests.swift; sourceTree = "<group>"; };
+		E0CFBF35131A8F7290CC794A /* JourneyChest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyChest.swift; sourceTree = "<group>"; };
+		E196CF8380F49E1DE6BC3CC2 /* WateringRhythmChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WateringRhythmChart.swift; sourceTree = "<group>"; };
+		E2B7D1D7427E8F936093A250 /* AccountStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountStorage.swift; sourceTree = "<group>"; };
+		E31AFBF9D45780DC5D26DF9D /* WatchTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchTheme.swift; sourceTree = "<group>"; };
+		E56221D8F195C5EA08217E69 /* TravelBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelBanner.swift; sourceTree = "<group>"; };
+		E597D0A7AFCCC5C833DF5220 /* DataExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExportService.swift; sourceTree = "<group>"; };
+		E5A56DF55A4334AE0624D358 /* TodayBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayBoard.swift; sourceTree = "<group>"; };
+		E71D8D1498E0CD24FE3BE3F8 /* SessionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionServiceTests.swift; sourceTree = "<group>"; };
+		E7DF498CAD2A716AF20CF300 /* GroveTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = GroveTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E815EF62FBE83C7F264D3C96 /* AppTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTab.swift; sourceTree = "<group>"; };
+		E8DEDF2549B959A99AB49E94 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		E9D1E9D101E3937E6E0494E0 /* Grove.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Grove.entitlements; sourceTree = "<group>"; };
+		EB8F3597C50330EB1AFC0951 /* GroveLiveActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveLiveActivityAttributes.swift; sourceTree = "<group>"; };
+		ED8389DF19A4E7A86C37BC1E /* OnboardingWelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWelcomeView.swift; sourceTree = "<group>"; };
+		EE362460E0F30136608513AA /* SoilMoistureReadTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilMoistureReadTests.swift; sourceTree = "<group>"; };
+		EFDB7B4E1CEDBB699D5980CA /* ScanMediaStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanMediaStore.swift; sourceTree = "<group>"; };
+		EFEE789D4333ACA5DAD41474 /* GroveFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveFlowLayout.swift; sourceTree = "<group>"; };
+		F0ADF798C704E78D153BD55F /* PendingFirstPlantStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingFirstPlantStore.swift; sourceTree = "<group>"; };
+		F12A8ECAB207C7B032388605 /* GroveWateringTourTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroveWateringTourTests.swift; sourceTree = "<group>"; };
+		F2FE207F2E4D3124145EE01E /* PremiumPaywallBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumPaywallBoard.swift; sourceTree = "<group>"; };
+		F38956428D64CD95EEAC48F6 /* Academy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Academy.swift; sourceTree = "<group>"; };
+		F5B631B84DB2259E0EF51850 /* JourneyMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyMapView.swift; sourceTree = "<group>"; };
+		F6B290152155CBFB82E10BCA /* SoilCheckCadenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoilCheckCadenceTests.swift; sourceTree = "<group>"; };
+		FCBEE587E5A1765571CE3142 /* GrovePremiumOffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrovePremiumOffer.swift; sourceTree = "<group>"; };
+		FEDC93C0DBE1481030153AE1 /* SittingLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SittingLinkView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1CCF92436FDEB3195822CF07 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB962E10202D9E1DD74BFF75 /* Vortex in Frameworks */,
+				FF5DE52F57FFA877F16C5270 /* Pow in Frameworks */,
+				327B15512D503D72597DBB0A /* GoogleSignIn in Frameworks */,
+				2769A285421F5F7513DE89DD /* RevenueCat in Frameworks */,
+				ABBA482C736F1C2F090AEC10 /* InjectionNext in Frameworks */,
+				A77B4EBCBB47F0ABF4E6F90D /* Inject in Frameworks */,
+				194F9347C50881359C65C3E3 /* DialKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C0F16A0E5EC2E7A1D9B3F402 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				C0F16A0E5EC2E7A1D9B3F401 /* Grove.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		14F5EC988CFE8BB8A3B547D3 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				AC0D91A659750FB53B0A2CC6 /* Fraunces-OFL.txt */,
+				2BA78583F1BD8DF11E7840A1 /* Fraunces72ptSoft-Bold.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		2FC6B0FBBAA5852DE2AE92CD = {
+			isa = PBXGroup;
+			children = (
+				C0F16A0E5EC2E7A1D9B3F402 /* Config */,
+				7D089229D19BF3A023D5EFE5 /* Grove */,
+				BC04D55DFAB138C5A6FF7E8F /* GroveLiveActivity */,
+				D5B4E9E6EF06CB9442F32DB3 /* GroveTests */,
+				39F40ECCE3CA69D333E2CCCB /* GroveUITests */,
+				AEDC379B0AFE5EBDFBD65F41 /* GroveWatch */,
+				B0ED88A8EB64C448C84FEFD4 /* GroveWatchShared */,
+				B436EE2406BA1907B1C849CA /* GroveWatchTests */,
+				6C82A27342AA6E03E3320367 /* GroveWatchWidget */,
+				6E3A65F83A9462CA7160C6EF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		39F40ECCE3CA69D333E2CCCB /* GroveUITests */ = {
+			isa = PBXGroup;
+			children = (
+				8CA93030ED457544DDC500C2 /* GroveGuidesTourTests.swift */,
+				0BE0E0C5BDAFBC9AF0D1EE48 /* GroveJourneyTourTests.swift */,
+				E08E6AAA1DA5350B75C466C6 /* GroveUITests.swift */,
+				95501BCD695AF0BA8BA65598 /* GroveVisualTourTests.swift */,
+				F12A8ECAB207C7B032388605 /* GroveWateringTourTests.swift */,
+			);
+			path = GroveUITests;
+			sourceTree = "<group>";
+		};
+		4B99FD73986C089277EBAE85 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				33FD4C3F064CB5EC790109DE /* OnboardingAnalytics.swift */,
+				A349FAEC4FDC6EBBFA4754C3 /* OnboardingAuthViews.swift */,
+				986857A12A016C815A3D4B81 /* OnboardingComponents.swift */,
+				388C1947E8815C60DE08949A /* OnboardingContainerView.swift */,
+				2C352CA0570444B2AE2C08FA /* OnboardingFirstPlantViews.swift */,
+				13384A4C2F9697952766CB88 /* OnboardingModel.swift */,
+				964AF91ED188D06E5B84D9BB /* OnboardingNotificationPrimerView.swift */,
+				79A9F0E2500B8856067A68B4 /* OnboardingQuizViews.swift */,
+				8D4FF2280955B7EF1B87C6EE /* OnboardingSprout.swift */,
+				DEED96B5E2CA76587B8DC352 /* OnboardingSproutSteps.swift */,
+				ED8389DF19A4E7A86C37BC1E /* OnboardingWelcomeView.swift */,
+				726AC662CFEE690EA17CBA2E /* WelcomeDew.metal */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		6C82A27342AA6E03E3320367 /* GroveWatchWidget */ = {
+			isa = PBXGroup;
+			children = (
+				8B107C2FF3D6579DCE8EBD97 /* GroveWatchWidget.entitlements */,
+				9FDF0CBA4A292EF6644586FB /* GroveWatchWidget.swift */,
+				B00DEF4BC07AB1D16F260763 /* Info.plist */,
+			);
+			path = GroveWatchWidget;
+			sourceTree = "<group>";
+		};
+		6D002406704A0207DCDE9440 /* Journey */ = {
+			isa = PBXGroup;
+			children = (
+				C714BD227CE495D24E91BF35 /* JourneyAchievementsView.swift */,
+				D161264A0CBEA66ACF7FBCFF /* JourneyBadgeFlourish.swift */,
+				3227AF66A1F29C2C1454A268 /* JourneyBadgeShelf.swift */,
+				863A9DC3BF9DE4234802D19A /* JourneyBadgeUnlockOverlay.swift */,
+				E0CFBF35131A8F7290CC794A /* JourneyChest.swift */,
+				6BF6E275E2CCAB9192B7FB09 /* JourneyEffects.swift */,
+				8A7733228390CF82B042B451 /* JourneyHeroCard.swift */,
+				57A61D3286B21CE4A1F61C36 /* JourneyKeepsakes.swift */,
+				37F22054EE000FB4E97421D2 /* JourneyLevelUpTakeover.swift */,
+				7C368895ECAAAC9189E3040A /* JourneyLibrary.swift */,
+				8BC7D7B6F522E02D6F030070 /* JourneyLockedMilestoneSheet.swift */,
+				F5B631B84DB2259E0EF51850 /* JourneyMapView.swift */,
+				DB644C3CE674C6B53A5EE0EA /* JourneyMilestoneDetailView.swift */,
+				0297BCAE72D4B1932ABEB128 /* JourneyModels.swift */,
+				89E0C477189F6DBF92E791D0 /* JourneyParticles.swift */,
+				855CC0383AD5BB08133AD299 /* JourneyQuests.swift */,
+				C52C78A0F40075B2D06C31C5 /* JourneyWorldProgression.swift */,
+			);
+			path = Journey;
+			sourceTree = "<group>";
+		};
+		6E3A65F83A9462CA7160C6EF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3ABE038753FE982B33C15FE0 /* Grove.app */,
+				6EBAEC9C698A49F745AAE732 /* GroveLiveActivity.appex */,
+				E7DF498CAD2A716AF20CF300 /* GroveTests.xctest */,
+				858DC48D43C9BE32CFB3011F /* GroveUITests.xctest */,
+				7ABCA9E105EED20497962277 /* GroveWatch.app */,
+				7A900F284180708652483DFC /* GroveWatchTests.xctest */,
+				AB2E3AF68928C59B42487B60 /* GroveWatchWidget.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7D089229D19BF3A023D5EFE5 /* Grove */ = {
+			isa = PBXGroup;
+			children = (
+				F38956428D64CD95EEAC48F6 /* Academy.swift */,
+				E2B7D1D7427E8F936093A250 /* AccountStorage.swift */,
+				50AF30FE157DFBA8A3F4CD31 /* ActivityView.swift */,
+				1FF2AC60795BD92CBAB44E3A /* APIClient.swift */,
+				282DB7705F67F1E4FF51BB5D /* AppRoutes.swift */,
+				E815EF62FBE83C7F264D3C96 /* AppTab.swift */,
+				A3654E7BD1966DB187751D05 /* AskPrompts.swift */,
+				4A0EFE0AC3B23AD1B667F30A /* AskSession.swift */,
+				AA0EBBFF9F9530A304719E94 /* AskView.swift */,
+				538C3EDD3272C289AF7A361C /* Assets.xcassets */,
+				74C4E2997169F3630AC2AFB4 /* BotanistFormatting.swift */,
+				D531E21CAA92CFF99C42D427 /* BotanistService.swift */,
+				D3552FDA33EC1E468B4E0731 /* CaptureBoard.swift */,
+				6788F127B580D36568D6547A /* CareQueueView.swift */,
+				C90223259B40706DC9F085FA /* CareTaskDetailView.swift */,
+				73BBD027F5A4C74D1BD71311 /* CareTaskRow.swift */,
+				949E5EE87F0F7836CA9A8B81 /* CheckInHealthCard.swift */,
+				D59266CA0B6175BFB73DD52D /* CheckInView.swift */,
+				0FFDB16C6301E8ACD3B36B5C /* CollectionDetailView.swift */,
+				87946D0350BB8F24CE09F633 /* Components.swift */,
+				9AF017EE61215AD02A0BC4D6 /* CreateCollectionView.swift */,
+				E597D0A7AFCCC5C833DF5220 /* DataExportService.swift */,
+				80B4EDC5989ED54F32DCDC02 /* DesignSystem.swift */,
+				9FBC360D528FB898E922BBF2 /* DomainModels.swift */,
+				423EC0072608BEDCE9550B03 /* EditPlantView.swift */,
+				2451756BD27E638BD0C919A4 /* FriendGroveView.swift */,
+				2679138939BE4EFDDC43ACBD /* FriendsBoard.swift */,
+				A08BB5F3F21870670BA71B0F /* FriendSlotsPaywallSheet.swift */,
+				6068DCB7A686B680042DB616 /* FriendsView.swift */,
+				82CF1161B80288D3F3DD9836 /* GoogleAuthenticator.swift */,
+				E9D1E9D101E3937E6E0494E0 /* Grove.entitlements */,
+				3C38B2AED6CDD251C319C4FD /* GroveAnalytics.swift */,
+				1132DF3EFAC79E057EDE7337 /* GroveApp.swift */,
+				852E1CB96D7F38E1C7AC6549 /* GroveAtmosphere.swift */,
+				2A47223165467889B48D68D2 /* GroveBackSwipe.swift */,
+				75B40FAC14EFC440C9DEE036 /* GroveCameraView.swift */,
+				1BFF606D6ED1DA5B921676BE /* GroveCensus.swift */,
+				C1E48B0E50FE39E2564A1CCE /* GroveDefaults.swift */,
+				398B6322F28B4E2933E99771 /* GroveDiag.swift */,
+				D191E290129C6D8A1949C14B /* GroveEmptyArt.swift */,
+				B5B2A9346F11EB3D8C17E552 /* GroveEmptyState.swift */,
+				EFEE789D4333ACA5DAD41474 /* GroveFlowLayout.swift */,
+				BE40247C1AACC7340C0645FA /* GroveHaptics.swift */,
+				A9F79A227C5B815FD42F0176 /* GroveImageLoader.swift */,
+				11E3F652D687A0BB8457524C /* GroveIntents.swift */,
+				5611706D7737595B47CEE600 /* GroveLaunchView.swift */,
+				273AF407E4BA8D23BFEA2285 /* GroveLegal.swift */,
+				EB8F3597C50330EB1AFC0951 /* GroveLiveActivityAttributes.swift */,
+				E005969557B9CAA905836F8F /* GroveLiveActivityController.swift */,
+				0B41B4B19FC4BFC788E16EF0 /* GroveLocationPickerView.swift */,
+				959103A16A150174A9055F00 /* GroveMediaPath.swift */,
+				69861ABB4913C8B09A774AE3 /* GroveMotionDials.swift */,
+				0A7FD970311790F53000E075 /* GroveMotionKit.swift */,
+				44A64D0E727CE8C5F26A2C4B /* GrovePlan.swift */,
+				D5DF36B7A487A6E4F0C38A07 /* GrovePlanView.swift */,
+				FCBEE587E5A1765571CE3142 /* GrovePremiumOffer.swift */,
+				5F6DBE583F986E40BC4DDE95 /* GrovePremiumStore.swift */,
+				77CC99D042DB9CA3A137FD3E /* GroveRegionPicker.swift */,
+				12D86E3766A5137C9453AA48 /* GroveRemoteRepository.swift */,
+				8BC4D711E8328670A7D99DB8 /* GroveScanButton.swift */,
+				988E5CE24418FA7BA71A464B /* GroveScore.swift */,
+				8180B4ADB4C32F0AADA83299 /* GroveScoreView.swift */,
+				9DE134188ABB153D7019EC62 /* GroveServiceFactory.swift */,
+				4B4D0017291D38CF91510791 /* GroveSkyAdvisory.swift */,
+				D2F3FCA87EE8036298AF4187 /* GroveStatus.swift */,
+				DF70EB5674C4002EBE1B7B4A /* GroveStatusBar.swift */,
+				3523C257731F699BA460088C /* GroveStore.swift */,
+				3BF6FD4CFB0C439954A9184D /* GroveSwipeTabs.swift */,
+				226CF14FE5CF63174F232ACA /* GroveToast.swift */,
+				BA8BD1E4B6B1BD935036E905 /* Info.plist */,
+				9D4B1D76B70BB09256365DAA /* IntentRouter.swift */,
+				213CD6A27FB6E1BAE72EFCBF /* LaunchScreen.storyboard */,
+				01B6043539F44E86CE92E1F6 /* LivingRecordFilm.swift */,
+				D3C4A33F34278AFA1D4A673D /* LivingRecordView.swift */,
+				1EF479CFD3B7636F8CA91CB7 /* MediaUploadService.swift */,
+				8FD431E613BD77AB978800AD /* MyGroveBoard.swift */,
+				10CBC52CE47AD4A42A9E5060 /* NotificationService.swift */,
+				602024518419EB5CBB4B75B9 /* ObservationMediaStore.swift */,
+				F0ADF798C704E78D153BD55F /* PendingFirstPlantStore.swift */,
+				94165E6A221FEA22DD9C8D2A /* PlantAnalysisService.swift */,
+				47525FB1BED203A627C352CE /* PlantBoardDetails.swift */,
+				41945C36EBC16D9682BC8264 /* PlantBoardPage.swift */,
+				AE104CF472EB413CA0D83106 /* PlantCareProfile.swift */,
+				714F749AC3A0A125EC04C9AE /* PlantChangeCard.swift */,
+				AD28E9D9931D7F8E76CB4020 /* PlantDetailView.swift */,
+				1EFBF6FA9DD8C710001DC080 /* PlantPortrait.swift */,
+				D330A14E931189187C354192 /* PlantProfileViews.swift */,
+				BE63308FDE9DFA55A9FD33C2 /* PlantSafety.swift */,
+				4B3DEDB8966735AD6C472A56 /* PlantSafetyCatalogue.swift */,
+				41D8F08E2B4F214D3F5A1B3B /* PlantShareView.swift */,
+				711BADB37AF7C55F1381DC86 /* PlantSittingView.swift */,
+				D6D629A3B9FAFE231F10FCED /* PlantWateringEstimate.swift */,
+				1463F98B0935718DE32B1FC9 /* PlantWateringSheet.swift */,
+				F2FE207F2E4D3124145EE01E /* PremiumPaywallBoard.swift */,
+				17221138D7CC56F75D0A1752 /* PrivacyInfo.xcprivacy */,
+				922467EE801C658765CEDF37 /* ProfileSetupView.swift */,
+				E8DEDF2549B959A99AB49E94 /* ProfileView.swift */,
+				82C3C07E7ABCE560B591D484 /* RootView.swift */,
+				D7A71F9C2963B39291AC5630 /* ScanHistoryView.swift */,
+				BE2EA7589A01D3A3BC476E97 /* ScanImageQuality.swift */,
+				09FD2BE4CD4DE3C4D550803A /* ScanLiveIntelligence.swift */,
+				EFDB7B4E1CEDBB699D5980CA /* ScanMediaStore.swift */,
+				A413A81810DAEEAFF215C177 /* ScanSession.swift */,
+				0562CEDCF3B1F43DC0799AD2 /* ScanTipsView.swift */,
+				CEA7D3DEA0C77F0111541020 /* ScanView.swift */,
+				5583816DC046D9D48A9C6611 /* SessionService.swift */,
+				00707C889B471E288EC60151 /* SettingsView.swift */,
+				FEDC93C0DBE1481030153AE1 /* SittingLinkView.swift */,
+				4FB1951AC57C098514AAC3C8 /* SkyCard.swift */,
+				7E446FFD7F88BBD9AC65865C /* SoilMoistureGauge.swift */,
+				21DDCCBEEEC81D8D639B6605 /* SoilMoistureRead.swift */,
+				B7E9412045399A3964FE4E0C /* StreakCelebration.swift */,
+				358360B6E6FD438B9F898829 /* StreakDetailSheet.swift */,
+				7C750F3F5E1C318CD3E881B7 /* SunlightCard.swift */,
+				05AD067CBF200763666F1727 /* SupabaseAuthClient.swift */,
+				DA20A4EE70F9C56138226805 /* SupabaseSessionStore.swift */,
+				15F098CB1FDC726C1FEAA43A /* SyncEngine.swift */,
+				E5A56DF55A4334AE0624D358 /* TodayBoard.swift */,
+				598FC9AF9F2F372BE2112E4E /* TodayMasthead.swift */,
+				2A07D97BA99EAFC0A78FAEA2 /* TodayView.swift */,
+				E56221D8F195C5EA08217E69 /* TravelBanner.swift */,
+				32C3E13BA4B2616AFC944CC8 /* TravelWatcher.swift */,
+				14F46AF766937ADD90DA3D02 /* WatchSyncService.swift */,
+				A4504AD15977E1E18B7891F3 /* WateringRhythm.swift */,
+				E196CF8380F49E1DE6BC3CC2 /* WateringRhythmChart.swift */,
+				73D40792C58309CF16501D0D /* WeatherService.swift */,
+				6D002406704A0207DCDE9440 /* Journey */,
+				4B99FD73986C089277EBAE85 /* Onboarding */,
+				8A6E45468B93E399109E86EB /* Resources */,
+			);
+			path = Grove;
+			sourceTree = "<group>";
+		};
+		8A6E45468B93E399109E86EB /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B045EB983F80751AD50866BD /* PlantSafetyCatalogue.json */,
+				14F5EC988CFE8BB8A3B547D3 /* Fonts */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		AEDC379B0AFE5EBDFBD65F41 /* GroveWatch */ = {
+			isa = PBXGroup;
+			children = (
+				84041DF02A62C8528B7EA0A8 /* Assets.xcassets */,
+				75C5FA320B4C7F08BAA48835 /* GroveWatch.entitlements */,
+				B340C7E17E69E7E241503FED /* GroveWatchApp.swift */,
+				545A3F4D2713F4CEF8FF4C4E /* Info.plist */,
+				5456EBF482C36FA5E998A482 /* WatchGroveView.swift */,
+				D85D4DA4CB4FA3022915B848 /* WatchStore.swift */,
+				E31AFBF9D45780DC5D26DF9D /* WatchTheme.swift */,
+				2A95E3FBF0F12FDE72C03B37 /* WatchTodayView.swift */,
+			);
+			path = GroveWatch;
+			sourceTree = "<group>";
+		};
+		B0ED88A8EB64C448C84FEFD4 /* GroveWatchShared */ = {
+			isa = PBXGroup;
+			children = (
+				960F7C4401805DAE67717ECC /* WatchSync.swift */,
+			);
+			path = GroveWatchShared;
+			sourceTree = "<group>";
+		};
+		B436EE2406BA1907B1C849CA /* GroveWatchTests */ = {
+			isa = PBXGroup;
+			children = (
+				5F2398CDF08F2B0627A173D7 /* GroveWatchTests.swift */,
+			);
+			path = GroveWatchTests;
+			sourceTree = "<group>";
+		};
+		BC04D55DFAB138C5A6FF7E8F /* GroveLiveActivity */ = {
+			isa = PBXGroup;
+			children = (
+				872FC6F6B833928664DF8600 /* GroveLiveActivityBundle.swift */,
+				D235177AFC5D6356948A1A71 /* GroveSittingLiveActivity.swift */,
+				65F6654D18961167B9065C75 /* GroveWateringLiveActivity.swift */,
+				96A2F8BE048B621CB7185C41 /* Info.plist */,
+			);
+			path = GroveLiveActivity;
+			sourceTree = "<group>";
+		};
+		D5B4E9E6EF06CB9442F32DB3 /* GroveTests */ = {
+			isa = PBXGroup;
+			children = (
+				2AABA21FF730EB0EABCF8132 /* AccountDeletionTests.swift */,
+				4DE73F47CDD1225D6A31F9C6 /* APIClientTests.swift */,
+				8E06D1EF2B2AB5158C852C1B /* AppIntentsTests.swift */,
+				9F3C859DE750D52476578D61 /* AppShellChromePolicyTests.swift */,
+				5B222EBF9104DF1EA67A6FB5 /* BotanistAskTests.swift */,
+				B66004A4D0B53CDDE62719FE /* DailyQuestCreditTests.swift */,
+				33644443E7A0D55150FD0FDF /* DataExportServiceTests.swift */,
+				D98E5161E53333B13451B2A7 /* GroveCensusTests.swift */,
+				22D145BF0C6D723AE4D72CD3 /* GrovePlanTests.swift */,
+				3A8A3808FB44B11674B5A930 /* GroveScoreTests.swift */,
+				DF4541D22F87A02B99AD3449 /* GroveStoreTests.swift */,
+				B3FD71CEBBCA0CEBD6A5BD9E /* ICPJourneyRegressionTests.swift */,
+				A270789AB6A3D45E06A30A1F /* JourneyProgressionTests.swift */,
+				ABC169799F470CD40A4E1E37 /* NotificationServiceTests.swift */,
+				964B8809BC4AAE50000AE7F8 /* PendingFirstPlantStoreTests.swift */,
+				27E6C2FE3D9BD0822BF3562C /* PlantBoardDetailsTests.swift */,
+				9EC8A5EF8BE636498526F08F /* PlantChangeStoryTests.swift */,
+				7EA7941243BDAF80475601C4 /* PlantPageAuditRegressionTests.swift */,
+				4C116370B635E367666E2306 /* PlantStateReadTests.swift */,
+				1D9793BE730293DEA1F9E8D6 /* PremiumOfferTimingTests.swift */,
+				6788251DFACC0E6B24A75AEA /* PremiumStoreTests.swift */,
+				31B9ADCBD3805393D31E7433 /* ScanEvidencePipelineRegressionTests.swift */,
+				500CEF2AC3404DA50F64BA9A /* ScanPipelineTests.swift */,
+				E71D8D1498E0CD24FE3BE3F8 /* SessionServiceTests.swift */,
+				03CE136FD58E00454D6D57EB /* SettingsBehaviourTests.swift */,
+				1A3FF82129ECFC47BA8E47BB /* SignInRecoveryTests.swift */,
+				C19463490259A2BAC5130C95 /* SkyAdvisoryTests.swift */,
+				F6B290152155CBFB82E10BCA /* SoilCheckCadenceTests.swift */,
+				EE362460E0F30136608513AA /* SoilMoistureReadTests.swift */,
+				295E6322DBC43B87BBA72703 /* StreakSummaryTests.swift */,
+				7ED597A51865B87963421C58 /* SyncEngineTests.swift */,
+				7F51D7928D6593878373F42B /* TodayMastheadTests.swift */,
+				15AF9FECDD1BC96F6CB82744 /* TravelWatcherTests.swift */,
+				D54FAD3F3C140F78E1528085 /* WatchSyncTests.swift */,
+				1D59F9E048126A7F14503BFE /* WateringRhythmTests.swift */,
+				9095E1D495BFC3714A855E0D /* WeeklyHealthTests.swift */,
+			);
+			path = GroveTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2F853B5054DBF8672BB4BE98 /* GroveWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 271400197C334A00973C7185 /* Build configuration list for PBXNativeTarget "GroveWatch" */;
+			buildPhases = (
+				9DA4B6D1ADD0103526C8A2C6 /* Sources */,
+				B013823222BD6D35BC9B5D89 /* Resources */,
+				CF8FFFE334448848E321237A /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C92DF02F95BDAAD7B7CAEAA8 /* PBXTargetDependency */,
+			);
+			name = GroveWatch;
+			packageProductDependencies = (
+			);
+			productName = GroveWatch;
+			productReference = 7ABCA9E105EED20497962277 /* GroveWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5864D1C0E61F375A273F7C19 /* GroveWatchWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B2DB9AECF35F68A93C24563F /* Build configuration list for PBXNativeTarget "GroveWatchWidget" */;
+			buildPhases = (
+				782AE3D82B87A5D40D05AB6E /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GroveWatchWidget;
+			packageProductDependencies = (
+			);
+			productName = GroveWatchWidget;
+			productReference = AB2E3AF68928C59B42487B60 /* GroveWatchWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		5E6A57A7AE794D1577049B5E /* GroveTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0133CCB77E0559310D235FBE /* Build configuration list for PBXNativeTarget "GroveTests" */;
+			buildPhases = (
+				53FD5D449548801F359D11CE /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				66822AC0AF41E4DACDF5B5DA /* PBXTargetDependency */,
+			);
+			name = GroveTests;
+			packageProductDependencies = (
+			);
+			productName = GroveTests;
+			productReference = E7DF498CAD2A716AF20CF300 /* GroveTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		9C57E594A837DC8048757E52 /* Grove */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 10AD9D5F3238545CC2A3B4C5 /* Build configuration list for PBXNativeTarget "Grove" */;
+			buildPhases = (
+				926BBF13049BB96A292D752B /* Require production API config (Release) */,
+				C88337E70D8A7DC4FCDF32A2 /* Sources */,
+				A1D81D1D02595F9C7F4B5B3E /* Resources */,
+				1CCF92436FDEB3195822CF07 /* Frameworks */,
+				655700AE24EB28C200F6EE4D /* Embed Foundation Extensions */,
+				730879F5E900CB0FACA9A7E8 /* Embed Watch Content */,
+				EBA636199087C80E9A8EF483 /* Strip dev-only Info.plist keys (Release) */,
+				DE6589C18A2D30215D47929B /* Copy injection bundle (Debug, on-device hot reload) */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9453E888B9CCA6857D79208F /* PBXTargetDependency */,
+				83EA88AFECB3358AC43AC440 /* PBXTargetDependency */,
+			);
+			name = Grove;
+			packageProductDependencies = (
+				A8E1AB6A82969007C35B6620 /* Vortex */,
+				73BED7F8172B48B57D9BC236 /* Pow */,
+				55F88180E7C9B7543D89F012 /* GoogleSignIn */,
+				1DCB5391D9A0F4E7628A2557 /* RevenueCat */,
+				2247AEA0A7AAA72C7A1CEC00 /* InjectionNext */,
+				6C456B1822A62F6B554EBB2B /* Inject */,
+				5E004E40FCD8F5693062DE25 /* DialKit */,
+			);
+			productName = Grove;
+			productReference = 3ABE038753FE982B33C15FE0 /* Grove.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B5E2E9BEC30BD17CD0F0C41C /* GroveWatchTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A07DE0876529E831D16EE36C /* Build configuration list for PBXNativeTarget "GroveWatchTests" */;
+			buildPhases = (
+				DA76DF65D018DFD9149EC01F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E26B460DB2DA91F599663998 /* PBXTargetDependency */,
+			);
+			name = GroveWatchTests;
+			packageProductDependencies = (
+			);
+			productName = GroveWatchTests;
+			productReference = 7A900F284180708652483DFC /* GroveWatchTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		C2447A8783E57C9170AE17B2 /* GroveUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CBCEB265DECA88C3311FC084 /* Build configuration list for PBXNativeTarget "GroveUITests" */;
+			buildPhases = (
+				76F212BA0E9DBE60696F01F9 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A551189649500D9D6BA04685 /* PBXTargetDependency */,
+			);
+			name = GroveUITests;
+			packageProductDependencies = (
+			);
+			productName = GroveUITests;
+			productReference = 858DC48D43C9BE32CFB3011F /* GroveUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		FF561F15368CF6DE9AFAF446 /* GroveLiveActivity */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0366B8A6297D978BF5F0A45B /* Build configuration list for PBXNativeTarget "GroveLiveActivity" */;
+			buildPhases = (
+				617931330290FC8A53A50584 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GroveLiveActivity;
+			packageProductDependencies = (
+			);
+			productName = GroveLiveActivity;
+			productReference = 6EBAEC9C698A49F745AAE732 /* GroveLiveActivity.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		599B316DC08150787CABFED5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					2F853B5054DBF8672BB4BE98 = {
+						ProvisioningStyle = Automatic;
+					};
+					5864D1C0E61F375A273F7C19 = {
+						ProvisioningStyle = Automatic;
+					};
+					5E6A57A7AE794D1577049B5E = {
+						ProvisioningStyle = Automatic;
+					};
+					9C57E594A837DC8048757E52 = {
+						ProvisioningStyle = Automatic;
+					};
+					B5E2E9BEC30BD17CD0F0C41C = {
+						ProvisioningStyle = Automatic;
+					};
+					C2447A8783E57C9170AE17B2 = {
+						ProvisioningStyle = Automatic;
+						TestTargetID = 9C57E594A837DC8048757E52;
+					};
+					FF561F15368CF6DE9AFAF446 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = C7C18E23092BFCE95B048000 /* Build configuration list for PBXProject "Grove" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 2FC6B0FBBAA5852DE2AE92CD;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				EE27C7439C9E0FE603F2F419 /* XCRemoteSwiftPackageReference "dialkit-ios" */,
+				87EA88DCCE544948EC42CDE7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				F2FE288851D68AF4D9D8182D /* XCRemoteSwiftPackageReference "Inject" */,
+				FC1A396E86B84BFE6C310995 /* XCRemoteSwiftPackageReference "InjectionNext" */,
+				149FA69F89DD1C2587E639BB /* XCRemoteSwiftPackageReference "Pow" */,
+				D62BF5CF9A111B3A11E9B635 /* XCRemoteSwiftPackageReference "purchases-ios" */,
+				4FDC31E4A60EFD1C2D70AF5B /* XCRemoteSwiftPackageReference "Vortex" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 6E3A65F83A9462CA7160C6EF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9C57E594A837DC8048757E52 /* Grove */,
+				FF561F15368CF6DE9AFAF446 /* GroveLiveActivity */,
+				5E6A57A7AE794D1577049B5E /* GroveTests */,
+				C2447A8783E57C9170AE17B2 /* GroveUITests */,
+				2F853B5054DBF8672BB4BE98 /* GroveWatch */,
+				B5E2E9BEC30BD17CD0F0C41C /* GroveWatchTests */,
+				5864D1C0E61F375A273F7C19 /* GroveWatchWidget */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A1D81D1D02595F9C7F4B5B3E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				396B274A7B7BEDAD07C099CC /* Assets.xcassets in Resources */,
+				A9D466B26B36B74D54E15A7F /* Fraunces-OFL.txt in Resources */,
+				DDC2C17DCF18745E6D5CA2ED /* Fraunces72ptSoft-Bold.ttf in Resources */,
+				2CDC04FC4E79A6C28840587D /* LaunchScreen.storyboard in Resources */,
+				4A9E49C7B038678D2B35FF9F /* PlantSafetyCatalogue.json in Resources */,
+				74F5E429D94A3CE174FFEAA0 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B013823222BD6D35BC9B5D89 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5D97D854E6C864266F014EDF /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		926BBF13049BB96A292D752B /* Require production API config (Release) */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Require production API config (Release)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Account providers have no baked-in production credentials. A\n# Release must receive the complete environment explicitly.\nif [ \"$CONFIGURATION\" = \"Release\" ]; then\n  if [ -z \"${SUPABASE_URL:-}\" ]; then echo \"error: SUPABASE_URL is required for Release account sign-in.\"; exit 1; fi\n  if [ -z \"${SUPABASE_ANON_KEY:-}\" ]; then echo \"error: SUPABASE_ANON_KEY is required for Release account sign-in.\"; exit 1; fi\n  if [ -z \"${GOOGLE_IOS_CLIENT_ID:-}\" ]; then echo \"error: GOOGLE_IOS_CLIENT_ID is required for Release account sign-in.\"; exit 1; fi\n  # The gateway rejects every request without the app key, so a Release\n  # without one could not scan, ask or sync. No key is baked into the\n  # source: supply it via Config/Secrets.xcconfig or the command line.\n  if [ -z \"${GROVE_APP_KEY:-}\" ]; then echo \"error: GROVE_APP_KEY is required for Release. Set it in Config/Secrets.xcconfig (copy Config/Secrets.example.xcconfig) or .env.production.\"; exit 1; fi\n  if [ -z \"${GOOGLE_REVERSED_CLIENT_ID:-}\" ]; then echo \"error: GOOGLE_REVERSED_CLIENT_ID is required for Release account sign-in.\"; exit 1; fi\n  case \"$SUPABASE_URL\" in\n    https://*) : ;;\n    *) echo \"error: SUPABASE_URL must be an https URL in Release builds.\"; exit 1 ;;\n  esac\n  case \"$GOOGLE_IOS_CLIENT_ID\" in\n    ?*.apps.googleusercontent.com) : ;;\n    *) echo \"error: GOOGLE_IOS_CLIENT_ID is not an iOS OAuth client id.\"; exit 1 ;;\n  esac\n  GOOGLE_CLIENT_PREFIX=\"${GOOGLE_IOS_CLIENT_ID%.apps.googleusercontent.com}\"\n  EXPECTED_GOOGLE_SCHEME=\"com.googleusercontent.apps.$GOOGLE_CLIENT_PREFIX\"\n  if [ \"$GOOGLE_REVERSED_CLIENT_ID\" != \"$EXPECTED_GOOGLE_SCHEME\" ]; then\n    echo \"error: GOOGLE_REVERSED_CLIENT_ID must be $EXPECTED_GOOGLE_SCHEME for the configured client id.\"\n    exit 1\n  fi\n  # A Release that cannot reach RevenueCat cannot sell anything, and\n  # GrovePremiumStore reads \"no catalogue\" as \"nothing is metered\" —\n  # so a missing key would ship the whole app for free rather than\n  # fail visibly. Fail here instead.\n  if [ -z \"${REVENUECAT_API_KEY:-}\" ]; then\n    echo \"error: REVENUECAT_API_KEY is required for Release. RevenueCat → Project settings → API keys → the public app key for Apple. Add it to .env.production.\"\n    exit 1\n  fi\n  # Secret keys can issue refunds and read every customer record.\n  # One pasted into the wrong variable would ship inside the binary.\n  case \"$REVENUECAT_API_KEY\" in\n    appl_*) : ;;\n    sk_*) echo \"error: REVENUECAT_API_KEY is a RevenueCat secret key. Secret keys must never ship in a binary — use the public Apple SDK key (appl_…).\"; exit 1 ;;\n    *) echo \"error: REVENUECAT_API_KEY must be the public Apple SDK key, which begins with appl_.\"; exit 1 ;;\n  esac\n  # No gateway endpoint is compiled into the source: the analysis and\n  # sync URLs come from Config/Secrets.xcconfig or the command line, and\n  # a Release without them could not scan, ask or sync.\n  for NAME in GROVE_ANALYSIS_URL GROVE_SYNC_URL; do\n    eval \"VALUE=\\\"\\${$NAME:-}\\\"\"\n    case \"$VALUE\" in\n      \"\") echo \"error: $NAME is required for Release. Set it in Config/Secrets.xcconfig (copy Config/Secrets.example.xcconfig) or pass it to xcodebuild.\"; exit 1 ;;\n      https://*) : ;;\n      *) echo \"error: $NAME must be an https URL in Release builds.\"; exit 1 ;;\n    esac\n  done\nfi\n";
+		};
+		DE6589C18A2D30215D47929B /* Copy injection bundle (Debug, on-device hot reload) */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy injection bundle (Debug, on-device hot reload)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "COPY_BUNDLE=\"/Applications/InjectionNext.app/Contents/Resources/copy_bundle.sh\"\nif [ \"$CONFIGURATION\" = \"Debug\" ] && [ -x \"$COPY_BUNDLE\" ]; then\n  \"$COPY_BUNDLE\" || echo \"warning: injection bundle copy failed; hot reload will be unavailable.\"\nfi\n";
+		};
+		EBA636199087C80E9A8EF483 /* Strip dev-only Info.plist keys (Release) */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
+			);
+			name = "Strip dev-only Info.plist keys (Release)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Release builds talk HTTPS to the production API only — remove the\n# local-networking ATS relaxation and its usage description.\nif [ \"$CONFIGURATION\" = \"Release\" ]; then\n  PLIST=\"$TARGET_BUILD_DIR/$INFOPLIST_PATH\"\n  /usr/libexec/PlistBuddy -c \"Delete :NSAppTransportSecurity\" \"$PLIST\" 2>/dev/null || true\n  /usr/libexec/PlistBuddy -c \"Delete :NSLocalNetworkUsageDescription\" \"$PLIST\" 2>/dev/null || true\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		53FD5D449548801F359D11CE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C36F0BEFE3D6F758C2769C97 /* APIClientTests.swift in Sources */,
+				C8D20C1E83D3ACD16293516A /* AccountDeletionTests.swift in Sources */,
+				5081A7A3D47680851350D32D /* AppIntentsTests.swift in Sources */,
+				C45834BA498A0410F9FE6CC0 /* AppShellChromePolicyTests.swift in Sources */,
+				37D1955F1D3E567CA32012CE /* BotanistAskTests.swift in Sources */,
+				5EB5AEB4E17102F31ADA9C8F /* DailyQuestCreditTests.swift in Sources */,
+				D69D68CDA5821CDDE0F2FDC1 /* DataExportServiceTests.swift in Sources */,
+				FEEE92374E87655BB2170633 /* GroveCensusTests.swift in Sources */,
+				2433C28909EF8C65A3F1ADA9 /* GrovePlanTests.swift in Sources */,
+				A78368CD88D49906B6F1A821 /* GroveScoreTests.swift in Sources */,
+				2701CE091C63CF82E5096F6F /* GroveStoreTests.swift in Sources */,
+				BACA06F147D48D98FC3825A5 /* ICPJourneyRegressionTests.swift in Sources */,
+				FC61A85F440B2E4B69C1BF7B /* JourneyProgressionTests.swift in Sources */,
+				7A98D56F3135A2607E535D7F /* NotificationServiceTests.swift in Sources */,
+				B047ACC3AFBDF3DE2BDF14FD /* PendingFirstPlantStoreTests.swift in Sources */,
+				78A8C3B8FCB9FD603A7065F5 /* PlantBoardDetailsTests.swift in Sources */,
+				CE55AE94D8129BDEBD915F9B /* PlantChangeStoryTests.swift in Sources */,
+				74055C367F76E2FB87E34B7D /* PlantPageAuditRegressionTests.swift in Sources */,
+				98F4C1137C80D3757C30E0C7 /* PlantStateReadTests.swift in Sources */,
+				045F55666F8226FD445E6DB4 /* PremiumOfferTimingTests.swift in Sources */,
+				B2DA0A8D7987B62F0D107B0C /* PremiumStoreTests.swift in Sources */,
+				016DD05C8EA77ACE130696BC /* ScanEvidencePipelineRegressionTests.swift in Sources */,
+				14300E5E64D133DE4E4F6211 /* ScanPipelineTests.swift in Sources */,
+				EE5DF61EF1D0A5E628B5CD26 /* SessionServiceTests.swift in Sources */,
+				8CE8AEDD04638226B5EB0240 /* SettingsBehaviourTests.swift in Sources */,
+				A0E42DFF83D9156FCBC5A2FB /* SignInRecoveryTests.swift in Sources */,
+				1E60E4F2BF9D9116AA86B1F4 /* SkyAdvisoryTests.swift in Sources */,
+				98D29C72BF51BDAF2D361182 /* SoilCheckCadenceTests.swift in Sources */,
+				3F354624FA1B5317ABFB75E0 /* SoilMoistureReadTests.swift in Sources */,
+				1308FA06F1638119F0870E36 /* StreakSummaryTests.swift in Sources */,
+				DE87E18AF69457E407F70C70 /* SyncEngineTests.swift in Sources */,
+				3D9B12B2D7B86A72803DD81C /* TodayMastheadTests.swift in Sources */,
+				EFFA2FB27940E87E644947BF /* TravelWatcherTests.swift in Sources */,
+				9FFCA98657F78905765BB288 /* WatchSyncTests.swift in Sources */,
+				BC07B2644B78EA3E00AAFE93 /* WateringRhythmTests.swift in Sources */,
+				9A1893E3ACF7B3D93DCF4D69 /* WeeklyHealthTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		617931330290FC8A53A50584 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A4A2F4A6F7DCB44AB2E39F9 /* GroveLiveActivityAttributes.swift in Sources */,
+				5B45191F772DCFB97991DD48 /* GroveLiveActivityBundle.swift in Sources */,
+				89D5F99A1F3CEF927D643F1D /* GroveSittingLiveActivity.swift in Sources */,
+				39897A26713B7D21E494B50C /* GroveWateringLiveActivity.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		76F212BA0E9DBE60696F01F9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0095A16B0FE580CE98067A9 /* GroveGuidesTourTests.swift in Sources */,
+				A377F3253B39F89890E23204 /* GroveJourneyTourTests.swift in Sources */,
+				3AB4157DB68A648829A5DBDC /* GroveUITests.swift in Sources */,
+				74691505FBB3C975BF5FAB78 /* GroveVisualTourTests.swift in Sources */,
+				5680671201F18D992A34211E /* GroveWateringTourTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		782AE3D82B87A5D40D05AB6E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE49A57C0180D0D5B92B3BAE /* GroveWatchWidget.swift in Sources */,
+				C690365D2A447C9ED1474EDC /* WatchSync.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9DA4B6D1ADD0103526C8A2C6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6C24869ED526419CE57901D1 /* GroveWatchApp.swift in Sources */,
+				11161705F3130E92B2B1D585 /* WatchGroveView.swift in Sources */,
+				79463F9C5D9C01644FDC04DF /* WatchStore.swift in Sources */,
+				AAEF7AE5D812C924A2FFD5FA /* WatchSync.swift in Sources */,
+				318CD17C858F6D83337D29B5 /* WatchTheme.swift in Sources */,
+				5D91F566A7F1E6782381D0D9 /* WatchTodayView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C88337E70D8A7DC4FCDF32A2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A6BA5E2C75792A8647C7446B /* APIClient.swift in Sources */,
+				86E329E27F24E6B9B87E81B9 /* Academy.swift in Sources */,
+				E5D86373148D4A7F1F95D075 /* AccountStorage.swift in Sources */,
+				6A30F90765B06567E0C77991 /* ActivityView.swift in Sources */,
+				B5AB392781CB042B0119B2B6 /* AppRoutes.swift in Sources */,
+				D906BE3402F065421BF3A527 /* AppTab.swift in Sources */,
+				A20341ED60F873C833D40A5D /* AskPrompts.swift in Sources */,
+				E63F6DE9850E21215D6B46A9 /* AskSession.swift in Sources */,
+				961C847EF2C326FD4E7C31F4 /* AskView.swift in Sources */,
+				D22121B9DC23F48787E76FF0 /* BotanistFormatting.swift in Sources */,
+				839AAE1BC75840B4CB2B3EAA /* BotanistService.swift in Sources */,
+				92693B1363A5CB2CB77980EB /* CaptureBoard.swift in Sources */,
+				AFF346325FC1A9B6ADD1BE92 /* CareQueueView.swift in Sources */,
+				A6EF0E741D096304654A71DB /* CareTaskDetailView.swift in Sources */,
+				0CEF2619C1D2B6ABDB227261 /* CareTaskRow.swift in Sources */,
+				547737821BF67459E6924D34 /* CheckInHealthCard.swift in Sources */,
+				6F8374F10F4BF3DEB7EC1AD0 /* CheckInView.swift in Sources */,
+				DFEBF464350778E726C028F4 /* CollectionDetailView.swift in Sources */,
+				6060485ED3550D41CDDD63BA /* Components.swift in Sources */,
+				C87E94D62005A65585A83F28 /* CreateCollectionView.swift in Sources */,
+				BE51FD09929D9A2CDDB3F3D0 /* DataExportService.swift in Sources */,
+				DC000FA6F755D750B7EEF4CE /* DesignSystem.swift in Sources */,
+				8FAE7E9424C414F42B5DD1A0 /* DomainModels.swift in Sources */,
+				020C14009A502A71D83212C7 /* EditPlantView.swift in Sources */,
+				2E329085168B01F178D0AAF5 /* FriendGroveView.swift in Sources */,
+				1AA5621529ECAC7FBEAA5C2B /* FriendSlotsPaywallSheet.swift in Sources */,
+				C553DFD8A38B849C73FE5E50 /* FriendsBoard.swift in Sources */,
+				E598784BEE6AA2326264F339 /* FriendsView.swift in Sources */,
+				F1F7334C56D0B105A1141EC4 /* GoogleAuthenticator.swift in Sources */,
+				F4C01F595B9DE23DFD810741 /* GroveAnalytics.swift in Sources */,
+				474E5CCAE324BF65B3A5A4D1 /* GroveApp.swift in Sources */,
+				3DF4793C089523160F91785B /* GroveAtmosphere.swift in Sources */,
+				42D853CDB84B3D2AF4E9D9C6 /* GroveBackSwipe.swift in Sources */,
+				7712BDAE15801EE022E7EB4F /* GroveCameraView.swift in Sources */,
+				5D428E6259A11EA3F5329CC2 /* GroveCensus.swift in Sources */,
+				614F3237D2F03265A35FC4A5 /* GroveDefaults.swift in Sources */,
+				FEE34EA4F68A73161FA6B13D /* GroveDiag.swift in Sources */,
+				EE3054F08E0ABD79D7A1A351 /* GroveEmptyArt.swift in Sources */,
+				CB5CB2FD5EE92CDBF8554BF3 /* GroveEmptyState.swift in Sources */,
+				91003E98B9470989A7004A79 /* GroveFlowLayout.swift in Sources */,
+				D81BE158B19C5C6D2B12D3D0 /* GroveHaptics.swift in Sources */,
+				D3F218B11E0D8CA3FD55B847 /* GroveImageLoader.swift in Sources */,
+				320D4FC28FBA7A312BBE4D2C /* GroveIntents.swift in Sources */,
+				8DCD656CA3D0360244FDD0E0 /* GroveLaunchView.swift in Sources */,
+				DC3258B3D6FE130C854C375D /* GroveLegal.swift in Sources */,
+				ECF224461AD501EBB7E0D6CC /* GroveLiveActivityAttributes.swift in Sources */,
+				E8B2B675AEF0673DD7B0793C /* GroveLiveActivityController.swift in Sources */,
+				09781FB274B70A89A0C4898B /* GroveLocationPickerView.swift in Sources */,
+				D222A18D0B9EFE9226C8B02A /* GroveMediaPath.swift in Sources */,
+				C1D9E84E1757A8152E241F4B /* GroveMotionDials.swift in Sources */,
+				41EFA277935BC1F6758F4458 /* GroveMotionKit.swift in Sources */,
+				EEDA619B8CA56FF5A39756C7 /* GrovePlan.swift in Sources */,
+				7AA4F837C58A1944EDCDC62F /* GrovePlanView.swift in Sources */,
+				D55D80B69E825074847D4E41 /* GrovePremiumOffer.swift in Sources */,
+				DEE03B5B4881CFE83EC664CB /* GrovePremiumStore.swift in Sources */,
+				5251700211C47B2CDA6933D7 /* GroveRegionPicker.swift in Sources */,
+				B8BFAE5917C9C687CAB0DC02 /* GroveRemoteRepository.swift in Sources */,
+				CD4C320DFFB46D70F1874358 /* GroveScanButton.swift in Sources */,
+				13546CF82CB6767CAB4A2E49 /* GroveScore.swift in Sources */,
+				B6194DF60AC5B6C0115E8753 /* GroveScoreView.swift in Sources */,
+				C1466CE0706DE06251407A22 /* GroveServiceFactory.swift in Sources */,
+				334B150B5924693E85FE4A43 /* GroveSkyAdvisory.swift in Sources */,
+				2F2324D8D31DD5909AD20628 /* GroveStatus.swift in Sources */,
+				3B01FA6371B575E7E65FACC4 /* GroveStatusBar.swift in Sources */,
+				520333205D58E74CB18C492B /* GroveStore.swift in Sources */,
+				D8E97179588F525584CE5632 /* GroveSwipeTabs.swift in Sources */,
+				347511048FABAA28F61DDC05 /* GroveToast.swift in Sources */,
+				C37BEC000D98FB1411AD2684 /* IntentRouter.swift in Sources */,
+				4BD948C2AA8CAE43062BB61A /* JourneyAchievementsView.swift in Sources */,
+				B47CD3F7D42FDB159770AD93 /* JourneyBadgeFlourish.swift in Sources */,
+				6A2DC89249B8E44B08AFCA00 /* JourneyBadgeShelf.swift in Sources */,
+				2011E5798DF5468D21031749 /* JourneyBadgeUnlockOverlay.swift in Sources */,
+				165647875A32FECE47D65D7D /* JourneyChest.swift in Sources */,
+				ECE35C09510CC7ABC2C947FD /* JourneyEffects.swift in Sources */,
+				0841CCF0EFBED2867CE50150 /* JourneyHeroCard.swift in Sources */,
+				B69C17E4E2B3923C70D6F8FE /* JourneyKeepsakes.swift in Sources */,
+				A7365B16C8E62BC1BCB49A09 /* JourneyLevelUpTakeover.swift in Sources */,
+				F1FA597751D74958C0078CB6 /* JourneyLibrary.swift in Sources */,
+				672CE899AC84E2DE996B8515 /* JourneyLockedMilestoneSheet.swift in Sources */,
+				AB27DE35700C538B453000B0 /* JourneyMapView.swift in Sources */,
+				5814FFC5E63EF71F3A779D5F /* JourneyMilestoneDetailView.swift in Sources */,
+				72F3E3FDAC216B544B21FD77 /* JourneyModels.swift in Sources */,
+				2F16374CD4F16780CC21EDC1 /* JourneyParticles.swift in Sources */,
+				B5BD87606C5590283056809E /* JourneyQuests.swift in Sources */,
+				325CABEDB8ABFA7309B37B35 /* JourneyWorldProgression.swift in Sources */,
+				105C22DE654C7C5D1B43E51A /* LivingRecordFilm.swift in Sources */,
+				0265EF1DC992744D0FC57EE7 /* LivingRecordView.swift in Sources */,
+				64D0278199C32197AC0AD970 /* MediaUploadService.swift in Sources */,
+				C92B455A8955EEA1FB2A599E /* MyGroveBoard.swift in Sources */,
+				EDF3703F6DA099A98A80AF44 /* NotificationService.swift in Sources */,
+				195DEC52E264966C4B0907F9 /* ObservationMediaStore.swift in Sources */,
+				AD056B12C5C65EC56E2F08A4 /* OnboardingAnalytics.swift in Sources */,
+				EF46018EE88075D5DFFA544C /* OnboardingAuthViews.swift in Sources */,
+				45A760AE9C74999C7D71AE11 /* OnboardingComponents.swift in Sources */,
+				8260B495498B11DCB9CCF53C /* OnboardingContainerView.swift in Sources */,
+				05FC1D5C3213A4236BCBD757 /* OnboardingFirstPlantViews.swift in Sources */,
+				6FE051210C8D3BF6EBA92ADD /* OnboardingModel.swift in Sources */,
+				DC63C302B5FF451B0E403CD3 /* OnboardingNotificationPrimerView.swift in Sources */,
+				91CD8AB91CF5CBD8603E3070 /* OnboardingQuizViews.swift in Sources */,
+				CF913B3633E2D1F3099793CF /* OnboardingSprout.swift in Sources */,
+				C3D5BD058B81F37091C76C1B /* OnboardingSproutSteps.swift in Sources */,
+				D7F2B530FBBB7B6D4F207339 /* OnboardingWelcomeView.swift in Sources */,
+				EE0FF1E7578409FBBA6F8FD4 /* PendingFirstPlantStore.swift in Sources */,
+				8CAC10424B60092ABDE99672 /* PlantAnalysisService.swift in Sources */,
+				4DF3ED299572BF43985D324A /* PlantBoardDetails.swift in Sources */,
+				B2BB155D8F27E9CA4F07441A /* PlantBoardPage.swift in Sources */,
+				18C067E8B2A6E9AB22654258 /* PlantCareProfile.swift in Sources */,
+				03271619BD3CD98BE5884903 /* PlantChangeCard.swift in Sources */,
+				949BE3533E9E969D5372BCBC /* PlantDetailView.swift in Sources */,
+				3CBC2183E6928A3211A88229 /* PlantPortrait.swift in Sources */,
+				CC31ED6197845DDA2E912AF4 /* PlantProfileViews.swift in Sources */,
+				188AAFFF82A51137570CFD6A /* PlantSafety.swift in Sources */,
+				CC37F54FAEC2FF90B7488482 /* PlantSafetyCatalogue.swift in Sources */,
+				9CF82B6C7FB890237A6C3CB6 /* PlantShareView.swift in Sources */,
+				EEB3B8DF6E92E90629E50E4D /* PlantSittingView.swift in Sources */,
+				281CD81A76A6ED746D20B8CD /* PlantWateringEstimate.swift in Sources */,
+				B54015071E71ADC8A382AAE9 /* PlantWateringSheet.swift in Sources */,
+				3DA14E592427079E38AEE9D1 /* PremiumPaywallBoard.swift in Sources */,
+				DFC214A772999522C0704641 /* ProfileSetupView.swift in Sources */,
+				69ED8D163E57AF82C09BF10C /* ProfileView.swift in Sources */,
+				64731C2D30ABB2FC82D873CB /* RootView.swift in Sources */,
+				70A2ACC92EFED27E3D6C402C /* ScanHistoryView.swift in Sources */,
+				28726D478DFB3960CD45B3FE /* ScanImageQuality.swift in Sources */,
+				246CAA177BCA2ACE6595884E /* ScanLiveIntelligence.swift in Sources */,
+				639EBD53C3855FCBB72B2D6F /* ScanMediaStore.swift in Sources */,
+				48D65FD45706A52DB5C72386 /* ScanSession.swift in Sources */,
+				F3A98975B2670FF9EF73E186 /* ScanTipsView.swift in Sources */,
+				C52A55E7ED5ED532F90AB4FC /* ScanView.swift in Sources */,
+				FF4D13E7AED853D545C088E0 /* SessionService.swift in Sources */,
+				A18F01A2B794145978A87DED /* SettingsView.swift in Sources */,
+				6107C3B1655E136F0AAF98FB /* SittingLinkView.swift in Sources */,
+				D323082E2260AF904CB20459 /* SkyCard.swift in Sources */,
+				0CFE711B1F477C16F4AC342C /* SoilMoistureGauge.swift in Sources */,
+				EDAA95CBC79B5C829F056C9E /* SoilMoistureRead.swift in Sources */,
+				D82FDCFACF2F5A89EC38749A /* StreakCelebration.swift in Sources */,
+				06B6CDCB577CA13A6732627F /* StreakDetailSheet.swift in Sources */,
+				813F52B642F0B5E0A8EB7AF5 /* SunlightCard.swift in Sources */,
+				71F679EA54D9AF749C34EABB /* SupabaseAuthClient.swift in Sources */,
+				1468F1A1A2A08D0574D13084 /* SupabaseSessionStore.swift in Sources */,
+				BE70E93FEE8483B5805B9BDD /* SyncEngine.swift in Sources */,
+				1D8D3C692E2FD41CDE132513 /* TodayBoard.swift in Sources */,
+				3EB9D2AD32322C88E9B9F986 /* TodayMasthead.swift in Sources */,
+				60A8AE3CB353107B92C9F656 /* TodayView.swift in Sources */,
+				5CDDF556D1B28B1AC50AED77 /* TravelBanner.swift in Sources */,
+				C9D7A9D5BC181DDC76810848 /* TravelWatcher.swift in Sources */,
+				DA809EA553CA9AF76F4883DE /* WatchSync.swift in Sources */,
+				AF847CF2F4BEFA27FEDED70F /* WatchSyncService.swift in Sources */,
+				5A6B6C9023DA309472296076 /* WateringRhythm.swift in Sources */,
+				D85B29A57ADF446DFB210331 /* WateringRhythmChart.swift in Sources */,
+				087293C2738E13653A6D3F74 /* WeatherService.swift in Sources */,
+				D66036542C67EE8AFD96E259 /* WelcomeDew.metal in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DA76DF65D018DFD9149EC01F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				403D2CDA9C8B469E94FAC368 /* GroveWatchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		66822AC0AF41E4DACDF5B5DA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9C57E594A837DC8048757E52 /* Grove */;
+			targetProxy = 81CAB6783DC288772F157BFB /* PBXContainerItemProxy */;
+		};
+		83EA88AFECB3358AC43AC440 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FF561F15368CF6DE9AFAF446 /* GroveLiveActivity */;
+			targetProxy = 422501CE9174281C5650EFD3 /* PBXContainerItemProxy */;
+		};
+		9453E888B9CCA6857D79208F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2F853B5054DBF8672BB4BE98 /* GroveWatch */;
+			targetProxy = 65A595D080E7E6C44DC4EF50 /* PBXContainerItemProxy */;
+		};
+		A551189649500D9D6BA04685 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9C57E594A837DC8048757E52 /* Grove */;
+			targetProxy = 7858789F818D5343D6B72992 /* PBXContainerItemProxy */;
+		};
+		C92DF02F95BDAAD7B7CAEAA8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5864D1C0E61F375A273F7C19 /* GroveWatchWidget */;
+			targetProxy = A39E15237A65EEAD712F342A /* PBXContainerItemProxy */;
+		};
+		E26B460DB2DA91F599663998 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2F853B5054DBF8672BB4BE98 /* GroveWatch */;
+			targetProxy = 1C54BF806FCF3BE63C029168 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1C0C23E46BF2BC72C7CB0B9D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = nz.co.thinkingai.GroveWatchTests;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GroveWatch.app/GroveWatch";
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		238D660FB5EBF324DB3437D3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = nz.co.thinkingai.GroveTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Grove.app/Grove";
+			};
+			name = Debug;
+		};
+		287639EBCEA471037987F76D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = GroveWatch/GroveWatch.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = GroveWatch/Info.plist;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = nz.co.thinkingai.Grove.watchkitapp;
+				PROVISIONING_PROFILE_SPECIFIER = "$(GROVE_WATCH_PROFILE_SPECIFIER)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		29772A5F0555CF1FF9F64F06 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = GroveWatchWidget/GroveWatchWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = GroveWatchWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = nz.co.thinkingai.Grove.watchkitapp.widget;
+				PROVISIONING_PROFILE_SPECIFIER = "$(GROVE_WATCH_WIDGET_PROFILE_SPECIFIER)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		3459D089A5E90423F9C66B72 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = nz.co.thinkingai.GroveWatchTests;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GroveWatch.app/GroveWatch";
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		54156B11C249142E0A360056 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = GroveLiveActivity/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = nz.co.thinkingai.Grove.LiveActivity;
+				PROVISIONING_PROFILE_SPECIFIER = "$(GROVE_LIVE_ACTIVITY_PROFILE_SPECIFIER)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		75BEA3CA6AA22FCB5CCDCA5E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = GroveLiveActivity/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = nz.co.thinkingai.Grove.LiveActivity;
+				PROVISIONING_PROFILE_SPECIFIER = "$(GROVE_LIVE_ACTIVITY_PROFILE_SPECIFIER)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		97DBA6DA19F1678D16661CD6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = GroveWatch/GroveWatch.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = GroveWatch/Info.plist;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = nz.co.thinkingai.Grove.watchkitapp;
+				PROVISIONING_PROFILE_SPECIFIER = "$(GROVE_WATCH_PROFILE_SPECIFIER)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		AD536D6FE941BB55068C4B3B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = nz.co.thinkingai.GroveTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Grove.app/Grove";
+			};
+			name = Release;
+		};
+		BCCD5B8D5F19B3A09287C788 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = GroveWatchWidget/GroveWatchWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = GroveWatchWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = nz.co.thinkingai.Grove.watchkitapp.widget;
+				PROVISIONING_PROFILE_SPECIFIER = "$(GROVE_WATCH_WIDGET_PROFILE_SPECIFIER)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		C4F8F1C9C7CD03D95F9B3F33 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C0F16A0E5EC2E7A1D9B3F401 /* Grove.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		D4B50FC10E4DD5908F69A04D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = nz.co.thinkingai.GroveUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Grove;
+			};
+			name = Debug;
+		};
+		D4D700F4DA7A1DB2F1852706 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C0F16A0E5EC2E7A1D9B3F401 /* Grove.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Grove/Grove.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GROVE_APS_ENVIRONMENT = production;
+				INFOPLIST_FILE = Grove/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = nz.co.thinkingai.Grove;
+				PROVISIONING_PROFILE_SPECIFIER = "$(GROVE_APP_PROFILE_SPECIFIER)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) $(GROVE_EXTRA_SWIFT_CONDITIONS)";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		D56499DCE9512B0E0B17F09F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C0F16A0E5EC2E7A1D9B3F401 /* Grove.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		E13C4FBFC14379EDB63F626D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = nz.co.thinkingai.GroveUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Grove;
+			};
+			name = Release;
+		};
+		EF1EC7B0914FC8F22CC6FDEA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C0F16A0E5EC2E7A1D9B3F401 /* Grove.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Grove/Grove.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				EMIT_FRONTEND_COMMAND_LINES = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GROVE_APS_ENVIRONMENT = development;
+				INFOPLIST_FILE = Grove/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-Xlinker",
+					"-interposable",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = nz.co.thinkingai.Grove;
+				PROVISIONING_PROFILE_SPECIFIER = "$(GROVE_APP_PROFILE_SPECIFIER)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) $(GROVE_EXTRA_SWIFT_CONDITIONS)";
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0133CCB77E0559310D235FBE /* Build configuration list for PBXNativeTarget "GroveTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				238D660FB5EBF324DB3437D3 /* Debug */,
+				AD536D6FE941BB55068C4B3B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		0366B8A6297D978BF5F0A45B /* Build configuration list for PBXNativeTarget "GroveLiveActivity" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				75BEA3CA6AA22FCB5CCDCA5E /* Debug */,
+				54156B11C249142E0A360056 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		10AD9D5F3238545CC2A3B4C5 /* Build configuration list for PBXNativeTarget "Grove" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EF1EC7B0914FC8F22CC6FDEA /* Debug */,
+				D4D700F4DA7A1DB2F1852706 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		271400197C334A00973C7185 /* Build configuration list for PBXNativeTarget "GroveWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				97DBA6DA19F1678D16661CD6 /* Debug */,
+				287639EBCEA471037987F76D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A07DE0876529E831D16EE36C /* Build configuration list for PBXNativeTarget "GroveWatchTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1C0C23E46BF2BC72C7CB0B9D /* Debug */,
+				3459D089A5E90423F9C66B72 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B2DB9AECF35F68A93C24563F /* Build configuration list for PBXNativeTarget "GroveWatchWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				29772A5F0555CF1FF9F64F06 /* Debug */,
+				BCCD5B8D5F19B3A09287C788 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C7C18E23092BFCE95B048000 /* Build configuration list for PBXProject "Grove" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C4F8F1C9C7CD03D95F9B3F33 /* Debug */,
+				D56499DCE9512B0E0B17F09F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CBCEB265DECA88C3311FC084 /* Build configuration list for PBXNativeTarget "GroveUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D4B50FC10E4DD5908F69A04D /* Debug */,
+				E13C4FBFC14379EDB63F626D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		149FA69F89DD1C2587E639BB /* XCRemoteSwiftPackageReference "Pow" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/EmergeTools/Pow";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		4FDC31E4A60EFD1C2D70AF5B /* XCRemoteSwiftPackageReference "Vortex" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/Vortex";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		87EA88DCCE544948EC42CDE7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.1.0;
+			};
+		};
+		D62BF5CF9A111B3A11E9B635 /* XCRemoteSwiftPackageReference "purchases-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.83.0;
+			};
+		};
+		EE27C7439C9E0FE603F2F419 /* XCRemoteSwiftPackageReference "dialkit-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mikelikesdesign/dialkit-ios";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		F2FE288851D68AF4D9D8182D /* XCRemoteSwiftPackageReference "Inject" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/krzysztofzablocki/Inject";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.2;
+			};
+		};
+		FC1A396E86B84BFE6C310995 /* XCRemoteSwiftPackageReference "InjectionNext" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/johnno1962/InjectionNext";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1DCB5391D9A0F4E7628A2557 /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D62BF5CF9A111B3A11E9B635 /* XCRemoteSwiftPackageReference "purchases-ios" */;
+			productName = RevenueCat;
+		};
+		2247AEA0A7AAA72C7A1CEC00 /* InjectionNext */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FC1A396E86B84BFE6C310995 /* XCRemoteSwiftPackageReference "InjectionNext" */;
+			productName = InjectionNext;
+		};
+		55F88180E7C9B7543D89F012 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 87EA88DCCE544948EC42CDE7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		5E004E40FCD8F5693062DE25 /* DialKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EE27C7439C9E0FE603F2F419 /* XCRemoteSwiftPackageReference "dialkit-ios" */;
+			productName = DialKit;
+		};
+		6C456B1822A62F6B554EBB2B /* Inject */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F2FE288851D68AF4D9D8182D /* XCRemoteSwiftPackageReference "Inject" */;
+			productName = Inject;
+		};
+		73BED7F8172B48B57D9BC236 /* Pow */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 149FA69F89DD1C2587E639BB /* XCRemoteSwiftPackageReference "Pow" */;
+			productName = Pow;
+		};
+		A8E1AB6A82969007C35B6620 /* Vortex */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FDC31E4A60EFD1C2D70AF5B /* XCRemoteSwiftPackageReference "Vortex" */;
+			productName = Vortex;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 599B316DC08150787CABFED5 /* Project object */;
+}

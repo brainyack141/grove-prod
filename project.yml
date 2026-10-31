@@ -1,0 +1,529 @@
+name: Grove
+options:
+  bundleIdPrefix: nz.co.thinkingai
+  deploymentTarget:
+    # 18 is the floor for the modern navigation idioms Grove now relies on —
+    # `matchedTransitionSource` / `navigationTransition(.zoom)` — and for app
+    # icon appearance variants. iOS 26's Liquid Glass stays behind availability
+    # checks so the app still renders correctly a release or two back.
+    iOS: "18.0"
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+# Project-level base config so every target (app, watch, widget, Live
+# Activity, tests) picks up DEVELOPMENT_TEAM from Config/Grove.xcconfig, which
+# Config/Secrets.xcconfig can override. The Grove target also uses the same
+# file as its own target-level config (targets.Grove.configFiles).
+configFiles:
+  Debug: Config/Grove.xcconfig
+  Release: Config/Grove.xcconfig
+packages:
+  # Gaming/juice packages for the Journey: Vortex is a SwiftUI particle engine
+  # (confetti, fireworks, fireflies); Pow adds game-feel effects (glow, shine,
+  # spray, push-down buttons).
+  Vortex:
+    url: https://github.com/twostraws/Vortex
+    from: 1.0.0
+  Pow:
+    url: https://github.com/EmergeTools/Pow
+    from: 1.0.0
+  # Google Sign-In: mints the Google OpenID identity token on-device, which
+  # SupabaseAuthClient then exchanges for a Supabase session. There is no
+  # OS-native equivalent to SignInWithAppleButton, so the SDK is required.
+  GoogleSignIn:
+    url: https://github.com/google/GoogleSignIn-iOS
+    from: 7.1.0
+  # RevenueCat owns the subscription lifecycle. It is not a convenience wrapper
+  # over StoreKit here — it is the fix for three things the hand-rolled store
+  # could not do: observe the transaction stream (so Ask to Buy approvals,
+  # refunds, offer codes and Family Sharing grants land without a relaunch),
+  # hold the entitlement server-side so the botanist gateway can meter a paying
+  # account differently, and serve offerings from a dashboard so a price can be
+  # tested without shipping a binary. See GrovePremiumStore.
+  RevenueCat:
+    url: https://github.com/RevenueCat/purchases-ios
+    from: 5.83.0
+  # Hot reload, in two halves. InjectionNext is the on-device runtime: it opens
+  # a socket back to InjectionNext.app on the Mac and swaps recompiled method
+  # bodies into the running app, so a styling change lands without losing the
+  # screen you were three taps into. Inject is the SwiftUI half — injection
+  # replaces the code, but a SwiftUI view only redraws when something tells it
+  # to, which is what `@ObserveInjection` / `.enableInjection()` are for.
+  #
+  # What actually ships, checked with `nm` against a Release build rather than
+  # assumed: InjectionNext's runtime is *entirely* absent — no fishhook, no
+  # SimpleSocket, no InjectionLite, zero text symbols — because its sources sit
+  # behind `#if DEBUG || !SWIFT_PACKAGE`. Inject is the exception worth knowing
+  # about: its SwiftUI shims (`ObserveInjection`, `InjectionObserver`,
+  # `enableInjection`) are still in the Release binary, as inert no-ops with no
+  # machinery behind them. So `.enableInjection()` left on a view is safe to
+  # ship, it just is not free. The `-Xlinker -interposable` flag both depend on
+  # is Debug-only.
+  #
+  # Keep the InjectionNext package version in step with the installed
+  # InjectionNext.app (2.0.1) — the two speak a versioned wire protocol.
+  InjectionNext:
+    url: https://github.com/johnno1962/InjectionNext
+    from: 2.0.1
+  Inject:
+    url: https://github.com/krzysztofzablocki/Inject
+    from: 1.5.2
+  # Live motion tuning on the phone. Linked always, but every line that touches
+  # it sits behind `#if GROVE_DIALS`, which only `GROVE_DIALS=1
+  # scripts/prod-phone.sh` turns on — so an ordinary build references none of
+  # it and the linker strips it. See GroveMotionDials.swift.
+  DialKit:
+    url: https://github.com/mikelikesdesign/dialkit-ios
+    branch: main
+targets:
+  Grove:
+    type: application
+    platform: iOS
+    # GROVE_APP_KEY, GROVE_ANALYSIS_URL and GROVE_SYNC_URL come from the
+    # gitignored Config/Secrets.xcconfig, pulled in
+    # by this committed base file (see Config/Secrets.example.xcconfig).
+    configFiles:
+      Debug: Config/Grove.xcconfig
+      Release: Config/Grove.xcconfig
+    sources:
+      - Grove
+      # The watch wire contract (payload models) — compiled into both the app
+      # and GroveWatch so the two sides can never drift apart silently.
+      - GroveWatchShared
+    dependencies:
+      - package: Vortex
+      - package: Pow
+      - package: GoogleSignIn
+        product: GoogleSignIn
+      - package: RevenueCat
+        product: RevenueCat
+      - package: InjectionNext
+        product: InjectionNext
+      - package: Inject
+        product: Inject
+      - package: DialKit
+        product: DialKit
+      # Embeds the watch app into Grove.app/Watch so installing on the phone
+      # carries it to the paired watch.
+      - target: GroveWatch
+      # Embeds the Live Activity extension into Grove.app/PlugIns.
+      - target: GroveLiveActivity
+    info:
+      path: Grove/Info.plist
+      properties:
+        CFBundleDevelopmentRegion: $(DEVELOPMENT_LANGUAGE)
+        # Home-screen label only — SpringBoard strips spaces then truncates
+        # anything much past ~11 characters ("GroveAI-PlantID…"). The full
+        # ASO name "Grove AI - Plant ID Buddy" lives in AppStore/metadata.
+        CFBundleDisplayName: Grove AI
+        CFBundleExecutable: $(EXECUTABLE_NAME)
+        CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
+        CFBundleInfoDictionaryVersion: "6.0"
+        CFBundleName: $(PRODUCT_NAME)
+        CFBundlePackageType: APPL
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        ITSAppUsesNonExemptEncryption: false
+        LSRequiresIPhoneOS: true
+        NSCameraUsageDescription: Grove uses the camera to identify plants and compare their health over time.
+        NSPhotoLibraryUsageDescription: Grove lets you choose a profile picture and plant photos for identification and health check-ins.
+        NSPhotoLibraryAddUsageDescription: Grove saves plant progress cards to your photo library when you choose Save.
+        NSLocationWhenInUseUsageDescription: Grove uses your town to match your plants’ care to the local weather and daylight.
+        # Dev-only: lets Debug builds reach the analysis server on the Mac over
+        # local Wi-Fi. Both keys are stripped from Release builds by the
+        # "Strip dev-only Info.plist keys" build phase below.
+        NSLocalNetworkUsageDescription: Grove connects to your development analysis server on the local network to identify plants and assess their health.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+        GroveAnalysisURL: $(GROVE_ANALYSIS_URL)
+        GroveAppKey: $(GROVE_APP_KEY)
+        GroveSyncURL: $(GROVE_SYNC_URL)
+        # Grove's branded display face. SF Pro remains the interface and body
+        # face; this font is bundled under the SIL Open Font License in
+        # Grove/Resources/Fonts/Fraunces-OFL.txt.
+        UIAppFonts:
+          - Fraunces72ptSoft-Bold.ttf
+        # Lock Screen / Dynamic Island activities (watering track, plant-sitting
+        # handover), drawn by the GroveLiveActivity extension and driven by
+        # GroveLiveActivityController.
+        NSSupportsLiveActivities: true
+        # Supabase Auth endpoint + publishable anon key, baked in at build time
+        # (see .env.example). Empty leaves the app on local-only sessions; set
+        # both to turn Sign in with Apple / Google into real Supabase accounts.
+        SupabaseURL: $(SUPABASE_URL)
+        SupabaseAnonKey: $(SUPABASE_ANON_KEY)
+        # RevenueCat public SDK key (the `appl_…` one). Public by design: it
+        # ships inside every binary and can only read offerings and buy on
+        # behalf of the signed-in Apple account. The secret key never touches
+        # the app. Empty leaves Grove in its pre-catalogue state, where nothing
+        # is metered because nothing can be sold — see GrovePremiumStore.
+        RevenueCatAPIKey: $(REVENUECAT_API_KEY)
+        # Google iOS OAuth client id, used by the GoogleSignIn SDK (see SSO_SETUP.md).
+        # No production fallback in Debug: a developer who forgot to load an
+        # environment must not unknowingly sign test accounts into production.
+        GIDClientID: $(GOOGLE_IOS_CLIENT_ID)
+        # Google's OAuth callback scheme is the iOS client id reversed, so it
+        # must be supplied from the same environment. `GoogleAuthenticator`
+        # verifies that the two values agree before drawing the button.
+        CFBundleURLTypes:
+          - CFBundleURLSchemes:
+              - $(GOOGLE_REVERSED_CLIENT_ID)
+          # The HTTPS invite page uses this as its signed-build-safe handoff.
+          # It carries no bearer token or private data, only the public handle.
+          - CFBundleURLName: nz.co.thinkingai.Grove.invite
+            CFBundleTypeRole: Editor
+            CFBundleURLSchemes:
+              - nz.co.thinkingai.grove
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        # The static launch screen is the first half of one continuous opening:
+        # LaunchBackground is GroveTheme's cream canvas and LaunchMark is the
+        # same mark GroveLaunchView then draws live, at the same size and dead
+        # centre — so the handoff to the first SwiftUI frame is invisible.
+        # LaunchBackground has no dark variant on purpose: GroveApp forces
+        # `.preferredColorScheme(.light)`, so a dark launch screen would flash
+        # cream the moment the app took over. Regenerate LaunchMark with
+        # scripts/generate-launch-mark.sh after editing GroveLaunchMark.swift.
+        #
+        # A storyboard, not a UILaunchScreen dictionary: that dictionary's
+        # UIImageName is centred at natural size on the first launch after
+        # install but stretched to fill the screen on every launch after, which
+        # would make the mark jump. See the note in LaunchScreen.storyboard.
+        UILaunchStoryboardName: LaunchScreen
+    # Sign in with Apple capability. XcodeGen generates Grove.entitlements from
+    # these properties and wires CODE_SIGN_ENTITLEMENTS, so the capability is
+    # declared in version control instead of toggled by hand in Xcode.
+    entitlements:
+      path: Grove/Grove.entitlements
+      properties:
+        com.apple.developer.applesignin:
+          - Default
+        # Remote push. The value is a build setting rather than a literal
+        # because a Debug build receives a *sandbox* APNs token and a Release
+        # build a production one, and sending a sandbox token to the production
+        # host fails silently — no error the app can see, just notifications
+        # that never arrive. Entitlement files are variable-expanded at build
+        # time, so one declaration covers both. `GroveServiceFactory` reports
+        # the matching environment to the server, and the two must agree.
+        aps-environment: $(GROVE_APS_ENVIRONMENT)
+    # Attaching Grove.storekit to the run action gives Debug builds a local
+    # catalogue, so the paywall's prices, savings badge and trial timeline can
+    # be seen and screenshotted without a Sandbox Apple Account. It is a
+    # rehearsal surface only: purchases made against it never reach RevenueCat,
+    # so entitlement changes must still be verified in sandbox.
+    scheme:
+      testTargets:
+        - GroveTests
+        - GroveUITests
+      storeKitConfiguration: Grove.storekit
+      # Tells the injection runtime inside a Debug build which directory to
+      # watch, so saving a file is enough to trigger a reload without the app
+      # needing to be told about the project by hand.
+      environmentVariables:
+        INJECTION_PROJECT_ROOT: $(SRCROOT)
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: nz.co.thinkingai.Grove
+        # iPhone-only until Grove has regular-width layouts; iPads run it in iPhone compatibility mode.
+        TARGETED_DEVICE_FAMILY: "1"
+        PROVISIONING_PROFILE_SPECIFIER: $(GROVE_APP_PROFILE_SPECIFIER)
+        MARKETING_VERSION: 1.0.0
+        CURRENT_PROJECT_VERSION: 1
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_STYLE: Automatic
+        # Empty unless a build script passes it (GROVE_DIALS=1 prod-phone.sh
+        # sets it to GROVE_DIALS). Appended rather than set so DEBUG survives.
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) $(GROVE_EXTRA_SWIFT_CONDITIONS)
+      configs:
+        Debug:
+          GROVE_APS_ENVIRONMENT: development
+          # Hot reload (InjectionNext) rewrites a method by interposing on its
+          # symbol, which the linker only permits when it has been told to keep
+          # those symbols interposable. Debug only: it suppresses some direct
+          # dispatch, so it is a small optimisation cost that Release must not
+          # pay, and there is nothing on a shipped build to inject.
+          OTHER_LDFLAGS:
+            - $(inherited)
+            - -Xlinker
+            - -interposable
+          # How InjectionNext learns to recompile one file. Its primary route is
+          # supervising an Xcode it launched itself, which Grove never uses:
+          # every device build goes through `scripts/dev-phone.sh`, i.e. plain
+          # `xcodebuild`. That leaves log parsing, and from Xcode 16.3 the build
+          # log only carries the frontend invocations when asked. Without this,
+          # injection finds no command to reissue and silently does nothing.
+          EMIT_FRONTEND_COMMAND_LINES: YES
+          # The injection bundle copy writes into the built .app, which script
+          # sandboxing forbids — copy_bundle.sh detects it and stops with
+          # "unable to write to file system". Debug only; Release keeps the
+          # sandbox, and has no build phase that needs it off.
+          ENABLE_USER_SCRIPT_SANDBOXING: NO
+        Release:
+          GROVE_APS_ENVIRONMENT: production
+    preBuildScripts:
+      - name: Require production API config (Release)
+        basedOnDependencyAnalysis: false
+        script: |
+          # Account providers have no baked-in production credentials. A
+          # Release must receive the complete environment explicitly.
+          if [ "$CONFIGURATION" = "Release" ]; then
+            if [ -z "${SUPABASE_URL:-}" ]; then echo "error: SUPABASE_URL is required for Release account sign-in."; exit 1; fi
+            if [ -z "${SUPABASE_ANON_KEY:-}" ]; then echo "error: SUPABASE_ANON_KEY is required for Release account sign-in."; exit 1; fi
+            if [ -z "${GOOGLE_IOS_CLIENT_ID:-}" ]; then echo "error: GOOGLE_IOS_CLIENT_ID is required for Release account sign-in."; exit 1; fi
+            # The gateway rejects every request without the app key, so a Release
+            # without one could not scan, ask or sync. No key is baked into the
+            # source: supply it via Config/Secrets.xcconfig or the command line.
+            if [ -z "${GROVE_APP_KEY:-}" ]; then echo "error: GROVE_APP_KEY is required for Release. Set it in Config/Secrets.xcconfig (copy Config/Secrets.example.xcconfig) or .env.production."; exit 1; fi
+            if [ -z "${GOOGLE_REVERSED_CLIENT_ID:-}" ]; then echo "error: GOOGLE_REVERSED_CLIENT_ID is required for Release account sign-in."; exit 1; fi
+            case "$SUPABASE_URL" in
+              https://*) : ;;
+              *) echo "error: SUPABASE_URL must be an https URL in Release builds."; exit 1 ;;
+            esac
+            case "$GOOGLE_IOS_CLIENT_ID" in
+              ?*.apps.googleusercontent.com) : ;;
+              *) echo "error: GOOGLE_IOS_CLIENT_ID is not an iOS OAuth client id."; exit 1 ;;
+            esac
+            GOOGLE_CLIENT_PREFIX="${GOOGLE_IOS_CLIENT_ID%.apps.googleusercontent.com}"
+            EXPECTED_GOOGLE_SCHEME="com.googleusercontent.apps.$GOOGLE_CLIENT_PREFIX"
+            if [ "$GOOGLE_REVERSED_CLIENT_ID" != "$EXPECTED_GOOGLE_SCHEME" ]; then
+              echo "error: GOOGLE_REVERSED_CLIENT_ID must be $EXPECTED_GOOGLE_SCHEME for the configured client id."
+              exit 1
+            fi
+            # A Release that cannot reach RevenueCat cannot sell anything, and
+            # GrovePremiumStore reads "no catalogue" as "nothing is metered" —
+            # so a missing key would ship the whole app for free rather than
+            # fail visibly. Fail here instead.
+            if [ -z "${REVENUECAT_API_KEY:-}" ]; then
+              echo "error: REVENUECAT_API_KEY is required for Release. RevenueCat → Project settings → API keys → the public app key for Apple. Add it to .env.production."
+              exit 1
+            fi
+            # Secret keys can issue refunds and read every customer record.
+            # One pasted into the wrong variable would ship inside the binary.
+            case "$REVENUECAT_API_KEY" in
+              appl_*) : ;;
+              sk_*) echo "error: REVENUECAT_API_KEY is a RevenueCat secret key. Secret keys must never ship in a binary — use the public Apple SDK key (appl_…)."; exit 1 ;;
+              *) echo "error: REVENUECAT_API_KEY must be the public Apple SDK key, which begins with appl_."; exit 1 ;;
+            esac
+            # No gateway endpoint is compiled into the source: the analysis and
+            # sync URLs come from Config/Secrets.xcconfig or the command line, and
+            # a Release without them could not scan, ask or sync.
+            for NAME in GROVE_ANALYSIS_URL GROVE_SYNC_URL; do
+              eval "VALUE=\"\${$NAME:-}\""
+              case "$VALUE" in
+                "") echo "error: $NAME is required for Release. Set it in Config/Secrets.xcconfig (copy Config/Secrets.example.xcconfig) or pass it to xcodebuild."; exit 1 ;;
+                https://*) : ;;
+                *) echo "error: $NAME must be an https URL in Release builds."; exit 1 ;;
+              esac
+            done
+          fi
+    postBuildScripts:
+      - name: Strip dev-only Info.plist keys (Release)
+        # The processed Info.plist as an input forces this phase to run after
+        # plist processing (script phases always precede code signing), so the
+        # deletions can't be overwritten by a later ProcessInfoPlistFile task.
+        basedOnDependencyAnalysis: false
+        inputFiles:
+          - $(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)
+        script: |
+          # Release builds talk HTTPS to the production API only — remove the
+          # local-networking ATS relaxation and its usage description.
+          if [ "$CONFIGURATION" = "Release" ]; then
+            PLIST="$TARGET_BUILD_DIR/$INFOPLIST_PATH"
+            /usr/libexec/PlistBuddy -c "Delete :NSAppTransportSecurity" "$PLIST" 2>/dev/null || true
+            /usr/libexec/PlistBuddy -c "Delete :NSLocalNetworkUsageDescription" "$PLIST" 2>/dev/null || true
+          fi
+      - name: Copy injection bundle (Debug, on-device hot reload)
+        # InjectionNext.app offers to put this phase on the clipboard for you to
+        # paste into Xcode. Do not: `dev-phone.sh` runs `rm -rf Grove.xcodeproj
+        # && xcodegen generate` on every invocation, so anything added through
+        # the Xcode UI is destroyed on the next deploy. It belongs here.
+        #
+        # The script copies iOSDevInjection.bundle into the .app so the running
+        # app can load recompiled code, then records the expanded signing
+        # identity back into InjectionNext's own preferences — which is the real
+        # content of the app's "select your codesigning identity" step, done
+        # from the build that already knows the answer.
+        #
+        # It self-gates on Debug, so a Release build runs it and exits at the
+        # first line. Failure is deliberately non-fatal: a broken hot-reload
+        # helper must never be the reason a device build cannot ship.
+        basedOnDependencyAnalysis: false
+        script: |
+          COPY_BUNDLE="/Applications/InjectionNext.app/Contents/Resources/copy_bundle.sh"
+          if [ "$CONFIGURATION" = "Debug" ] && [ -x "$COPY_BUNDLE" ]; then
+            "$COPY_BUNDLE" || echo "warning: injection bundle copy failed; hot reload will be unavailable."
+          fi
+  GroveWatch:
+    # Modern single-target watch app (SwiftUI lifecycle, no extension).
+    # Plain `application`, not `application.watchapp2`: watchapp2 is the
+    # legacy stub-plus-extension architecture, and its build rules fight the
+    # compiled sources over who produces the executable.
+    type: application
+    platform: watchOS
+    deploymentTarget: "10.0"
+    sources:
+      - GroveWatch
+      - GroveWatchShared
+    dependencies:
+      - target: GroveWatchWidget
+    info:
+      path: GroveWatch/Info.plist
+      properties:
+        CFBundleDisplayName: Grove AI
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        # Marks this as a single-target watch app rather than a WatchKit
+        # app/extension pair.
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: nz.co.thinkingai.Grove
+    entitlements:
+      path: GroveWatch/GroveWatch.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.nz.co.thinkingai.Grove.watch
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: nz.co.thinkingai.Grove.watchkitapp
+        PROVISIONING_PROFILE_SPECIFIER: $(GROVE_WATCH_PROFILE_SPECIFIER)
+        # Must match the companion so the pair install and version together.
+        MARKETING_VERSION: 1.0.0
+        CURRENT_PROJECT_VERSION: 1
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_STYLE: Automatic
+  GroveWatchWidget:
+    type: app-extension
+    platform: watchOS
+    deploymentTarget: "10.0"
+    sources:
+      - GroveWatchWidget
+      - GroveWatchShared
+    info:
+      path: GroveWatchWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Grove Today
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: GroveWatchWidget/GroveWatchWidget.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.nz.co.thinkingai.Grove.watch
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: nz.co.thinkingai.Grove.watchkitapp.widget
+        PROVISIONING_PROFILE_SPECIFIER: $(GROVE_WATCH_WIDGET_PROFILE_SPECIFIER)
+        MARKETING_VERSION: 1.0.0
+        CURRENT_PROJECT_VERSION: 1
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
+        CODE_SIGN_STYLE: Automatic
+  GroveLiveActivity:
+    # Live Activities only — no Home Screen widgets. Everything it draws
+    # arrives in the ActivityKit content state, so it needs no App Group and
+    # no entitlements: the app is the only writer.
+    type: app-extension
+    platform: iOS
+    sources:
+      - GroveLiveActivity
+      # The ActivityAttributes contract, compiled into both sides.
+      - path: Grove/GroveLiveActivityAttributes.swift
+    info:
+      path: GroveLiveActivity/Info.plist
+      properties:
+        CFBundleDisplayName: Grove AI
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: nz.co.thinkingai.Grove.LiveActivity
+        TARGETED_DEVICE_FAMILY: "1"
+        PROVISIONING_PROFILE_SPECIFIER: $(GROVE_LIVE_ACTIVITY_PROFILE_SPECIFIER)
+        # Must match the containing app, or installation is refused.
+        MARKETING_VERSION: 1.0.0
+        CURRENT_PROJECT_VERSION: 1
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
+        CODE_SIGN_STYLE: Automatic
+  GroveWatchTests:
+    type: bundle.unit-test
+    platform: watchOS
+    deploymentTarget: "10.0"
+    sources:
+      - GroveWatchTests
+    dependencies:
+      - target: GroveWatch
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGNING_ALLOWED: YES
+        PRODUCT_BUNDLE_IDENTIFIER: nz.co.thinkingai.GroveWatchTests
+  GroveTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - GroveTests
+    dependencies:
+      - target: Grove
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGNING_ALLOWED: YES
+        PRODUCT_BUNDLE_IDENTIFIER: nz.co.thinkingai.GroveTests
+        # Hosted by Grove, so it must match the app's iPhone-only family.
+        TARGETED_DEVICE_FAMILY: "1"
+  GroveUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - GroveUITests
+    dependencies:
+      - target: Grove
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGNING_ALLOWED: YES
+        PRODUCT_BUNDLE_IDENTIFIER: nz.co.thinkingai.GroveUITests
+
+# Keep every Watch action on the production configuration. The workspace's
+# physical-device policy does not permit a Debug Watch build as a test fallback.
+schemes:
+  # Read-only visual tour (scripts/visual-tour.sh): the app and its UI tests
+  # in Release only. The unit tests use DEBUG-only seams and cannot build here.
+  GroveVisualTour:
+    build:
+      targets:
+        Grove: all
+        GroveUITests: [test]
+    run:
+      config: Release
+    test:
+      config: Release
+      targets:
+        - GroveUITests
+  GroveWatch:
+    build:
+      targets:
+        GroveWatch: all
+    run:
+      config: Release
+    test:
+      config: Release
+      targets:
+        - GroveWatchTests
+    profile:
+      config: Release
+    analyze:
+      config: Release
+    archive:
+      config: Release

@@ -1,0 +1,24 @@
+// Base build settings for the Grove iOS app target (wired in project.yml →
+// targets.Grove.configFiles). Committed; holds no secrets.
+//
+// Per-developer values live in Config/Secrets.xcconfig, which is gitignored.
+// Copy Config/Secrets.example.xcconfig to Config/Secrets.xcconfig and fill it
+// in. `#include?` makes the file optional, so a fresh clone still builds; the
+// app then runs with gateway requests disabled (see GroveServiceFactory) and
+// Release builds stop with an error.
+//
+// Values passed on the xcodebuild command line (scripts/prod-phone.sh,
+// archive-appstore.sh, testflight-local.sh, CI) take precedence over both files.
+
+GROVE_APP_KEY =
+// Production gateway origins. Deliberately empty here: no server endpoint is
+// committed. Set them in Config/Secrets.xcconfig.
+GROVE_ANALYSIS_URL =
+GROVE_SYNC_URL =
+
+// Apple developer team used to sign every target (applied project-wide, see
+// project.yml `configFiles`). Override in Config/Secrets.xcconfig to build
+// under a different team; you will also need bundle IDs registered to it.
+DEVELOPMENT_TEAM = Q5688GHWHJ
+
+#include? "Secrets.xcconfig"

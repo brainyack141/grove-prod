@@ -1,0 +1,587 @@
+import XCTest
+import SwiftUI
+import UIKit
+@testable import Grove
+
+/// TEMPORARY (branch icp-fixes): renders real screens from inside the hosted
+/// unit-test run so the ICP fixes can be inspected visually before this file is
+/// removed again.
+///
+/// Set `GROVE_SIMSHOT_DIR` to an absolute directory to run it; without that
+/// variable the test skips, so the ordinary CI job stays green. Every screen is
+/// captured once per appearance variant — light, dark and large text — and
+/// written as `<variant>-<name>.png`, with a `manifest.txt` listing every file
+/// and any screen that could not be set up.
+///
+/// Every screen is hosted in a freshly-created `UIHostingController` on one
+/// reusable `UIWindow`, with a fresh store and session, so state never leaks
+/// from one capture into the next. All screens are non-throwing and independent:
+/// one failing to render must not stop the rest.
+@MainActor
+final class SimScreenshotTests: XCTestCase {
+    private static let demoAccountID = "ui-test-demo-simshots"
+
+    private enum Variant: CaseIterable, Equatable {
+        case light
+        case dark
+        case largeText
+
+        var prefix: String {
+            switch self {
+            case .light: "light"
+            case .dark: "dark"
+            case .largeText: "ax"
+            }
+        }
+
+        var style: UIUserInterfaceStyle {
+            switch self {
+            case .light, .largeText: .light
+            case .dark: .dark
+            }
+        }
+
+        var dynamicType: DynamicTypeSize? {
+            switch self {
+            case .light, .dark: nil
+            case .largeText: .accessibility3
+            }
+        }
+    }
+
+    /// A screenshot render is only meaningful on a real scene.
+    private var window: UIWindow?
+    private var variant: Variant = .light
+    private var screenshotDirectory: URL?
+    private var capturedNames: [String] = []
+    private var missingLines: [String] = []
+
+    private var router: IntentRouter { IntentRouter.shared }
+
+    func testCaptureScreens() async throws {
+        let environment = ProcessInfo.processInfo.environment
+        guard let rawDirectory = environment["GROVE_SIMSHOT_DIR"], !rawDirectory.isEmpty else {
+            throw XCTSkip("Set GROVE_SIMSHOT_DIR to capture screenshots")
+        }
+        let directory = URL(fileURLWithPath: rawDirectory, isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        screenshotDirectory = directory
+        capturedNames = []
+        missingLines = ["MISSING watch-* watchOS target not hostable from GroveTests"]
+
+        GrovePremiumStore.bootstrap()
+        // The app's DEBUG launch-argument bypass does not apply to a hosted
+        // unit test, so grant consent before any scan or Ask screen is shown.
+        AIProcessingConsent.grant()
+        // Keep the one-time Premium takeover out of the screenshots.
+        UserDefaults.standard.removeObject(forKey: GroveDefaults.firstPlantNotificationPrimerPlantID)
+        GrovePremiumOffer.complete()
+        UserDefaults.standard.set(0, forKey: GroveDefaults.premiumOfferMeaningfulUseCount)
+
+        for appearance in Variant.allCases {
+            variant = appearance
+            await captureAllScreens()
+        }
+    }
+
+    private func captureAllScreens() async {
+        // The welcome screen must not resume a draft left by an earlier run.
+        UserDefaults.standard.removeObject(forKey: "grove.onboarding.draft.v1")
+        // A staged first plant left by an earlier run would block the
+        // signed-in shell behind its recovery screen.
+        try? await PendingFirstPlantStore.shared.discardUnclaimed()
+
+        // 10 — signed-out welcome.
+        resetRouter()
+        let (welcomeSession, welcomeStore) = makeSignedOutContext()
+        await show(
+            hosted(
+                RootView(pendingFirstPlantStore: .shared),
+                session: welcomeSession,
+                store: welcomeStore
+            ),
+            wait: 7
+        )
+        capture("10-welcome")
+
+        // 11–16 — onboarding steps. The private `Draft` type cannot be encoded
+        // directly, but its Codable key names are stable, so a minimal draft is
+        // written as JSON and read back by `OnboardingModel`. Each step is then
+        // rendered as its own view (rather than through the container) so the
+        // container's pending-plant validation cannot bounce the screen back to
+        // the camera.
+        await stageDemoFirstPlant()
+        let onboardingSteps: [(String, OnboardingModel.Step, OnboardingModel.Route)] = [
+            ("11-onb-firstPlantDetails", .firstPlantDetails, .newAccount),
+            ("12-onb-firstPlantRoom", .firstPlantRoom, .newAccount),
+            ("13-onb-location", .location, .newAccount),
+            ("14-onb-signIn", .signIn, .newAccount),
+            ("15-onb-emailEntry", .emailEntry, .newAccount),
+            ("16-onb-explore", .explore, .manual)
+        ]
+        for (name, step, route) in onboardingSteps {
+            resetRouter()
+            writeOnboardingDraft(step: step.rawValue, route: route.rawValue)
+            let (session, store) = makeSignedOutContext()
+            let model = OnboardingModel()
+            model.step = step
+            model.route = route
+            model.firstName = "Alex"
+            await show(hosted(onboardingView(step, model: model), session: session, store: store), wait: 4)
+            capture(name)
+        }
+        UserDefaults.standard.removeObject(forKey: "grove.onboarding.draft.v1")
+        try? await PendingFirstPlantStore.shared.discardUnclaimed()
+
+        // 20 — Today.
+        resetRouter()
+        // The demo root needs the shortest wait that still lets its fixtures
+        // settle, because it is shown again for every pushed screen.
+        await show(demoRoot(), wait: 5)
+        capture("20-today")
+
+        // 21–29 — pushed destinations, each from a fresh root.
+        await capturePushed("21-care-queue", route: .care)
+        await capturePushed("22-plant-detail", route: .plant(UUID(uuidString: "10000000-0000-0000-0000-000000000004")!))
+        await capturePushed("23-plant-detail-monty", route: .plant(UUID(uuidString: "10000000-0000-0000-0000-000000000001")!))
+        await capturePushed("24-add-plant", route: .addPlant)
+        await capturePushed("25-settings", route: .settings)
+        await capturePushed("26-journey", route: .journey)
+        await capturePushed("27-achievements", route: .achievements)
+        await capturePushed("28-plan", route: .plan)
+        await capturePushed("29-activity", route: .activity)
+
+        // 30–32 — the remaining tabs.
+        await captureTab("30-ask", tab: .ask)
+        await captureTab("31-friends", tab: .friends)
+        await captureTab("32-mygrove", tab: .profile)
+
+        // 33–34 — My Grove scrolled one screen down, then to the bottom.
+        await captureTab("33-mygrove-scrolled", tab: .profile) { [self] in
+            await scrollMainScrollView(toBottom: false)
+        }
+        await scrollMainScrollView(toBottom: true)
+        capture("34-mygrove-bottom")
+
+        // 35–49 — the remaining pushed destinations. Numbering skips 40–42 and
+        // 50–52, which belong to the paywalls, empty Today and the scan error.
+        let demoPlantID = UUID(uuidString: "10000000-0000-0000-0000-000000000004")!
+        await capturePushed("35-editPlant", route: .editPlant(demoPlantID))
+        await capturePushed("36-plantHistory", route: .plantHistory(demoPlantID))
+        await capturePushed("37-plantStory", route: .plantStory(demoPlantID))
+        await capturePushed("38-plantDiagnosis", route: .plantDiagnosis(demoPlantID))
+        await capturePushed("39-checkIn", route: .checkIn(demoPlantID))
+        await capturePushed("43-sitting", route: .sitting)
+        await capturePushed("44-sittingLink", route: .sittingLink)
+        await capturePushed("45-friendInvitations", route: .friendInvitations)
+        await capturePushed("46-editProfile", route: .editProfile)
+        await capturePushed("47-groveLocation", route: .groveLocation)
+        await capturePushed("48-scanHistory", route: .scanHistory)
+        await capturePushed("49-groveScore", route: .groveScore)
+
+        // 40–42 — paywalls, hosted directly.
+        resetRouter()
+        let (paywallSession, paywallStore) = makeDemoContext()
+        await show(
+            hosted(
+                GrovePremiumOfferView(subject: nil, onFinish: {}),
+                session: paywallSession,
+                store: paywallStore
+            ),
+            wait: 3
+        )
+        capture("40-paywall")
+
+        resetRouter()
+        let (askSession, askStore) = makeDemoContext()
+        await show(
+            hosted(AskPaywallSheet(reason: .browsing), session: askSession, store: askStore),
+            wait: 3
+        )
+        capture("41-ask-paywall")
+
+        resetRouter()
+        let (slotsSession, slotsStore) = makeDemoContext()
+        await show(
+            hosted(FriendSlotsPaywallSheet(), session: slotsSession, store: slotsStore),
+            wait: 3
+        )
+        capture("42-friend-slots-paywall")
+
+        // 50 — a signed-in non-demo account with no plants. A fresh defaults
+        // suite means no account snapshot and no demo fixtures; activation for
+        // a `.local` session clears the store's in-memory fixtures.
+        resetRouter()
+        let (emptySession, emptyStore) = makeEmptyContext()
+        await show(
+            hosted(RootView(pendingFirstPlantStore: .shared), session: emptySession, store: emptyStore),
+            wait: 8
+        )
+        capture("50-empty-today")
+
+        // 51 — the scan error surface. `ScanResultView` renders whatever its
+        // session's state says, so a session holding an add-mode draft in the
+        // failed state shows the error without a camera or a network call.
+        // Its `.task` only analyses from `.ready`, so the failure stays put.
+        resetRouter()
+        let (scanSession, scanStore) = makeDemoContext()
+        let failedScan = ScanSession(storage: UserDefaults(suiteName: "sim-shots-scan-\(UUID().uuidString)")!)
+        failedScan.draft = ScanMediaDraft(
+            id: UUID(),
+            mode: .add,
+            createdAt: Date(),
+            fileURL: FileManager.default.temporaryDirectory.appendingPathComponent("simshot-scan-error.jpg"),
+            pixelWidth: 800,
+            pixelHeight: 800
+        )
+        failedScan.state = .failure(for: PlantAnalysisError.unavailable)
+        await show(
+            hosted(
+                // Applied inside `hosted`, so this session wins over the one
+                // `hosted` injects for every other screen. The result is
+                // pushed from a root, the way the app reaches it, so the
+                // navigation bar's Back control is part of the capture.
+                PushedScanResultHost(mode: .add)
+                    .environment(failedScan),
+                session: scanSession,
+                store: scanStore
+            ),
+            wait: 3
+        )
+        capture("51-scan-error")
+
+        // 52 — the photo-processing consent sheet, hosted directly.
+        resetRouter()
+        let (consentSession, consentStore) = makeDemoContext()
+        await show(
+            hosted(
+                AIProcessingConsentView(onAgree: {}, onDecline: {}),
+                session: consentSession,
+                store: consentStore
+            ),
+            wait: 3
+        )
+        capture("52-ai-consent")
+
+        window?.isHidden = true
+    }
+
+    // MARK: - Hosting
+
+    /// Replaces the root with a fresh hosting controller and lets the screen
+    /// settle. Non-throwing so one capture cannot abort the rest.
+    private func show<V: View>(_ view: V, wait: Double) async {
+        guard let window = ensureWindow() else { return }
+        window.overrideUserInterfaceStyle = variant.style
+        window.rootViewController = UIHostingController(rootView: view)
+        window.makeKeyAndVisible()
+        window.layoutIfNeeded()
+        try? await Task.sleep(for: .seconds(wait))
+    }
+
+    private func ensureWindow() -> UIWindow? {
+        if let window { return window }
+        guard let scene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene }).first else {
+            print("SIMSHOT-NOTE no window scene")
+            return nil
+        }
+        let window = UIWindow(windowScene: scene)
+        window.frame = scene.coordinateSpace.bounds
+        self.window = window
+        return window
+    }
+
+    private func capture(_ name: String) {
+        let entry = "\(variant.prefix)-\(name)"
+        guard let window else {
+            noteMissing(name, reason: "no window scene")
+            return
+        }
+        guard let directory = screenshotDirectory else {
+            noteMissing(name, reason: "no screenshot directory")
+            return
+        }
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 2
+        let image = UIGraphicsImageRenderer(bounds: window.bounds, format: format).image { _ in
+            _ = window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+        }
+        guard let data = image.pngData() else {
+            noteMissing(name, reason: "could not encode PNG")
+            return
+        }
+        let url = directory.appendingPathComponent("\(entry).png")
+        do {
+            try data.write(to: url)
+        } catch {
+            noteMissing(name, reason: "could not write PNG")
+            return
+        }
+        let attachment = XCTAttachment(data: data, uniformTypeIdentifier: "public.png")
+        attachment.name = entry
+        attachment.lifetime = .keepAlways
+        add(attachment)
+        capturedNames.append(entry)
+        print("SIMSHOT saved \(entry)")
+        writeManifest()
+    }
+
+    private func noteMissing(_ name: String, reason: String) {
+        let line = "MISSING \(variant.prefix)-\(name) \(reason)"
+        missingLines.append(line)
+        print("SIMSHOT-NOTE \(line)")
+        writeManifest()
+    }
+
+    private func writeManifest() {
+        guard let directory = screenshotDirectory else { return }
+        let lines = capturedNames + missingLines
+        let text = lines.isEmpty ? "" : lines.joined(separator: "\n") + "\n"
+        try? text.write(
+            to: directory.appendingPathComponent("manifest.txt"),
+            atomically: true,
+            encoding: .utf8
+        )
+    }
+
+    // MARK: - Screens
+
+    private func capturePushed(_ name: String, route: AppRoute) async {
+        resetRouter()
+        await show(demoRoot(), wait: 5)
+        router.pushedRoute = route
+        try? await Task.sleep(for: .seconds(3))
+        capture(name)
+    }
+
+    private func captureTab(
+        _ name: String,
+        tab: AppTab,
+        beforeCapture: (() async -> Void)? = nil
+    ) async {
+        resetRouter()
+        await show(demoRoot(), wait: 5)
+        router.requestedTab = tab
+        try? await Task.sleep(for: .seconds(3))
+        await beforeCapture?()
+        capture(name)
+    }
+
+    /// Scrolls the screen's main vertical scroll view — the largest one in
+    /// the window that can actually scroll vertically — one screen down, or to
+    /// the bottom, then lets lazy content settle. Non-throwing: with no such
+    /// scroll view the capture simply shows the unscrolled screen.
+    private func scrollMainScrollView(toBottom: Bool) async {
+        guard let window else { return }
+        let candidates = scrollViews(in: window).filter {
+            !$0.isHidden && $0.contentSize.height > $0.bounds.height + 1
+        }
+        guard let scrollView = candidates.max(by: {
+            $0.bounds.width * $0.bounds.height < $1.bounds.width * $1.bounds.height
+        }) else {
+            print("SIMSHOT-NOTE no vertical scroll view to scroll")
+            return
+        }
+        let insets = scrollView.adjustedContentInset
+        let minY = -insets.top
+        let maxY = max(minY, scrollView.contentSize.height + insets.bottom - scrollView.bounds.height)
+        let target = toBottom ? maxY : min(maxY, scrollView.contentOffset.y + scrollView.bounds.height)
+        scrollView.setContentOffset(CGPoint(x: scrollView.contentOffset.x, y: target), animated: false)
+        try? await Task.sleep(for: .seconds(1.5))
+        // Lazy stacks can grow the content once they render what scrolled in,
+        // so a scroll to the bottom is re-measured and repeated once.
+        if toBottom {
+            let settledMaxY = max(minY, scrollView.contentSize.height + insets.bottom - scrollView.bounds.height)
+            if settledMaxY > scrollView.contentOffset.y + 1 {
+                scrollView.setContentOffset(CGPoint(x: scrollView.contentOffset.x, y: settledMaxY), animated: false)
+                try? await Task.sleep(for: .seconds(1.5))
+            }
+        }
+    }
+
+    private func scrollViews(in view: UIView) -> [UIScrollView] {
+        var found: [UIScrollView] = []
+        if let scrollView = view as? UIScrollView { found.append(scrollView) }
+        for subview in view.subviews { found += scrollViews(in: subview) }
+        return found
+    }
+
+    @ViewBuilder
+    private func onboardingView(_ step: OnboardingModel.Step, model: OnboardingModel) -> some View {
+        switch step {
+        case .firstPlantDetails:
+            OnboardingFirstPlantResultView(model: model)
+        case .firstPlantRoom:
+            OnboardingRoomStepView(model: model)
+        case .location:
+            OnboardingHomeStepView(model: model)
+        case .signIn:
+            OnboardingSignInView(model: model)
+        case .emailEntry:
+            OnboardingEmailEntryView(model: model)
+        case .explore:
+            OnboardingExploreView(model: model)
+        default:
+            EmptyView()
+        }
+    }
+
+    private func demoRoot() -> some View {
+        let (session, store) = makeDemoContext()
+        return hosted(RootView(pendingFirstPlantStore: .shared), session: session, store: store)
+    }
+
+    // MARK: - Environment
+
+    private func hosted<V: View>(_ view: V, session: SessionService, store: GroveStore) -> some View {
+        view
+            .environment(router)
+            .environment(store)
+            .environment(ScanSession(
+                analysisClient: GroveServiceFactory.makePlantAnalysisClient(session: session),
+                speciesSearchClient: GroveServiceFactory.makeSpeciesSearchClient(session: session)
+            ))
+            .environment(session)
+            .environment(GroveServiceFactory.makeSyncEngine(session: session))
+            .environment(ConnectivityMonitor())
+            .environment(NotificationService())
+            .environment(AskSession(client: GroveServiceFactory.makeBotanistClient(session: session)))
+            .environment(GrovePremiumStore())
+            .environment(WeatherService())
+            // `GrovePrimaryActionButton` stays at opacity 0 until the scene is
+            // active. A hosted window in the test run reports an inactive
+            // scene, which is why the centre scan button was missing from the
+            // root captures. The app itself reveals it on a real active scene.
+            .environment(\.scenePhase, .active)
+            .environment(\.dynamicTypeSize, variant.dynamicType ?? .large)
+            .preferredColorScheme(variant == .dark ? .dark : .light)
+    }
+
+    private func makeSignedOutContext() -> (SessionService, GroveStore) {
+        let defaults = UserDefaults(suiteName: "sim-shots-signed-out-\(UUID().uuidString)")!
+        return (
+            SessionService(storage: defaults, authClientProvider: { nil }),
+            GroveStore(storage: defaults)
+        )
+    }
+
+    private func makeDemoContext() -> (SessionService, GroveStore) {
+        let defaults = UserDefaults(suiteName: "sim-shots-demo-\(UUID().uuidString)")!
+        let demo = UserSession(accountID: Self.demoAccountID, mode: .demo, displayName: "Alex")
+        defaults.set(try? JSONEncoder().encode(demo), forKey: "grove.user.session.v1")
+        // Keep the post-signup name/location gate from covering the shell.
+        UserDefaults.standard.set(0, forKey: PostSignupSetupProgress.key(Self.demoAccountID))
+        let session = SessionService(storage: defaults, authClientProvider: { nil })
+        return (session, GroveStore(storage: defaults))
+    }
+
+    private func makeEmptyContext() -> (SessionService, GroveStore) {
+        let defaults = UserDefaults(suiteName: "sim-shots-empty-\(UUID().uuidString)")!
+        let empty = UserSession(
+            accountID: "ui-test-empty-\(UUID().uuidString)",
+            mode: .local,
+            displayName: "Alex"
+        )
+        defaults.set(try? JSONEncoder().encode(empty), forKey: "grove.user.session.v1")
+        let session = SessionService(storage: defaults, authClientProvider: { nil })
+        return (session, GroveStore(storage: defaults))
+    }
+
+    private func resetRouter() {
+        router.requestedTab = nil
+        router.pendingCareAction = nil
+        router.requestedPlantID = nil
+        router.requestedCheckInPlantID = nil
+        router.requestedScan = nil
+        router.requestedRoute = nil
+        router.requestedRouteTab = nil
+        router.pushedRoute = nil
+    }
+
+    // MARK: - Onboarding fixtures
+
+    /// Writes a minimal `OnboardingModel.Draft` JSON. `Draft` is private, but
+    /// its synthesized Codable keys are the property names below.
+    private func writeOnboardingDraft(step: String, route: String) {
+        let draft: [String: Any] = [
+            "flowVersion": 7,
+            "step": step,
+            "route": route,
+            "firstName": "Alex",
+            "overcome": [String]()
+        ]
+        guard let data = try? JSONSerialization.data(withJSONObject: draft) else { return }
+        UserDefaults.standard.set(data, forKey: "grove.onboarding.draft.v1")
+    }
+
+    private func stageDemoFirstPlant() async {
+        let size = CGSize(width: 800, height: 800)
+        let image = UIGraphicsImageRenderer(size: size).image { context in
+            UIColor.systemGreen.setFill()
+            context.fill(CGRect(origin: .zero, size: size))
+        }
+        guard let data = image.jpegData(compressionQuality: 0.85) else { return }
+        let photoURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("simshot-first-plant-\(UUID().uuidString).jpg")
+        guard (try? data.write(to: photoURL)) != nil else { return }
+
+        let analysis = PlantAnalysisResult(
+            identification: PlantIdentificationResult(
+                commonName: "Swiss cheese plant",
+                scientificName: "Monstera deliciosa",
+                confidence: 93,
+                alternatives: [],
+                distinguishingTraits: ["Split leaves"]
+            ),
+            condition: PlantConditionResult(
+                healthScore: 88,
+                healthBand: .thriving,
+                confidence: 90,
+                summary: "Even green growth and strong posture.",
+                positiveSigns: ["Even colour"],
+                concerns: [],
+                possibleCauses: [],
+                nextActions: ["Keep in bright, indirect light"]
+            ),
+            providerName: "Grove demo",
+            limitations: []
+        )
+        let media = ScanMediaDraft(
+            id: UUID(),
+            mode: .add,
+            createdAt: Date(),
+            fileURL: photoURL,
+            pixelWidth: 800,
+            pixelHeight: 800
+        )
+        _ = try? await PendingFirstPlantStore.shared.stage(
+            scanID: UUID(),
+            mediaDraft: media,
+            analysis: analysis,
+            nickname: "Fern",
+            location: "Living room"
+        )
+    }
+}
+
+/// A scan result pushed onto a real navigation stack.
+///
+/// `ScanResultView` only has a way out through the bar Back control that the
+/// stack supplies. Hosting it as a stack root drew the error state with no exit
+/// at all, which was a capture artefact, not the app's presentation.
+private struct PushedScanResultHost: View {
+    @State private var path: [AppRoute]
+
+    init(mode: ScanMode) {
+        _path = State(initialValue: [.scanResult(mode)])
+    }
+
+    var body: some View {
+        NavigationStack(path: $path) {
+            Color.clear
+                .navigationTitle("Scan")
+                .withAppDestinations(path: $path)
+        }
+    }
+}

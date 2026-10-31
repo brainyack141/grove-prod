@@ -1,0 +1,434 @@
+# Archive Grove (Release) and upload it to TestFlight on every push to main
+# that touches the app. Internal testers get the build ~5–15 min after upload.
+#
+# ── Signing ───────────────────────────────────────────────────────────────
+# This workflow signs in one of two modes, chosen automatically by which
+# secrets exist.
+#
+# MANUAL (preferred). One distribution certificate and one App Store
+# provisioning profile for each signed bundle, created once by hand and stored
+# as secrets. The runner imports them and signs against them. Nothing is created
+# at Apple per run, so the account's certificate count never grows.
+#
+#   BUILD_CERTIFICATE_BASE64    — base64 of the exported .p12
+#   P12_PASSWORD                — password set when exporting the .p12
+#   PROVISIONING_PROFILE_BASE64 — base64 of the .mobileprovision
+#   WATCH_PROVISIONING_PROFILE_BASE64 — profile for .Grove.watchkitapp
+#   WATCH_WIDGET_PROVISIONING_PROFILE_BASE64 — profile for .watchkitapp.widget
+#
+# CLOUD (fallback). No certificate secrets set, so xcodebuild's cloud
+# signing mints signing assets on the fly with -allowProvisioningUpdates.
+# This works, but every run asks Apple for a *new* certificate — the runner
+# is ephemeral, so it never finds the previous one. After roughly a dozen
+# runs the account hits its certificate cap and every archive fails with
+# "Your account has reached the maximum number of certificates" until
+# certificates are revoked by hand. Treat this mode as a stopgap.
+#
+# One-time setup for MANUAL mode, on a Mac with Xcode signed in to the team:
+#
+#   1. Certificate. Xcode → Settings → Accounts → <team> → Manage
+#      Certificates → "+" → Apple Distribution. (If the account is at its
+#      cap, revoke unused ones first at developer.apple.com → Certificates.)
+#      Then Keychain Access → My Certificates → right-click the new "Apple
+#      Distribution: … (Q5688GHWHJ)" → Export → .p12, and set a password.
+#        base64 -i Certificates.p12 | pbcopy   → BUILD_CERTIFICATE_BASE64
+#        the password you chose                → P12_PASSWORD
+#
+#   2. Profile. developer.apple.com → Profiles → "+" → Distribution → App
+#      Store Connect → App ID nz.co.thinkingai.Grove → the certificate from
+#      step 1 → download. The App ID must have Sign in with Apple enabled,
+#      because Grove.entitlements declares it.
+#        base64 -i Grove_App_Store.mobileprovision | pbcopy
+#                                              → PROVISIONING_PROFILE_BASE64
+#      Register the App Group group.nz.co.thinkingai.Grove.watch and enable it
+#      on both Watch identifiers. Create and encode two more App Store profiles:
+#        nz.co.thinkingai.Grove.watchkitapp
+#                                              → WATCH_PROVISIONING_PROFILE_BASE64
+#        nz.co.thinkingai.Grove.watchkitapp.widget
+#                                              → WATCH_WIDGET_PROVISIONING_PROFILE_BASE64
+#
+#   3. Add all five under Settings → Secrets and variables → Actions.
+#
+# The certificate expires after a year and the profile after a year; both
+# are re-created and re-uploaded the same way.
+#
+# ── App Store Connect API key (required in both modes) ────────────────────
+# The upload itself always authenticates with an API key:
+#
+#   ASC_KEY_ID      — App Store Connect API key ID
+#   ASC_ISSUER_ID   — App Store Connect API issuer ID
+#   ASC_API_KEY_P8  — full contents of the downloaded AuthKey_<KEY_ID>.p8
+#
+# Create it in App Store Connect → Users and Access → Integrations → App
+# Store Connect API → Team Keys → Generate. In manual mode the key only
+# uploads, so App Manager is enough; cloud mode additionally needs Admin so
+# xcodebuild may create signing assets.
+#
+# One-time prerequisites in App Store Connect:
+#   1. Bundle ID nz.co.thinkingai.Grove registered (developer.apple.com →
+#      Identifiers) — automatic signing may already have created it.
+#   2. An app record for that bundle ID (App Store Connect → Apps → “+”).
+#
+# ── Account services (required) ───────────────────────────────────────────
+# Add these repository secrets as well. Release builds deliberately have no
+# baked-in auth credentials, and the workflow verifies the hosted email
+# templates before archiving so a link-only deployment cannot ship behind a
+# six-digit-code screen:
+#
+#   SUPABASE_URL, SUPABASE_ANON_KEY
+#   GOOGLE_IOS_CLIENT_ID, GOOGLE_REVERSED_CLIENT_ID
+#   SUPABASE_ACCESS_TOKEN — personal access token used read-only by the
+#                           hosted Auth configuration preflight
+#   GROVE_APP_KEY         — the gateway's X-Grove-App-Key value (no longer
+#                           compiled into the source; see Config/)
+#   GROVE_ANALYSIS_URL    — analysis gateway origin, e.g.
+#                           https://<project-ref>.supabase.co/functions/v1/
+#   GROVE_SYNC_URL        — data-sync API, e.g.
+#                           https://<project-ref>.supabase.co/functions/v1/api/v1/
+#                           (no server endpoint is committed to the repo)
+
+name: TestFlight
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Grove/**"
+      - "GroveWatch/**"
+      - "GroveWatchShared/**"
+      - "GroveWatchTests/**"
+      - "GroveWatchWidget/**"
+      - "project.yml"
+      - "scripts/check-production-gateway.sh"
+      - "scripts/apply-auth-email.py"
+      - "scripts/ExportOptionsTestFlight.plist"
+      - "supabase/templates/**"
+      - ".github/workflows/testflight.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: testflight
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    name: Archive & upload to TestFlight
+    # macOS 26 image so the toolchain matches local development (Xcode 26.x) —
+    # the camera code uses concurrency semantics Xcode 16 rejects.
+    runs-on: macos-26
+    timeout-minutes: 60
+    # Only contexts available before a runner is assigned may appear here.
+    # `runner` is not one of them: a ${{ runner.* }} expression at job level
+    # fails the whole workflow at parse time, before any job starts, and the
+    # run reports "failure" with no jobs and no log to read. Steps below use
+    # $RUNNER_TEMP, which the runner exports, instead.
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      GOOGLE_IOS_CLIENT_ID: ${{ secrets.GOOGLE_IOS_CLIENT_ID }}
+      GOOGLE_REVERSED_CLIENT_ID: ${{ secrets.GOOGLE_REVERSED_CLIENT_ID }}
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      GROVE_APP_KEY: ${{ secrets.GROVE_APP_KEY }}
+      GROVE_ANALYSIS_URL: ${{ secrets.GROVE_ANALYSIS_URL }}
+      GROVE_SYNC_URL: ${{ secrets.GROVE_SYNC_URL }}
+    steps:
+      - name: Require App Store Connect secrets
+        env:
+          ASC_API_KEY_P8: ${{ secrets.ASC_API_KEY_P8 }}
+        run: |
+          if [ -z "$ASC_KEY_ID" ] || [ -z "$ASC_ISSUER_ID" ] || [ -z "$ASC_API_KEY_P8" ]; then
+            echo "::error::Missing ASC_KEY_ID / ASC_ISSUER_ID / ASC_API_KEY_P8 repository secrets. Generate an App Store Connect API key and add all three — see the header of this workflow file."
+            exit 1
+          fi
+
+          for NAME in SUPABASE_URL SUPABASE_ANON_KEY GOOGLE_IOS_CLIENT_ID GOOGLE_REVERSED_CLIENT_ID SUPABASE_ACCESS_TOKEN GROVE_APP_KEY GROVE_ANALYSIS_URL GROVE_SYNC_URL; do
+            if [ -z "${!NAME:-}" ]; then
+              echo "::error::Missing $NAME repository secret. Release sign-in, the gateway endpoints and the hosted preflights all require it — see the header of this workflow."
+              exit 1
+            fi
+          done
+
+      # Manual signing needs the certificate plus a profile for all three signed
+      # bundles. Anything less
+      # falls back to cloud signing rather than half-configuring the build,
+      # so a partially-filled setup is loud instead of mysterious.
+      - name: Choose signing mode
+        id: signing
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
+          WATCH_PROVISIONING_PROFILE_BASE64: ${{ secrets.WATCH_PROVISIONING_PROFILE_BASE64 }}
+          WATCH_WIDGET_PROVISIONING_PROFILE_BASE64: ${{ secrets.WATCH_WIDGET_PROVISIONING_PROFILE_BASE64 }}
+        run: |
+          PRESENT=0
+          [ -n "$BUILD_CERTIFICATE_BASE64" ] && PRESENT=$((PRESENT + 1))
+          [ -n "$P12_PASSWORD" ] && PRESENT=$((PRESENT + 1))
+          [ -n "$PROVISIONING_PROFILE_BASE64" ] && PRESENT=$((PRESENT + 1))
+          [ -n "$WATCH_PROVISIONING_PROFILE_BASE64" ] && PRESENT=$((PRESENT + 1))
+          [ -n "$WATCH_WIDGET_PROVISIONING_PROFILE_BASE64" ] && PRESENT=$((PRESENT + 1))
+
+          if [ "$PRESENT" -eq 5 ]; then
+            echo "mode=manual" >> "$GITHUB_OUTPUT"
+            echo "Signing all three bundles manually with the stored distribution certificate."
+          else
+            echo "mode=cloud" >> "$GITHUB_OUTPUT"
+            if [ "$PRESENT" -gt 0 ]; then
+              echo "::warning::Only $PRESENT of 5 manual-signing secrets are set — falling back to cloud signing. The iPhone app, Watch app and Watch widget each need their own profile."
+            fi
+            echo "::notice::Cloud signing: this run asks Apple for a new certificate and will start failing once the account hits its certificate cap. See the header of .github/workflows/testflight.yml to switch to manual signing."
+          fi
+
+      - uses: actions/checkout@v4
+
+      - name: Verify production intelligence contracts
+        env:
+          GROVE_ANALYSIS_BASE_URL: ${{ secrets.GROVE_ANALYSIS_URL }}
+          GROVE_API_BASE_URL: ${{ secrets.GROVE_SYNC_URL }}
+        run: bash scripts/check-production-gateway.sh
+
+      - name: Verify production account email configuration
+        run: python3 scripts/apply-auth-email.py --check
+
+      - name: Select newest Xcode 26
+        run: |
+          sudo xcode-select -s "$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)/Contents/Developer"
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: rm -rf Grove.xcodeproj && xcodegen generate
+
+      - name: Write App Store Connect API key
+        env:
+          ASC_API_KEY_P8: ${{ secrets.ASC_API_KEY_P8 }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/asc"
+          printf '%s\n' "$ASC_API_KEY_P8" > "$RUNNER_TEMP/asc/AuthKey_${ASC_KEY_ID}.p8"
+
+      # Imports the distribution certificate into a throwaway keychain and
+      # installs the profile where Xcode looks for it. The keychain is
+      # deleted by the cleanup step, whatever happens after this.
+      - name: Import signing certificate and profiles
+        if: steps.signing.outputs.mode == 'manual'
+        id: profile
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
+          WATCH_PROVISIONING_PROFILE_BASE64: ${{ secrets.WATCH_PROVISIONING_PROFILE_BASE64 }}
+          WATCH_WIDGET_PROVISIONING_PROFILE_BASE64: ${{ secrets.WATCH_WIDGET_PROVISIONING_PROFILE_BASE64 }}
+        run: |
+          set -euo pipefail
+
+          CERT_PATH="$RUNNER_TEMP/certificate.p12"
+          KEYCHAIN_PATH="$RUNNER_TEMP/signing.keychain-db"
+          KEYCHAIN_PASSWORD="$(uuidgen)"
+
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode > "$CERT_PATH"
+
+          # A keychain of our own: the runner's login keychain is shared with
+          # the rest of the job, and this one gets destroyed at the end.
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          # Without this, codesign blocks on a GUI prompt for keychain access.
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH" > /dev/null
+          security list-keychains -d user -s "$KEYCHAIN_PATH" "$HOME/Library/Keychains/login.keychain-db"
+          rm -f "$CERT_PATH"
+
+          if ! security find-identity -v -p codesigning "$KEYCHAIN_PATH" | grep -q "Apple Distribution"; then
+            echo "::error::No 'Apple Distribution' identity in BUILD_CERTIFICATE_BASE64. Export the *Apple Distribution* certificate from Keychain Access → My Certificates (an Apple Development certificate cannot sign an App Store build)."
+            exit 1
+          fi
+
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+
+          install_profile() {
+            local encoded="$1"
+            local name="$2"
+            local expected_bundle="$3"
+            local output_name="$4"
+            local needs_watch_group="$5"
+            local profile_path="$RUNNER_TEMP/$name.mobileprovision"
+            local profile_plist="$RUNNER_TEMP/$name.plist"
+
+            echo -n "$encoded" | base64 --decode > "$profile_path"
+            security cms -D -i "$profile_path" > "$profile_plist"
+            local uuid
+            local app_id
+            local task_allow
+            uuid=$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$profile_plist")
+            app_id=$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' "$profile_plist")
+            task_allow=$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:get-task-allow' "$profile_plist" 2>/dev/null || echo missing)
+
+            if [ "$task_allow" != "false" ]; then
+              echo "::error::$name is not an App Store profile (get-task-allow is '$task_allow', expected false)."
+              exit 1
+            fi
+            if [[ "$app_id" != *."$expected_bundle" ]]; then
+              echo "::error::$name is for '$app_id', expected $expected_bundle."
+              exit 1
+            fi
+            if [ "$needs_watch_group" = "yes" ] && ! /usr/libexec/PlistBuddy -c 'Print :Entitlements:com.apple.security.application-groups' "$profile_plist" | grep -q 'group.nz.co.thinkingai.Grove.watch'; then
+              echo "::error::$name does not include the group.nz.co.thinkingai.Grove.watch App Group."
+              exit 1
+            fi
+
+            cp "$profile_path" "$HOME/Library/MobileDevice/Provisioning Profiles/$uuid.mobileprovision"
+            echo "$output_name=$uuid" >> "$GITHUB_OUTPUT"
+            echo "Installed profile $uuid for $app_id"
+          }
+
+          install_profile "$PROVISIONING_PROFILE_BASE64" app-profile nz.co.thinkingai.Grove app_uuid no
+          install_profile "$WATCH_PROVISIONING_PROFILE_BASE64" watch-profile nz.co.thinkingai.Grove.watchkitapp watch_uuid yes
+          install_profile "$WATCH_WIDGET_PROVISIONING_PROFILE_BASE64" widget-profile nz.co.thinkingai.Grove.watchkitapp.widget widget_uuid yes
+
+      - name: Archive (Release)
+        env:
+          SIGNING_MODE: ${{ steps.signing.outputs.mode }}
+          APP_PROFILE_UUID: ${{ steps.profile.outputs.app_uuid }}
+          WATCH_PROFILE_UUID: ${{ steps.profile.outputs.watch_uuid }}
+          WATCH_WIDGET_PROFILE_UUID: ${{ steps.profile.outputs.widget_uuid }}
+        run: |
+          # TestFlight build number == CI run number (re-runs get .attempt).
+          BUILD_NUMBER="$GITHUB_RUN_NUMBER"
+          [ "${GITHUB_RUN_ATTEMPT:-1}" -gt 1 ] && BUILD_NUMBER="$GITHUB_RUN_NUMBER.$GITHUB_RUN_ATTEMPT"
+          echo "Build number: $BUILD_NUMBER"
+          set -o pipefail
+          PRETTY=$(command -v xcbeautify || echo cat)
+
+          SIGNING_FLAGS=()
+          SIGNING_SETTINGS=()
+          if [ "$SIGNING_MODE" = "manual" ]; then
+            # Archive straight to the distribution identity. Cloud signing
+            # archives with a *development* identity and lets export re-sign,
+            # which is the habit that burns a certificate per run.
+            SIGNING_SETTINGS=(
+              CODE_SIGN_STYLE=Manual
+              CODE_SIGN_IDENTITY="Apple Distribution"
+              GROVE_APP_PROFILE_SPECIFIER="$APP_PROFILE_UUID"
+              GROVE_WATCH_PROFILE_SPECIFIER="$WATCH_PROFILE_UUID"
+              GROVE_WATCH_WIDGET_PROFILE_SPECIFIER="$WATCH_WIDGET_PROFILE_UUID"
+              OTHER_CODE_SIGN_FLAGS="--keychain $RUNNER_TEMP/signing.keychain-db"
+            )
+          else
+            SIGNING_FLAGS=(
+              -allowProvisioningUpdates
+              -authenticationKeyPath "$RUNNER_TEMP/asc/AuthKey_${ASC_KEY_ID}.p8"
+              -authenticationKeyID "$ASC_KEY_ID"
+              -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+            )
+          fi
+
+          xcodebuild -project Grove.xcodeproj -scheme Grove -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath "$RUNNER_TEMP/Grove.xcarchive" \
+            "${SIGNING_FLAGS[@]}" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            SUPABASE_URL="$SUPABASE_URL" SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
+            GOOGLE_IOS_CLIENT_ID="$GOOGLE_IOS_CLIENT_ID" GOOGLE_REVERSED_CLIENT_ID="$GOOGLE_REVERSED_CLIENT_ID" \
+            GROVE_APP_KEY="$GROVE_APP_KEY" \
+            GROVE_ANALYSIS_URL="$GROVE_ANALYSIS_URL" GROVE_SYNC_URL="$GROVE_SYNC_URL" \
+            "${SIGNING_SETTINGS[@]}" \
+            archive | "$PRETTY"
+
+      - name: Strip dev-only Info.plist keys
+        # The in-build strip phase races ProcessInfoPlistFile nondeterministically
+        # (see prod-phone.sh). Deleting here is always safe: export re-signs.
+        run: |
+          PLIST="$RUNNER_TEMP/Grove.xcarchive/Products/Applications/Grove.app/Info.plist"
+          for KEY in NSAppTransportSecurity NSLocalNetworkUsageDescription; do
+            if /usr/libexec/PlistBuddy -c "Delete :$KEY" "$PLIST" 2>/dev/null; then
+              echo "Stripped $KEY (in-build phase lost the race)"
+            fi
+          done
+
+      # Manual mode needs an export plist naming the profile, so it is built
+      # here rather than committed — the UUID is only known at run time.
+      - name: Write manual export options
+        if: steps.signing.outputs.mode == 'manual'
+        env:
+          APP_PROFILE_UUID: ${{ steps.profile.outputs.app_uuid }}
+          WATCH_PROFILE_UUID: ${{ steps.profile.outputs.watch_uuid }}
+          WATCH_WIDGET_PROFILE_UUID: ${{ steps.profile.outputs.widget_uuid }}
+        run: |
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>app-store-connect</string>
+              <key>destination</key>
+              <string>upload</string>
+              <key>teamID</key>
+              <string>Q5688GHWHJ</string>
+              <key>signingStyle</key>
+              <string>manual</string>
+              <key>signingCertificate</key>
+              <string>Apple Distribution</string>
+              <key>provisioningProfiles</key>
+              <dict>
+                  <key>nz.co.thinkingai.Grove</key>
+                  <string>$APP_PROFILE_UUID</string>
+                  <key>nz.co.thinkingai.Grove.watchkitapp</key>
+                  <string>$WATCH_PROFILE_UUID</string>
+                  <key>nz.co.thinkingai.Grove.watchkitapp.widget</key>
+                  <string>$WATCH_WIDGET_PROFILE_UUID</string>
+              </dict>
+              <key>uploadSymbols</key>
+              <true/>
+              <key>manageAppVersionAndBuildNumber</key>
+              <false/>
+          </dict>
+          </plist>
+          PLIST
+
+      - name: Upload to TestFlight
+        env:
+          SIGNING_MODE: ${{ steps.signing.outputs.mode }}
+        run: |
+          set -o pipefail
+
+          # The upload authenticates with the API key in both modes; only
+          # cloud signing may also *create* assets during export.
+          EXPORT_FLAGS=(
+            -authenticationKeyPath "$RUNNER_TEMP/asc/AuthKey_${ASC_KEY_ID}.p8"
+            -authenticationKeyID "$ASC_KEY_ID"
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+          )
+          if [ "$SIGNING_MODE" = "manual" ]; then
+            # The signing keychain is on the user search list, so codesign
+            # finds the identity without being pointed at it.
+            EXPORT_PLIST="$RUNNER_TEMP/ExportOptions.plist"
+          else
+            EXPORT_PLIST="scripts/ExportOptionsTestFlight.plist"
+            EXPORT_FLAGS+=(-allowProvisioningUpdates)
+          fi
+
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/Grove.xcarchive" \
+            -exportOptionsPlist "$EXPORT_PLIST" \
+            -exportPath "$RUNNER_TEMP/export" \
+            "${EXPORT_FLAGS[@]}"
+
+      # The certificate cap is the one failure that looks like a build break
+      # but isn't, so name it here instead of leaving xcodebuild's exit 65.
+      - name: Explain a cloud-signing failure
+        if: failure() && steps.signing.outputs.mode == 'cloud'
+        run: |
+          echo "::error::Cloud signing failed. If the log says 'Your account has reached the maximum number of certificates', revoke unused certificates at developer.apple.com → Certificates and re-run — then switch this workflow to manual signing so it stops recurring (see the header of .github/workflows/testflight.yml)."
+
+      - name: Remove the signing keychain
+        if: always() && steps.signing.outputs.mode == 'manual'
+        run: |
+          security delete-keychain "$RUNNER_TEMP/signing.keychain-db" || true
+          rm -f "$HOME/Library/MobileDevice/Provisioning Profiles/${{ steps.profile.outputs.app_uuid }}.mobileprovision"
+          rm -f "$HOME/Library/MobileDevice/Provisioning Profiles/${{ steps.profile.outputs.watch_uuid }}.mobileprovision"
+          rm -f "$HOME/Library/MobileDevice/Provisioning Profiles/${{ steps.profile.outputs.widget_uuid }}.mobileprovision"

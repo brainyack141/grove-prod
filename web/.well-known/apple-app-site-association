@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["Q5688GHWHJ.nz.co.thinkingai.Grove"],
+        "components": [
+          {
+            "/": "/friends",
+            "comment": "Open a Grove trusted-person invitation"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "grove-development-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test test/*.test.mjs",
+    "eval:botanist": "node eval/botanist-eval.mjs",
+    "eval:botanist:vision": "node eval/botanist-vision-eval.mjs"
+  },
+  "dependencies": {
+    "postgres": "^3.4.9"
+  }
+}

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Grove's launch screen.
+
+    This is a storyboard rather than an Info.plist `UILaunchScreen` dictionary on
+    purpose. That dictionary's `UIImageName` sizes its image inconsistently — it
+    is centred at natural size on the first launch after install, then stretched
+    to fill the screen on subsequent launches, and `UIImageRespectsSafeAreaInsets`
+    does not correct it (FB/forum thread 671370). A storyboard pins the mark to
+    an exact 91×132 at a fixed point on every launch, which is what makes the
+    handoff to `GroveLaunchView` invisible.
+
+    `LaunchMark` is the app icon's sculpted `g` with the tile keyed out, produced
+    by `scripts/generate-launch-mark.sh`. The user taps that glyph on the home
+    screen and it is still there when the app opens — the same object, off its
+    tile and standing on the app's own paper.
+
+    Centred on the *view*, not the safe area, to match `GroveLaunchView`, which
+    ignores safe areas so its centre is the screen's centre too. The 24pt lift is
+    optical: a mark on the mathematical centre of a tall screen reads low, and
+    the lift keeps the mark optically centred when `GroveLaunchView` takes over.
+    That constant is stated in both files.
+-->
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="GRV-la-unc">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <scene sceneID="GRV-sc-ene">
+            <objects>
+                <viewController id="GRV-la-unc" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="GRV-ro-ot0">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchMark" translatesAutoresizingMaskIntoConstraints="NO" id="GRV-ma-rk0">
+                                <rect key="frame" x="151" y="326" width="91" height="132"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="91" id="GRV-cn-wd0"/>
+                                    <constraint firstAttribute="height" constant="132" id="GRV-cn-hg0"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="GRV-sa-fe0"/>
+                        <color key="backgroundColor" name="LaunchBackground"/>
+                        <constraints>
+                            <constraint firstItem="GRV-ma-rk0" firstAttribute="centerX" secondItem="GRV-ro-ot0" secondAttribute="centerX" id="GRV-cn-cx0"/>
+                            <constraint firstItem="GRV-ma-rk0" firstAttribute="centerY" secondItem="GRV-ro-ot0" secondAttribute="centerY" constant="-24" id="GRV-cn-cy0"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="GRV-fi-rst" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="53" y="375"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="LaunchMark" width="91" height="132"/>
+        <namedColor name="LaunchBackground">
+            <color red="0.95686274509803921" green="0.94901960784313721" blue="0.92549019607843142" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

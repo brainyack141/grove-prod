@@ -1,0 +1,37 @@
+# Works the same as any Docker host — Render/Railway can build the Dockerfile directly instead.
+# Placeholder: no real app name is committed. Deploy with `FLY_APP=<your-app> fly deploy`
+# (or `fly deploy -a <your-app>`), which overrides this value.
+app = "CHANGE-ME-grove-api"
+primary_region = "syd"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "8080"
+  HOST = "0.0.0.0"
+  # Set to your real https origin after the first deploy so media upload URLs are absolute:
+  # PUBLIC_BASE_URL = "https://<your-app>.fly.dev"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "suspend"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [http_service.http_options]
+    # Give Gemini analysis time to complete on a cold poll.
+    idle_timeout = 120
+
+  [[http_service.checks]]
+    method = "GET"
+    path = "/health"
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

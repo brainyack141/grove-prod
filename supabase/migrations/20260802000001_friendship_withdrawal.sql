@@ -1,0 +1,11 @@
+-- Taking back an invitation you sent.
+--
+-- 'declined' would have cleared it from the recipient's requests just as well,
+-- but the two are not the same fact: one is "they said no", the other is "I
+-- changed my mind". Only the second may be sent again, so the difference has to
+-- survive in the row rather than in the client that happened to write it.
+--
+-- Additive and idempotent: existing rows keep their status, and no policy
+-- changes -- friendships_participant_update already lets the requester move
+-- their own row on.
+alter type app.friendship_status add value if not exists 'withdrawn';

@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "TodayAllClearGoldenHourBespoke.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "TodayAllClearGoldenHourBespoke@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "TodayAllClearGoldenHourBespoke@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

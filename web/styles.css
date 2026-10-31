@@ -1,0 +1,709 @@
+/* Grove — grove.thinkingai.co.nz
+ *
+ * Every colour, radius, and curve below is lifted from the app's own contract
+ * (Grove/DesignSystem.swift and DESIGN.md). The site is not "inspired by" the
+ * app; it is the same five decisions rendered in CSS. If a token changes in
+ * Swift, change it here in the same commit — a marketing page that has drifted
+ * from the product is how brands start to feel stitched together.
+ */
+
+:root {
+  /* Canvas and surfaces — GroveTheme.background / .surface / .secondarySurface */
+  --canvas: #FAFBF8;
+  --surface: #FFFFFF;
+  --surface-sunk: #E8ECE7;
+
+  /* Ink — GroveTheme.ink / .mutedInk / .subtleInk */
+  --ink: #1C261C;
+  --ink-muted: #5F685D;
+  --ink-subtle: #898E84;
+
+  /* The one accent. Means "growing", and "act here". */
+  --accent: #4F7650;
+  --accent-strong: #31593A;
+  --accent-soft: #E1E8DD;
+
+  --separator: #DDE3DC;
+
+  /* The signature control — GroveTheme.onCanvasButton / .onCanvasButtonLabel */
+  --cta: #233F2B;
+  --cta-label: #FFFCF5;
+
+  /* Semantic, never literal. Only ever means what its name says. */
+  --thriving: #057D4E;
+  --streak: #E8720C;
+
+  /* Type on the photograph. Fixed in both schemes, because the photograph is
+     the same picture whichever way the reader's system is set — this is the
+     app's own on-dark treatment (DESIGN.md: the CTA pill flips to its onDark
+     form on camera-black surfaces). */
+  --on-photo: #FFFCF5;
+  --on-photo-muted: #D9D6CB;
+
+  /* Elevation — three levels, matching .groveShadow(.resting/.floating/.hero) */
+  --shadow-resting: 0 2px 8px rgba(28, 38, 28, 0.06);
+  --shadow-floating: 0 8px 24px rgba(28, 38, 28, 0.09);
+  --shadow-hero: 0 18px 48px rgba(28, 38, 28, 0.13);
+
+  /* Geometry — the app's four radii, counted on one hand */
+  --r-compact: 12px;
+  --r-inset: 16px;
+  --r-card: 22px;
+  --r-hero: 28px;
+
+  /* Motion — GroveMotion, transcribed. Springs for things that move. */
+  --press: 160ms cubic-bezier(0.32, 0.72, 0.35, 1);
+  --snap: 220ms cubic-bezier(0.32, 0.72, 0.35, 1);
+  --settle: 340ms cubic-bezier(0.28, 0.76, 0.3, 1);
+
+  /* Two voices, and nothing else. Display is the system serif — New York on
+     Apple hardware, which is what almost everyone reading about an iPhone app
+     is holding. Text is SF Pro. Both cost zero bytes and neither has ever
+     been the font a model reaches for. */
+  --display: ui-serif, "New York", "Iowan Old Style", Palatino, Georgia, serif;
+  --text: -apple-system, BlinkMacSystemFont, ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  --rounded: ui-rounded, "SF Pro Rounded", var(--text);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --canvas: #14130F;
+    --surface: #201E18;
+    --surface-sunk: #2A2820;
+
+    --ink: #F4F2EC;
+    --ink-muted: #A6A296;
+    --ink-subtle: #726E63;
+
+    --accent: #76B47B;
+    --accent-strong: #95CA98;
+    --accent-soft: #1E2A16;
+
+    --separator: #322F28;
+
+    --cta: #F4F2EC;
+    --cta-label: #14130F;
+
+    --thriving: #3CD79A;
+    --streak: #F08A2E;
+
+    /* Dark inverts elevation: higher surfaces lift with light, not shadow. */
+    --shadow-resting: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --shadow-floating: 0 10px 28px rgba(0, 0, 0, 0.5);
+    --shadow-hero: 0 20px 52px rgba(0, 0, 0, 0.6);
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: inherit; }
+
+.wrap {
+  width: min(1120px, 100% - 48px);
+  margin-inline: auto;
+}
+
+@media (max-width: 640px) {
+  .wrap { width: min(1120px, 100% - 40px); }
+}
+
+/* ---------------------------------------------------------------- masthead */
+
+/* Sticky and solid on the policy page, which is long enough to need it. Over
+   the photograph on the home page it floats instead — a solid bar above a
+   full-bleed image reads as a header bolted on top of a picture. */
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--canvas);
+  border-bottom: 1px solid var(--separator);
+}
+
+.masthead--over {
+  position: absolute;
+  inset: 0 0 auto;
+  background: none;
+  border-bottom: 0;
+  color: var(--on-photo);
+}
+
+.masthead--over nav a { color: var(--on-photo-muted); }
+.masthead--over nav a:hover { color: var(--on-photo); }
+
+.masthead-inner {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 14px 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+/* The mark carries the name on its own — it is a lowercase g with a leaf, and
+   setting GROVE beside it said the same word twice. Slightly larger now that it
+   is alone, so it still holds the corner. */
+.brand img { width: 30px; height: auto; }
+
+.masthead nav {
+  display: flex;
+  gap: 26px;
+  font-size: 15px;
+  font-weight: 500;
+  margin-left: auto;
+}
+
+.masthead nav a {
+  color: var(--ink-muted);
+  text-decoration: none;
+  transition: color var(--press);
+}
+
+.masthead nav a:hover { color: var(--ink); }
+
+@media (max-width: 820px) {
+  .masthead nav { display: none; }
+  .masthead-inner { justify-content: space-between; }
+}
+
+/* -------------------------------------------------------------------- hero */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #14130F;
+  color: var(--on-photo);
+}
+
+.hero-bg,
+.hero-bg img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+
+/* Mirrored so the plant falls behind the phone and the room's dark wall falls
+   behind the headline. Nothing in the frame reads as reversed. */
+.hero-bg img { transform: scaleX(-1); }
+
+/* A scrim, not decoration: the headline has to clear 4.5:1 over a photograph
+   whose luminance we do not control. Darkest where the type is. */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(100deg, rgba(12, 14, 11, 0.93) 0%, rgba(12, 14, 11, 0.82) 34%, rgba(12, 14, 11, 0.42) 62%, rgba(12, 14, 11, 0.34) 100%),
+    linear-gradient(to bottom, rgba(12, 14, 11, 0.55) 0%, rgba(12, 14, 11, 0) 22%);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+  gap: 64px;
+  align-items: center;
+  padding: 132px 0 92px;
+  min-height: min(860px, 94vh);
+}
+
+/* An explicit width, not a max-width: the image inside is absolutely
+   positioned for the crop, so the box has no content to size itself from and
+   the grid column would otherwise collapse to nothing. */
+.hero .shot {
+  width: min(320px, 100%);
+  margin-left: auto;
+}
+
+/* Bottom-left, out of the phone's way, and quiet enough not to compete with
+   the note above it. */
+.photo-credit {
+  position: absolute;
+  left: max(24px, calc((100% - min(1120px, 100% - 48px)) / 2));
+  bottom: 14px;
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.01em;
+  color: rgba(255, 252, 245, 0.42);
+}
+
+h1 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(3.1rem, 6.4vw, 4.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.032em;
+  margin: 0 0 26px;
+}
+
+.deck {
+  font-size: 1.2rem;
+  line-height: 1.55;
+  color: var(--on-photo-muted);
+  max-width: 36ch;
+  margin: 0 0 34px;
+}
+
+.deck strong {
+  color: var(--on-photo);
+  font-weight: 550;
+}
+
+/* Apple's badge, unaltered artwork, white variant because the hero is a dark
+   photograph. The guidelines set a floor of 40px tall and clear space of a
+   tenth of the badge height on every side; 45px with 24px above the note keeps
+   us clear of both. No border, no shadow, no tint — the badge is Apple's mark
+   and stays theirs. */
+.appstore {
+  display: inline-block;
+  border-radius: 8px;
+  transition: transform var(--press), opacity var(--press);
+}
+
+.appstore img {
+  display: block;
+  width: 135px;
+  height: auto;
+}
+
+.appstore:hover { transform: translateY(-1px); }
+.appstore:active { transform: scale(0.985); opacity: 0.9; }
+
+.appstore:focus-visible {
+  outline: 2px solid var(--on-photo);
+  outline-offset: 4px;
+}
+
+/* The signature control. One primary action treatment, everywhere. */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 15px 15px 26px;
+  border-radius: 999px;
+  background: var(--cta);
+  color: var(--cta-label);
+  font-family: var(--rounded);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 0;
+  transition: transform var(--press), opacity var(--press);
+}
+
+.cta .arrow {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--cta-label) 16%, transparent);
+}
+
+.cta .arrow svg { width: 15px; height: 15px; }
+
+a.cta:hover { transform: translateY(-1px); }
+a.cta:active { transform: scale(0.985); }
+
+.cta[aria-disabled="true"] { cursor: default; }
+
+.cta--small {
+  padding: 9px 18px;
+  font-size: 0.9375rem;
+  white-space: nowrap;
+}
+
+/* The app's onDark pill, kept for the day the App Store link exists: on
+   photographic surfaces the ink pill inverts rather than fighting the picture. */
+.cta--onphoto {
+  background: var(--on-photo);
+  color: #1C261C;
+}
+
+.cta--onphoto .arrow { background: rgba(28, 38, 28, 0.14); }
+
+.hero-note {
+  margin: 16px 0 0;
+  font-size: 0.9375rem;
+  color: var(--on-photo-muted);
+  max-width: 36ch;
+}
+
+.invite-page {
+  min-height: calc(100vh - 190px);
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  padding-block: 72px;
+  max-width: 760px;
+}
+
+.invite-mark {
+  border-radius: 22px;
+  box-shadow: var(--shadow-floating);
+  margin-bottom: 28px;
+}
+
+.invite-kicker {
+  margin: 0 0 12px;
+  color: var(--accent-strong);
+  font-family: var(--rounded);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.invite-page h1 {
+  color: var(--ink);
+  max-width: 13ch;
+}
+
+.invite-copy {
+  color: var(--ink-muted);
+  max-width: 58ch;
+  margin: 0 0 18px;
+}
+
+.invite-cta {
+  display: inline-flex;
+  padding: 13px 22px;
+  margin-top: 14px;
+  border-radius: 999px;
+  background: var(--cta);
+  color: var(--cta-label);
+  font-family: var(--rounded);
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform var(--press), opacity var(--press);
+}
+
+.invite-cta:hover { transform: translateY(-1px); }
+.invite-cta:active { transform: scale(0.985); opacity: 0.9; }
+.invite-cta:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 4px; }
+
+.invite-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+}
+
+.invite-secondary {
+  margin-top: 14px;
+  color: var(--ink-muted);
+  font-family: var(--rounded);
+  font-weight: 650;
+  text-underline-offset: 4px;
+}
+
+.invite-secondary:hover { color: var(--ink); }
+.invite-secondary:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 4px; }
+
+/* The source is an App Store frame: a caption, then the device, on a cream
+   page. Cropping to the device's measured bounds — x 29→523, top 298, of
+   555×1200 — is what makes this read as a phone rather than a screenshot
+   pasted onto the photograph. The percentages below are that rectangle:
+   width 555/495, left −29/495, top −298/495 expressed against the box. */
+.shot {
+  position: relative;
+  aspect-ratio: 495 / 902;
+  border-radius: 38px;
+  overflow: hidden;
+  box-shadow: var(--shadow-hero);
+  background: #0F0F0C;
+}
+
+.shot img {
+  position: absolute;
+  width: 112.12%;
+  max-width: none;
+  height: auto;
+  left: -5.86%;
+  top: -33.04%;
+}
+
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 44px;
+    padding: 116px 0 64px;
+    min-height: 0;
+  }
+  .deck { max-width: 40ch; }
+  .hero .shot { width: min(300px, 100%); margin-inline: 0; }
+
+  /* Stacked, the type sits over the whole frame, so the scrim goes vertical. */
+  .hero::before {
+    background:
+      linear-gradient(to bottom, rgba(12, 14, 11, 0.92) 0%, rgba(12, 14, 11, 0.86) 46%, rgba(12, 14, 11, 0.5) 100%);
+  }
+
+  .photo-credit { right: 20px; bottom: 8px; }
+}
+
+/* ---------------------------------------------------------------- sections */
+
+section { padding: 0; }
+
+/* Four claims where a lesser page puts four circular icon cards. Text only:
+   the claims are short enough to read in one pass, and an icon above each one
+   would add decoration, not meaning. */
+.claims {
+  border-block: 1px solid var(--separator);
+  margin: 8px 0 0;
+  padding: 40px 0;
+}
+
+/* Hairline rules between the columns, so this reads as a spec strip rather
+   than four cards that lost their borders. */
+.claims-inner {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+}
+
+.claims p {
+  margin: 0;
+  padding: 0 28px;
+  border-left: 1px solid var(--separator);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+.claims p:first-child { padding-left: 0; border-left: 0; }
+.claims p:last-child { padding-right: 0; }
+
+.claims b {
+  display: block;
+  color: var(--ink);
+  font-family: var(--rounded);
+  font-size: 1.0625rem;
+  font-weight: 650;
+  letter-spacing: -0.012em;
+  margin-bottom: 5px;
+}
+
+@media (max-width: 900px) {
+  .claims-inner { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 0; }
+  .claims p:nth-child(odd) { padding-left: 0; border-left: 0; }
+  .claims p { padding: 0 22px; }
+}
+
+@media (max-width: 520px) {
+  .claims-inner { grid-template-columns: 1fr; gap: 0; }
+  .claims { padding: 8px 0 32px; }
+  .claims p {
+    padding: 22px 0;
+    border-left: 0;
+    border-top: 1px solid var(--separator);
+  }
+  .claims p:first-child { border-top: 0; }
+}
+
+/* ------------------------------------------------------------------- footer */
+
+footer {
+  border-top: 1px solid var(--separator);
+  padding: 48px 0 72px;
+  color: var(--ink-muted);
+  font-size: 0.9375rem;
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 32px 48px;
+}
+
+.footer-inner p { margin: 0; }
+
+.footer-org { margin-top: 14px !important; line-height: 1.6; }
+
+footer .brand img { width: 26px; }
+
+footer a {
+  color: var(--ink-muted);
+  text-decoration: none;
+  transition: color var(--press);
+}
+
+footer a:hover { color: var(--ink); }
+
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 12px 48px;
+}
+
+@media (max-width: 520px) {
+  .footer-links { grid-template-columns: 1fr; gap: 12px; }
+}
+
+/* The sticky masthead must not swallow the heading an anchor lands on. */
+[id] { scroll-margin-top: 88px; }
+
+/* ------------------------------------------------------------ policy pages */
+
+.policy {
+  max-width: 68ch;
+  padding: 56px 0 96px;
+}
+
+.policy-head { margin-bottom: 44px; }
+
+.policy h1 {
+  font-size: clamp(2.4rem, 5vw, 3.4rem);
+  margin-bottom: 12px;
+}
+
+.policy .effective {
+  margin: 0;
+  font-family: var(--rounded);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--accent-strong);
+  letter-spacing: 0.01em;
+}
+
+.policy h2 {
+  font-family: var(--text);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin: 56px 0 14px;
+  padding-top: 22px;
+  border-top: 1px solid var(--separator);
+}
+
+.policy h2:first-of-type { margin-top: 44px; }
+
+.policy p {
+  margin: 0 0 18px;
+  color: var(--ink-muted);
+}
+
+.policy p.lead {
+  font-size: 1.15rem;
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+.policy strong { color: var(--ink); font-weight: 600; }
+
+.policy ul {
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+
+.policy li {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 10px;
+  color: var(--ink-muted);
+}
+
+.policy li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.65em;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+/* A processor, or a jurisdiction: an indented block in the source text. */
+.policy .entry {
+  border-left: 2px solid var(--separator);
+  padding: 2px 0 2px 22px;
+  margin: 0 0 22px;
+}
+
+.policy .entry-title {
+  margin: 0 0 6px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.policy .entry p { margin: 0 0 8px; }
+.policy .entry p:last-child { margin-bottom: 0; }
+
+.policy .entry b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.policy address {
+  font-style: normal;
+  line-height: 1.7;
+  color: var(--ink);
+  background: var(--surface);
+  border-radius: var(--r-inset);
+  padding: 20px 24px;
+  margin: 0 0 22px;
+  box-shadow: var(--shadow-resting);
+}
+
+.policy .colophon {
+  margin-top: 48px;
+  padding-top: 22px;
+  border-top: 1px solid var(--separator);
+  font-size: 0.9375rem;
+  color: var(--ink-muted);
+}
+
+.policy a { color: var(--accent-strong); }
+
+/* ------------------------------------------------------------------ motion */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* The accent green does not carry over a dark photograph. */
+.hero :focus-visible,
+.masthead--over :focus-visible {
+  outline-color: var(--on-photo);
+}

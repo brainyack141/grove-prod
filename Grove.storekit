@@ -1,0 +1,91 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "BD41D31D-6C56-42F8-9857-64D4A2A3054A",
+  "nonRenewingSubscriptions" : [
+  ],
+  "products" : [
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_disableDialogs" : false,
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "BC3DF9B7-241B-497C-B173-47E33A7DE1BD",
+      "localizations" : [
+      ],
+      "name" : "Grove Premium",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+          ],
+          "codeOffers" : [
+          ],
+          "displayPrice" : "34.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "276B679D-79FD-4D67-A56F-60CCAA2EE557",
+          "introductoryOffer" : {
+            "internalID" : "C6611C6B-FB65-4401-AA0C-0F32502D0F9F",
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
+          "localizations" : [
+            {
+              "description" : "Unlimited questions to Ari, unlimited friends and premium plant mascots.",
+              "displayName" : "Grove Premium, yearly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "nz.co.thinkingai.Grove.premium.yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Grove Premium Yearly",
+          "subscriptionGroupID" : "BC3DF9B7-241B-497C-B173-47E33A7DE1BD",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+          ],
+          "codeOffers" : [
+          ],
+          "displayPrice" : "6.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "7B902EE9-3E6F-4C43-BD1A-DCD822CA4131",
+          "localizations" : [
+            {
+              "description" : "Unlimited questions to Ari, unlimited friends and premium plant mascots.",
+              "displayName" : "Grove Premium, monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "nz.co.thinkingai.Grove.premium.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Grove Premium Monthly",
+          "subscriptionGroupID" : "BC3DF9B7-241B-497C-B173-47E33A7DE1BD",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "grove-swift-syntax-check",
+  "private": true,
+  "type": "module",
+  "description": "Grammar-level Swift syntax check that runs without Xcode.",
+  "scripts": {
+    "check": "node check.mjs"
+  },
+  "dependencies": {
+    "tree-sitter": "^0.22.4",
+    "tree-sitter-swift": "^0.7.1"
+  }
+}

@@ -1,0 +1,130 @@
+# Build and test Grove on every push and pull request.
+#
+# This exists because the iOS app cannot be compiled anywhere except macOS:
+# SwiftUI, UIKit, AppIntents, PhotosUI, AVFoundation, MapKit, CoreMotion and
+# Security have no Linux implementation, so a Linux CI box or cloud dev
+# environment can check syntax and nothing more. Before this workflow, the only
+# thing that ever compiled the app was the TestFlight job on `main` — which
+# means a branch could only discover it did not build *after* merging.
+#
+# Three gates, cheapest first:
+#   1. Swift syntax        (Linux, seconds)   — grammar-level parse of every file
+#   2. Backend tests       (Linux, seconds)   — including durability against Postgres
+#   3. iOS build and tests (macOS, minutes)   — the authority on types and APIs
+
+name: CI
+
+on:
+  push:
+    branches-ignore: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  swift-syntax:
+    name: Swift syntax
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Parse every Swift file
+        run: ./scripts/check-swift-syntax.sh
+
+  backend:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: grove
+          POSTGRES_PASSWORD: grove
+          POSTGRES_DB: grove
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U grove"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Apply the schema
+        env:
+          PGPASSWORD: grove
+        run: |
+          # Supabase supplies auth.users, auth.uid(), storage.buckets and the
+          # anon/authenticated/service_role roles; a plain PostgreSQL has to
+          # stand them up before the migrations will apply.
+          psql -h localhost -U grove -d grove -v ON_ERROR_STOP=1 -f Backend/test/helpers/auth-stub.sql
+          for migration in supabase/migrations/*.sql; do
+            echo "Applying $migration"
+            psql -h localhost -U grove -d grove -v ON_ERROR_STOP=1 -f "$migration"
+          done
+      - name: Install dependencies
+        working-directory: Backend
+        run: npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+      - name: Test (including durability against PostgreSQL)
+        working-directory: Backend
+        env:
+          GROVE_TEST_DATABASE_URL: postgres://grove:grove@localhost:5432/grove
+        run: npm test
+
+  ios:
+    name: iOS build & tests
+    # macOS 26 to match the TestFlight job and local development (Xcode 26.x);
+    # the camera code uses concurrency semantics Xcode 16 rejects.
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select newest Xcode 26
+        run: |
+          sudo xcode-select -s "$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)/Contents/Developer"
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: rm -rf Grove.xcodeproj && xcodegen generate
+
+      - name: Pick a simulator
+        id: sim
+        run: |
+          # Any available iPhone runtime will do; pin the name so the log says
+          # which one actually ran.
+          DEVICE=$(xcrun simctl list devices available --json \
+            | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; \
+                print(next(x['name'] for rt in d for x in d[rt] if x['name'].startswith('iPhone')))")
+          echo "Using $DEVICE"
+          echo "device=$DEVICE" >> "$GITHUB_OUTPUT"
+
+      - name: Build for testing
+        run: |
+          set -o pipefail
+          PRETTY=$(command -v xcbeautify || echo cat)
+          xcodebuild -project Grove.xcodeproj -scheme Grove -configuration Debug \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.device }}" \
+            -skipPackagePluginValidation \
+            build-for-testing | "$PRETTY"
+
+      - name: Unit tests
+        run: |
+          set -o pipefail
+          PRETTY=$(command -v xcbeautify || echo cat)
+          xcodebuild -project Grove.xcodeproj -scheme Grove -configuration Debug \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.device }}" \
+            -only-testing:GroveTests \
+            test-without-building | "$PRETTY"

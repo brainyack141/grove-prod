@@ -1,0 +1,8 @@
+{
+  "images" : [
+    { "filename" : "JourneyBadgeGreenThumb.png", "idiom" : "universal", "scale" : "1x" },
+    { "filename" : "JourneyBadgeGreenThumb@2x.png", "idiom" : "universal", "scale" : "2x" },
+    { "filename" : "JourneyBadgeGreenThumb@3x.png", "idiom" : "universal", "scale" : "3x" }
+  ],
+  "info" : { "author" : "xcode", "version" : 1 }
+}

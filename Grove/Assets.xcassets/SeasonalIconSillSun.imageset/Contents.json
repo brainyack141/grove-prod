@@ -1,0 +1,8 @@
+{
+  "images" : [
+    { "filename" : "SeasonalIconSillSun.png", "idiom" : "universal", "scale" : "1x" },
+    { "filename" : "SeasonalIconSillSun@2x.png", "idiom" : "universal", "scale" : "2x" },
+    { "filename" : "SeasonalIconSillSun@3x.png", "idiom" : "universal", "scale" : "3x" }
+  ],
+  "info" : { "author" : "xcode", "version" : 1 }
+}
