@@ -82,7 +82,7 @@ struct PlantDetailView: View {
         // ignores the top one, so the photo starts at the physical top of the
         // screen and the chips still land under the status bar.
         return ZStack(alignment: .top) {
-            PlantBoardPage(plant: plant, collapsed: $titleIsCollapsed, onWater: { log(.water, for: plant) }) {
+            PlantBoardPage(plant: plant, collapsed: $titleIsCollapsed, onWater: { log(.water, for: plant) }, previous: previousPlant, next: nextPlant) {
                 // Ahead of everything else on the sheet, because it is the only
                 // thing on the page that can hurt somebody.
                 if safety.cautionLevel != .none {
@@ -2252,7 +2252,7 @@ private struct PlantRecordCard: View {
 /// is drawn as itself — its newest photograph, or its portrait when there is
 /// none — because a row about a plant that led with a grey arrow glyph was a
 /// row about an arrow.
-private struct PlantNeighborCard: View {
+struct PlantNeighborCard: View {
     let previous: Plant?
     let next: Plant?
 

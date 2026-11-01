@@ -15,6 +15,10 @@ struct PlantBoardPage<Alerts: View>: View {
     /// Logs a watering. The page owns the check-the-soil-first question a
     /// repeat watering raises, so the board only asks for it.
     let onWater: () -> Void
+    /// The plants either side in the grove list, so a round of many plants is
+    /// one pass rather than a push and pop per plant.
+    var previous: Plant? = nil
+    var next: Plant? = nil
     /// Cards that outrank the status block when they apply: a toxic plant,
     /// an unconfirmed species, a paused plant.
     @ViewBuilder var alerts: Alerts
@@ -85,6 +89,8 @@ struct PlantBoardPage<Alerts: View>: View {
             PlantTimetableCard(plant: plant)
 
             PlantBoardLinks(facts: facts)
+
+            PlantNeighborCard(previous: previous, next: next)
         }
     }
 }
