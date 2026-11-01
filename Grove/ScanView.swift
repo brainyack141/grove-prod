@@ -4027,6 +4027,12 @@ struct AddPlantView: View {
                 .accessibilityIdentifier("confirmAddPlant")
                 .groveActionBar()
             }
+            .onChange(of: focusedField) { oldValue, newValue in
+                print("SIMSHOT-DEBUG addPlant focus \(String(describing: oldValue)) -> \(String(describing: newValue)) dts=\(dynamicTypeSize)")
+            }
+            .onAppear {
+                print("SIMSHOT-DEBUG addPlant appear focus=\(String(describing: focusedField)) dts=\(dynamicTypeSize)")
+            }
             .task {
                 // `dynamicTypeSize` can still read the default size on the
                 // first frame, so check it only after the screen has settled.
