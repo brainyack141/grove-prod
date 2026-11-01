@@ -420,7 +420,7 @@ final class SimScreenshotTests: XCTestCase {
                     OnboardingNotificationPrimerView(
                         plant: plant,
                         task: primerStore.tasks.first(where: { $0.plantID == plant.id }),
-                        reminderHour: 9,
+                        reminderHour: .constant(9),
                         isRequesting: false,
                         onEnable: {},
                         onSkip: {}
