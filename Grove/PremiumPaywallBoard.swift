@@ -317,6 +317,8 @@ struct PaywallPlanCard: View {
     let isSelected: Bool
     /// True once the store has answered with no price for this plan.
     let isUnavailable: Bool
+    /// The plan the offer leads with, given a larger price figure.
+    var isFeatured: Bool = false
 
     private var shape: RoundedRectangle {
         RoundedRectangle(cornerRadius: GroveTheme.cardRadius, style: .continuous)
@@ -369,7 +371,7 @@ struct PaywallPlanCard: View {
     private var priceText: some View {
         if let price {
             Text(price)
-                .font(.title3.weight(.bold))
+                .font(isFeatured ? .title2.weight(.bold) : .title3.weight(.bold))
                 .monospacedDigit()
                 .foregroundStyle(GroveTheme.ink)
         } else if isUnavailable {
