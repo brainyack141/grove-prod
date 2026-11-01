@@ -70,8 +70,6 @@ struct GrovePlanView: View {
             )
 
             Section {
-                Button("Save changes") { save() }
-                    .disabled(!hasChanges)
                 if storedPlan != nil {
                     Button("Clear preferences", role: .destructive) {
                         isConfirmingClear = true
@@ -95,6 +93,7 @@ struct GrovePlanView: View {
         .formStyle(.grouped)
         .groveGroupedContent()
         .grovePageTitle("Care preferences")
+        .safeAreaInset(edge: .bottom) { saveBar }
         .onAppear {
             // Load once: re-seeding on every appearance would discard an edit
             // the user made before scrolling a picker back into view.
@@ -102,6 +101,23 @@ struct GrovePlanView: View {
             draft = storedPlan ?? GrovePlan()
             hasLoaded = true
         }
+    }
+
+    /// Pinned so the save control is in reach from every choice on this long
+    /// form, not only from the bottom of it. Dim until something has changed.
+    private var saveBar: some View {
+        Button {
+            save()
+        } label: {
+            GroveCTALabel(title: "Save changes", systemImage: "checkmark")
+        }
+        .buttonStyle(GrovePressStyle())
+        .disabled(!hasChanges)
+        // Dims the button, not the bar (see ProfileSetupView.saveBar).
+        .opacity(hasChanges ? 1 : 0.4)
+        .accessibilityIdentifier("savePlanChanges")
+        .animation(GroveMotion.snap, value: hasChanges)
+        .groveActionBar()
     }
 
     private var emptyIntro: String {
