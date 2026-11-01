@@ -40,6 +40,7 @@ struct GroveTrialFlowView: View {
     @State private var failure: String?
     @State private var restoreMessage: String?
     @State private var declineReason: GroveTrialDeclineReason?
+    @State private var isCompactHeight = false
 
     init(
         subject: GrovePremiumOfferSubject?,
@@ -61,6 +62,12 @@ struct GroveTrialFlowView: View {
                     topBar
                     stepBody(availableHeight: proxy.size.height)
                 }
+            }
+            .onAppear {
+                isCompactHeight = isCompact(proxy)
+            }
+            .onChange(of: proxy.size.height) { _, _ in
+                isCompactHeight = isCompact(proxy)
             }
         }
         .environment(\.colorScheme, .dark)
@@ -243,8 +250,20 @@ struct GroveTrialFlowView: View {
         .onAppear { OnboardingAnalytics.paywallAction(step.analyticsAction) }
     }
 
+    /// A short phone needs tighter content so the plans and the example
+    /// conversation clear the pinned footer at rest. Accessibility sizes opt
+    /// out: they already scroll as one page, and shrinking there would only
+    /// make text hit the edge sooner.
+    private func isCompact(_ proxy: GeometryProxy) -> Bool {
+        let fullHeight = proxy.size.height + proxy.safeAreaInsets.top + proxy.safeAreaInsets.bottom
+        return fullHeight < 820 && !dynamicTypeSize.isAccessibilitySize
+    }
+
     private func phoneHeight(for availableHeight: CGFloat) -> CGFloat {
-        min(max(availableHeight * 0.6, 320), 560)
+        if dynamicTypeSize.isAccessibilitySize { return 360 }
+        return isCompactHeight
+            ? min(max(availableHeight * 0.55, 300), 440)
+            : min(max(availableHeight * 0.6, 320), 560)
     }
 
     private func stepScroll<Content: View, Footer: View>(
@@ -302,7 +321,7 @@ struct GroveTrialFlowView: View {
 
     private func tryFreeStep(phoneHeight: CGFloat) -> some View {
         stepScroll {
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 16) {
                 Text(tryFreeHeadline)
                     .font(.largeTitle.weight(.bold))
                     .foregroundStyle(GroveTheme.ink)
@@ -345,58 +364,66 @@ struct GroveTrialFlowView: View {
         let outerCorner = GroveTheme.heroRadius
         let innerCorner = GroveTheme.cardRadius
         let bezel: CGFloat = outerCorner - innerCorner
+        let contentInset: CGFloat = isCompactHeight ? 10 : 12
 
-        return ZStack {
+        return ZStack(alignment: .top) {
             RoundedRectangle(cornerRadius: outerCorner, style: .continuous)
                 .fill(GroveTheme.ink)
                 .environment(\.colorScheme, .light)
 
-            Group {
-                RoundedRectangle(cornerRadius: innerCorner, style: .continuous)
-                    .fill(GroveTheme.background)
+            VStack(spacing: 0) {
                 threadContent
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 18)
+                Spacer(minLength: 0)
             }
-            .padding(bezel)
+            .padding(.horizontal, 14)
+            .padding(.vertical, contentInset)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .background(
+                GroveTheme.background,
+                in: RoundedRectangle(cornerRadius: innerCorner, style: .continuous)
+            )
             .clipShape(RoundedRectangle(cornerRadius: innerCorner, style: .continuous))
             .environment(\.colorScheme, .light)
+            .padding(bezel)
         }
         .frame(maxWidth: .infinity)
-        .frame(height: height)
+        .frame(height: height, alignment: .top)
+        .clipShape(RoundedRectangle(cornerRadius: outerCorner, style: .continuous))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Example conversation with Ari")
     }
 
     private var threadContent: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 10) {
-                plantPhoto(size: 34)
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(plantName)
-                        .font(.headline)
-                        .foregroundStyle(GroveTheme.ink)
-                        .lineLimit(1)
-                    Text("Ask Ari")
-                        .font(.caption)
-                        .foregroundStyle(GroveTheme.mutedInk)
-                        .lineLimit(1)
+        VStack(alignment: .leading, spacing: isCompactHeight ? 10 : 12) {
+            if !isCompactHeight {
+                HStack(spacing: 10) {
+                    plantPhoto(size: 34)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(plantName)
+                            .font(.headline)
+                            .foregroundStyle(GroveTheme.ink)
+                            .lineLimit(1)
+                        Text("Ask Ari")
+                            .font(.caption)
+                            .foregroundStyle(GroveTheme.mutedInk)
+                            .lineLimit(1)
+                    }
+                    Spacer(minLength: 0)
                 }
-                Spacer(minLength: 0)
-            }
-            .accessibilityHidden(true)
-
-            Rectangle()
-                .fill(GroveTheme.separator)
-                .frame(height: 1)
                 .accessibilityHidden(true)
 
-            VStack(alignment: .leading, spacing: 14) {
+                Rectangle()
+                    .fill(GroveTheme.separator)
+                    .frame(height: 1)
+                    .accessibilityHidden(true)
+            }
+
+            VStack(alignment: .leading, spacing: 10) {
                 AriChatBubble(
                     role: .user,
                     text: userTurnText,
                     photo: plantImage.map(AriChatPhoto.image),
-                    photoSize: 132
+                    photoSize: isCompactHeight ? 80 : 110
                 )
                 AriChatBubble(role: .botanist, text: ariTurnText)
             }
@@ -575,10 +602,18 @@ struct GroveTrialFlowView: View {
     // MARK: - Screen 04 · Timeline
 
     private var timelineHeadline: String {
-        if showsTrial, let days = trialDays {
+        if selectedPlanHasTrial, let days = premium.freeTrialDays(for: selectedPlan) {
             return "Start your \(days)-day free trial of Premium."
         }
         return "Choose your Premium plan."
+    }
+
+    /// The trial timeline belongs to the plan actually selected, not to the
+    /// yearly plan the copy was written for. Picking a plan without a trial
+    /// must drop both the trial headline and the timeline rather than describe
+    /// a free week the CTA is not selling.
+    private var selectedPlanHasTrial: Bool {
+        !premium.hasPremium && premium.freeTrialDays(for: selectedPlan) != nil
     }
 
     private struct TrialTimeline {
@@ -589,15 +624,14 @@ struct GroveTrialFlowView: View {
     }
 
     private var trialTimeline: TrialTimeline? {
-        guard showsTrial,
-              let plan = trialPlan,
-              let days = premium.freeTrialDays(for: plan),
-              let chargeDate = premium.trialChargeDate(for: plan),
-              let price = premium.displayPrice(for: plan) else { return nil }
+        guard selectedPlanHasTrial,
+              let days = premium.freeTrialDays(for: selectedPlan),
+              let chargeDate = premium.trialChargeDate(for: selectedPlan),
+              let price = premium.displayPrice(for: selectedPlan) else { return nil }
         return TrialTimeline(
             days: days,
             reminderDate: premium.trialReminderDate(
-                for: plan,
+                for: selectedPlan,
                 from: .now,
                 hour: reminderHour
             ),
@@ -608,18 +642,18 @@ struct GroveTrialFlowView: View {
 
     private var timelineStep: some View {
         stepScroll {
-            VStack(alignment: .leading, spacing: 22) {
+            VStack(alignment: .leading, spacing: isCompactHeight ? 18 : 22) {
                 Text(timelineHeadline)
                     .font(.largeTitle.weight(.bold))
                     .foregroundStyle(GroveTheme.ink)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityAddTraits(.isHeader)
 
+                planCards
+
                 if let timeline = trialTimeline {
                     timelineView(timeline)
                 }
-
-                planCards
             }
         } footer: {
             timelineFooter
@@ -649,7 +683,7 @@ struct GroveTrialFlowView: View {
                 isLast: true
             )
         }
-        .padding(18)
+        .padding(isCompactHeight ? 14 : 18)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             GroveTheme.ink.opacity(0.06),
@@ -692,7 +726,7 @@ struct GroveTrialFlowView: View {
                     .foregroundStyle(GroveTheme.ink.opacity(0.85))
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(.bottom, isLast ? 0 : 18)
+            .padding(.bottom, isLast ? 0 : (isCompactHeight ? 12 : 18))
         }
         .accessibilityElement(children: .combine)
     }
@@ -951,15 +985,18 @@ struct GroveTrialFlowView: View {
     }
 
     private var answerRing: some View {
-        ZStack {
+        VStack(spacing: 16) {
+            HStack(spacing: 12) {
+                answerChip(.price, compact: true)
+                answerChip(.unsureAri, compact: true)
+            }
             plantCircle(size: 140)
-            ForEach(Array(GroveTrialDeclineReason.allCases.enumerated()), id: \.element) { index, reason in
-                answerChip(reason, compact: true)
-                    .frame(maxWidth: 126)
-                    .offset(ringOffset(for: index))
+            HStack(spacing: 12) {
+                answerChip(.browsing, compact: true)
+                answerChip(.other, compact: true)
             }
         }
-        .frame(width: 330, height: 330)
+        .frame(maxWidth: .infinity)
     }
 
     private var answerList: some View {
@@ -972,15 +1009,6 @@ struct GroveTrialFlowView: View {
             }
         }
         .frame(maxWidth: .infinity)
-    }
-
-    private func ringOffset(for index: Int) -> CGSize {
-        switch index {
-        case 0: CGSize(width: 0, height: -112)
-        case 1: CGSize(width: 112, height: 0)
-        case 2: CGSize(width: 0, height: 112)
-        default: CGSize(width: -112, height: 0)
-        }
     }
 
     private func answerChip(_ reason: GroveTrialDeclineReason, compact: Bool) -> some View {
