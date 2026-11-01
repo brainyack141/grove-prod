@@ -1064,7 +1064,7 @@ private extension View {
 
 /// Ari's face, used at 56pt beside the tab's title and at 32pt beside every
 /// answer, so the expert is visually continuous from the first question on.
-private struct AriAvatar: View {
+struct AriAvatar: View {
     let size: CGFloat
 
     var body: some View {
@@ -2840,48 +2840,63 @@ struct AskAboutPlantView: View {
     }
 }
 
-private struct MessageBubble: View {
-    let message: BotanistMessage
-    let threadID: UUID
+/// The photo attached to a turn. Kept as a source rather than a resolved image
+/// so the live thread can keep loading from disk while the trial flow's static
+/// example can hand in the user's photo directly.
+enum AriChatPhoto {
+    case url(URL)
+    case image(UIImage)
+}
 
-    @Environment(AskSession.self) private var ask
-    @State private var isSavingOutcome = false
-    @State private var outcomeFailed = false
+/// The visual half of a conversation turn — the part that belongs to the Ask
+/// tab's look rather than to a live `AskSession`. The live thread and the trial
+/// flow's phone illustration both draw this, so the example cannot drift from
+/// the screen it is advertising.
+///
+/// `accessory` is where the live thread's outcome buttons live; the static
+/// example leaves it empty.
+struct AriChatBubble<Accessory: View>: View {
+    let role: BotanistMessage.Role
+    let text: String
+    let photo: AriChatPhoto?
+    let photoSize: CGFloat
+    @ViewBuilder let accessory: () -> Accessory
 
-    private var isUser: Bool { message.role == .user }
+    init(
+        role: BotanistMessage.Role,
+        text: String,
+        photo: AriChatPhoto? = nil,
+        photoSize: CGFloat = 200,
+        @ViewBuilder accessory: @escaping () -> Accessory
+    ) {
+        self.role = role
+        self.text = text
+        self.photo = photo
+        self.photoSize = photoSize
+        self.accessory = accessory
+    }
+
+    private var isUser: Bool { role == .user }
 
     /// The botanist writes markdown; the user typed plain text and would be
     /// startled to see their own asterisks reinterpreted.
     private var displayText: AttributedString {
-        isUser ? AttributedString(message.text) : BotanistFormatting.attributed(message.text)
+        isUser ? AttributedString(text) : BotanistFormatting.attributed(text)
     }
 
     var body: some View {
-        Group {
-            if isUser {
-                userTurn
-            } else {
-                ariTurn
-            }
+        if isUser {
+            userTurn
+        } else {
+            ariTurn
         }
-        .accessibilityElement(children: .combine)
-        // Spoken from the stripped text: VoiceOver reading "asterisk asterisk
-        // overwatering" is the same defect heard rather than seen.
-        .accessibilityLabel(
-            "\(isUser ? "You asked" : "Ari"): "
-            + "\(message.photoURL == nil ? "" : "Photo attached. ")"
-            + "\(isUser ? message.text : BotanistFormatting.plain(message.text))"
-        )
-        .accessibilityIdentifier(isUser ? "botanistUserMessage" : "botanistAnswer")
     }
 
     /// The user's words: any photo above, then an ink bubble whose tail
     /// corner points back at the field they came from.
     private var userTurn: some View {
         VStack(alignment: .trailing, spacing: 8) {
-            if let photoURL = message.photoURL {
-                BotanistMessagePhoto(url: photoURL)
-            }
+            photoView
             Text(displayText)
                 .font(.body)
                 .foregroundStyle(GroveTheme.background)
@@ -2911,9 +2926,7 @@ private struct MessageBubble: View {
         HStack(alignment: .top, spacing: 10) {
             AriAvatar(size: 32)
             VStack(alignment: .leading, spacing: 14) {
-                if let photoURL = message.photoURL {
-                    BotanistMessagePhoto(url: photoURL)
-                }
+                photoView
                 Text(displayText)
                     .font(.body)
                     .lineSpacing(4)
@@ -2922,12 +2935,67 @@ private struct MessageBubble: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .textSelection(.enabled)
 
-                if message.adviceID != nil {
-                    responseDetails
-                }
+                accessory()
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
+    }
+
+    @ViewBuilder
+    private var photoView: some View {
+        if let photo {
+            switch photo {
+            case .url(let url):
+                BotanistMessagePhoto(url: url, size: photoSize)
+            case .image(let image):
+                BotanistMessagePhoto(image: image, size: photoSize)
+            }
+        }
+    }
+}
+
+extension AriChatBubble where Accessory == EmptyView {
+    init(
+        role: BotanistMessage.Role,
+        text: String,
+        photo: AriChatPhoto? = nil,
+        photoSize: CGFloat = 200
+    ) {
+        self.init(role: role, text: text, photo: photo, photoSize: photoSize) {
+            EmptyView()
+        }
+    }
+}
+
+private struct MessageBubble: View {
+    let message: BotanistMessage
+    let threadID: UUID
+
+    @Environment(AskSession.self) private var ask
+    @State private var isSavingOutcome = false
+    @State private var outcomeFailed = false
+
+    private var isUser: Bool { message.role == .user }
+
+    private var photo: AriChatPhoto? {
+        message.photoURL.map(AriChatPhoto.url)
+    }
+
+    var body: some View {
+        AriChatBubble(role: message.role, text: message.text, photo: photo) {
+            if message.adviceID != nil {
+                responseDetails
+            }
+        }
+        .accessibilityElement(children: .combine)
+        // Spoken from the stripped text: VoiceOver reading "asterisk asterisk
+        // overwatering" is the same defect heard rather than seen.
+        .accessibilityLabel(
+            "\(isUser ? "You asked" : "Ari"): "
+            + "\(message.photoURL == nil ? "" : "Photo attached. ")"
+            + "\(isUser ? message.text : BotanistFormatting.plain(message.text))"
+        )
+        .accessibilityIdentifier(isUser ? "botanistUserMessage" : "botanistAnswer")
     }
 
     /// Where the answer was checked, as one small line with the publishers
@@ -3027,10 +3095,33 @@ private struct MessageBubble: View {
     }
 }
 
-private struct BotanistMessagePhoto: View {
-    let url: URL
+struct BotanistMessagePhoto: View {
+    private let source: AriChatPhoto
+    private let size: CGFloat
 
-    @State private var image: UIImage?
+    @State private var loaded: UIImage?
+
+    init(url: URL, size: CGFloat = 200) {
+        source = .url(url)
+        self.size = size
+    }
+
+    init(image: UIImage, size: CGFloat = 200) {
+        source = .image(image)
+        self.size = size
+    }
+
+    private var image: UIImage? {
+        switch source {
+        case .url: loaded
+        case .image(let value): value
+        }
+    }
+
+    private var url: URL? {
+        guard case .url(let url) = source else { return nil }
+        return url
+    }
 
     var body: some View {
         Group {
@@ -3047,10 +3138,11 @@ private struct BotanistMessagePhoto: View {
                 }
             }
         }
-        .frame(width: 200, height: 200)
+        .frame(width: size, height: size)
         .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
         .task(id: url) {
-            image = await GroveImageLoader.downsampledImage(at: url, maxDimension: 800)
+            guard let url else { return }
+            loaded = await GroveImageLoader.downsampledImage(at: url, maxDimension: 800)
         }
         .accessibilityHidden(true)
     }
