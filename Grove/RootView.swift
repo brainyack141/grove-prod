@@ -653,6 +653,7 @@ private struct AppShellView: View {
     @AppStorage(GroveDefaults.firstPlantActivationPending) private var firstPlantActivationPending = false
     @AppStorage(GroveDefaults.firstPlantAutoScanPresented) private var firstPlantAutoScanPresented = false
     @AppStorage(GroveDefaults.premiumOfferMeaningfulUseCount) private var premiumMeaningfulUseCount = 0
+    @AppStorage(GroveDefaults.premiumOfferOnboardingFinished) private var premiumOfferOnboardingFinished = false
 
     var body: some View {
         // The tab bar is the system's. Grove used to hide it and draw its own,
@@ -929,9 +930,11 @@ private struct AppShellView: View {
             intentRouter.pendingCareAction = nil
             apply(action)
         }
-        // Onboarding only arms the offer. A real care-loop action makes it due,
-        // and it can rise only while Today is idle at its root — never over the
-        // camera, a check-in, or the destination that produced that value.
+        // The offer becomes due at the end of onboarding, once the first
+        // plant's first-week care plan is dismissed; the care-loop count stays
+        // as the fallback for the manual route that creates no plant. It can
+        // rise only while Today is idle at its root — never over the camera, a
+        // check-in, or the destination that produced that value.
         .task(id: premiumOfferGateID) {
             guard premiumOffer == nil,
                   scanLaunch == nil,
@@ -939,6 +942,8 @@ private struct AppShellView: View {
                   isAtTabRoot,
                   premium.didLoadCatalogue,
                   !premium.hasPremium,
+                  premium.displayPrice(for: .yearly) != nil
+                    || premium.displayPrice(for: .monthly) != nil,
                   GrovePremiumOffer.isDue(),
                   let plant = store.plants.first else { return }
             // Let Today settle first. An offer that animates up during the
@@ -948,7 +953,9 @@ private struct AppShellView: View {
                   !premium.hasPremium,
                   scanLaunch == nil,
                   selectedTab == .today,
-                  isAtTabRoot else { return }
+                  isAtTabRoot,
+                  premium.displayPrice(for: .yearly) != nil
+                    || premium.displayPrice(for: .monthly) != nil else { return }
             var image: UIImage?
             if let url = store.latestPhotoURL(for: plant.id) {
                 image = await GroveImageLoader.downsampledImage(at: url)
@@ -1129,9 +1136,10 @@ private struct AppShellView: View {
     }
 
     /// Re-runs the offer gate whenever eligibility or presentation context can
-    /// change. `@AppStorage` observes the care-loop counter written by the store.
+    /// change. `@AppStorage` observes the care-loop counter written by the store
+    /// and the onboarding-finished flag written when the care plan is dismissed.
     private var premiumOfferGateID: String {
-        "\(store.plants.count)-\(premiumMeaningfulUseCount)-\(selectedTab.rawValue)-\(isAtTabRoot)-\(scanLaunch != nil)-\(premium.hasPremium)-\(premium.didLoadCatalogue)"
+        "\(store.plants.count)-\(premiumMeaningfulUseCount)-\(premiumOfferOnboardingFinished)-\(selectedTab.rawValue)-\(isAtTabRoot)-\(scanLaunch != nil)-\(premium.hasPremium)-\(premium.didLoadCatalogue)"
     }
 
     /// The only thing one forecast is pinned to: where the grove is.

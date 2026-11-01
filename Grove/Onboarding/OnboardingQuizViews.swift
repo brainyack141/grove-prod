@@ -1143,6 +1143,7 @@ struct PostSignupSetupGate<Content: View>: View {
                 setupPage
             } else if let plant = dayOnePlant {
                 OnboardingFirstWeekView(plant: plant, reminderHour: reminderHour) {
+                    GrovePremiumOffer.markOnboardingFinished()
                     withAnimation(GroveMotion.settle) { dayOnePlant = nil }
                 }
                 .transition(.opacity)

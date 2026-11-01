@@ -95,6 +95,11 @@ enum GroveDefaults {
     static let launchCount = "grove.launchCount"
     /// Onboarding finished and the Premium offer has not been shown yet.
     static let premiumOfferPending = "grove.premiumOffer.pending"
+    /// The first plant's first-week care plan was seen, so the end of
+    /// onboarding is the moment to offer Premium.
+    static let premiumOfferOnboardingFinished = "grove.premiumOffer.onboardingFinished"
+    /// The one-time Premium offer has been shown and answered either way.
+    static let premiumOfferShown = "grove.premiumOffer.shown"
     /// Retired launch at which the old offer was armed.
     static let premiumOfferArmedLaunch = "grove.premiumOffer.armedLaunch"
     /// Care-loop actions completed since onboarding armed the one-time offer.
@@ -149,6 +154,8 @@ enum GroveDefaults {
         firstPlantNotificationPrimerPlantID,
         launchCount,
         premiumOfferPending,
+        premiumOfferOnboardingFinished,
+        premiumOfferShown,
         premiumOfferArmedLaunch,
         premiumOfferMeaningfulUseCount,
         hapticsEnabled,
