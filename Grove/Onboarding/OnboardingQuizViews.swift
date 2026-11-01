@@ -415,39 +415,54 @@ struct OnboardingSingleChoiceStep: View {
 
 // MARK: - Premium
 
-/// Grove's Premium offer.
+/// Grove's full-screen Premium offer.
 ///
-/// It no longer sits inside onboarding. Asking for money before the account
-/// existed meant asking someone whose baseline was not saved yet, on the
-/// strength of a single screen; `GrovePremiumOfferPresenter` now raises this
-/// once the person has completed a meaningful care-loop action in a grove they
-/// own. Core plant care is never the price of entry, so dismissing it always
-/// moves on.
+/// The screen leads with the person's own grove when the offer has a subject:
+/// their plant's photo, name and next check-in, over the faded night green.
+/// Without one it leads with Ari and the general offer. Below that, the three
+/// gated features come from `PremiumBenefit`, so no surface can sell something
+/// another does not. When a trial is genuinely available, a dated timeline
+/// shows how the free week works — today, the reminder Grove will send, and
+/// the first charge date. The reminder date comes from
+/// `NotificationService.trialNoticeDate`, the same function that schedules the
+/// local notification, so the screen and the notification cannot disagree.
+/// Every price, saving and trial comes from the live StoreKit product; nothing
+/// is shown as a price until the catalogue has answered.
 ///
-/// The screen is a night-green page: a fern photograph fades into the ground,
-/// then a plain Free against Premium table, the Premium mascots, and the two
-/// plans. Every limit in the table is read from the constant that enforces it,
-/// and every price, saving and trial comes from StoreKit for the current Apple
-/// account. Nothing is shown as a price until the catalogue has answered.
+/// The trigger that presents it lives elsewhere; this view only owns the
+/// offer, its purchase and restore flow, and every way out of it.
 struct GrovePremiumOfferView: View {
-    /// The plant the offer was raised for. Kept so the presenter's contract is
-    /// unchanged; the offer itself now leads with what Premium adds rather than
-    /// with one plant.
+    /// The plant the offer was raised for, when there is one. It supplies the
+    /// photo, name and next check-in that lead the offer; nil falls back to
+    /// the general Ari offer.
     var subject: GrovePremiumOfferSubject?
-    /// Dismissal, purchase and "continue without Premium" all end here. The
-    /// caller decides whether that means advancing a funnel or closing a sheet.
+    /// Dismissal, purchase and "not now" all end here. The caller decides
+    /// whether that means advancing a funnel or closing a sheet.
     var onFinish: () -> Void
 
     @Environment(GrovePremiumStore.self) private var premium
     @Environment(NotificationService.self) private var notifications
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @AppStorage(GroveDefaults.reminderHour) private var reminderHour = NotificationService.reminderHour
 
     @State private var selectedPlan: GrovePremiumStore.Plan = .yearly
     @State private var isWorking = false
     @State private var failure: String?
     @State private var restoreMessage: String?
     @State private var isCompactHeight = false
+
+    @ScaledMetric(relativeTo: .footnote) private var benefitSymbolWidth: CGFloat = 22
+
+    init(
+        subject: GrovePremiumOfferSubject?,
+        initialPlan: GrovePremiumStore.Plan = .yearly,
+        onFinish: @escaping () -> Void
+    ) {
+        self.subject = subject
+        self.onFinish = onFinish
+        _selectedPlan = State(initialValue: initialPlan)
+    }
 
     private var isPurchasable: Bool {
         premium.displayPrice(for: .yearly) != nil || premium.displayPrice(for: .monthly) != nil
@@ -466,13 +481,17 @@ struct GrovePremiumOfferView: View {
             && (premium.freeTrialDays(for: .yearly) != nil || premium.freeTrialDays(for: .monthly) != nil)
     }
 
-    /// The photo gives way to 212pt on shorter phones so the title, the
-    /// comparison and the mascots all sit above the footer at rest, because
-    /// at 240 the mascot caption still sat under the footer on a 402x874
-    /// phone.
+    /// The photo's height, and with it how much of the offer can sit above the
+    /// pinned footer before anyone scrolls. The plans lead the content now, so
+    /// the photo only has to carry the title: 250pt on a standard phone, 170pt
+    /// when the screen is compact (<820) so the yearly price clears the footer
+    /// on a 375x667 phone, and 200pt at accessibility sizes, where the footer
+    /// sits in the scroll content instead. The title overlap scales with the
+    /// hero so the headline keeps sitting on the faded photo rather than under
+    /// the close X.
     private func heroHeight(available height: CGFloat) -> CGFloat {
         if dynamicTypeSize.isAccessibilitySize { return 200 }
-        return height < 820 ? 212 : 320
+        return height < 820 ? 170 : 250
     }
 
     var body: some View {
@@ -480,26 +499,27 @@ struct GrovePremiumOfferView: View {
             GroveTheme.mapGround.ignoresSafeArea()
 
             GeometryReader { proxy in
+                let heroFrameHeight = heroHeight(available: proxy.size.height)
                 VStack(spacing: 0) {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 0) {
                             hero
                                 .frame(
                                     width: proxy.size.width,
-                                    height: heroHeight(available: proxy.size.height) + proxy.safeAreaInsets.top
+                                    height: heroFrameHeight + proxy.safeAreaInsets.top
                                 )
                                 .clipped()
 
-                            VStack(alignment: .leading, spacing: isCompactHeight ? 18 : 24) {
+                            VStack(alignment: .leading, spacing: isCompactHeight ? 14 : 24) {
                                 introduction
-                                PaywallComparisonTable(rows: PaywallComparison.rows)
                                 storeOffer
-                                PaywallMascotRow()
-                                    .padding(.horizontal, 4)
+                                benefitsList
+                                freeWeekTimeline
+                                staysFreeBlock
                             }
                             .padding(.horizontal, 16)
                             // The title sits on the faded lower part of the photo.
-                            .padding(.top, dynamicTypeSize.isAccessibilitySize ? -70 : -150)
+                            .padding(.top, dynamicTypeSize.isAccessibilitySize ? -70 : -min(150, heroFrameHeight * 0.5))
                             .padding(.bottom, 24)
 
                             if dynamicTypeSize.isAccessibilitySize { footer }
@@ -563,57 +583,244 @@ struct GrovePremiumOfferView: View {
                 .font(.system(size: 17, weight: .semibold))
                 .foregroundStyle(GroveTheme.ink)
                 .frame(width: 44, height: 44)
-                .background(GroveTheme.ink.opacity(0.14), in: Circle())
-                .background(.ultraThinMaterial, in: Circle())
+                .background {
+                    Circle().fill(GroveTheme.mapGround.opacity(0.92))
+                }
+                .overlay {
+                    Circle().stroke(GroveTheme.ink.opacity(0.35), lineWidth: 1)
+                }
                 .contentShape(Circle())
         }
         .buttonStyle(GroveCardPressStyle(scale: 0.94, haptics: false))
         .disabled(isWorking)
         .opacity(isWorking ? 0.4 : 1)
-        .accessibilityLabel("Continue without Premium")
+        .accessibilityLabel(PremiumTerms.notNowTitle)
         .accessibilityIdentifier("onboardingPaywallClose")
     }
 
-    /// Ferns in soft light, dissolving into the night green so the title can
-    /// sit on the lower part of the photograph.
+    /// The subject's own photo when the offer has one, otherwise the fern
+    /// photograph, dissolving into the night green either way so the title can
+    /// sit on the lower part of the image.
     private var hero: some View {
-        OnboardingHeroPhoto(name: "PlantShareBackdrop")
-            .overlay {
-                LinearGradient(
-                    stops: [
-                        .init(color: GroveTheme.mapGround.opacity(0.1), location: 0),
-                        .init(color: GroveTheme.mapGround.opacity(0.55), location: 0.55),
-                        .init(color: GroveTheme.mapGround, location: 0.96)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+        Group {
+            if let image = subject?.image {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                OnboardingHeroPhoto(name: "PlantShareBackdrop")
             }
-            .accessibilityHidden(true)
+        }
+        .overlay {
+            LinearGradient(
+                stops: [
+                    .init(color: GroveTheme.mapGround.opacity(0.1), location: 0),
+                    .init(color: GroveTheme.mapGround.opacity(0.55), location: 0.55),
+                    .init(color: GroveTheme.mapGround, location: 0.96)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        }
+        .accessibilityHidden(true)
     }
 
     private var introduction: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Grove Premium".uppercased())
+            Text(eyebrowLine)
                 .font(.caption.weight(.semibold))
                 .tracking(0.6)
                 .foregroundStyle(GroveTheme.mapCaption)
-            Text("Unlimited questions to Ari and as many friends as you like.")
+            Text(headline)
                 .font(.largeTitle.weight(.bold))
                 .foregroundStyle(GroveTheme.ink)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
+            Text(subhead)
+                .font(.body)
+                .foregroundStyle(GroveTheme.ink.opacity(0.85))
+                .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, 4)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
+    private var eyebrowLine: String {
+        guard let subject else { return "GROVE PREMIUM" }
+        return "GROVE PREMIUM · FOR \(subject.displayName.uppercased())"
+    }
+
+    private var headline: String {
+        guard let subject else { return "Ask Ari as often as your plants need." }
+        return "Help for \(subject.displayName) whenever something looks wrong."
+    }
+
+    private var subhead: String {
+        guard let subject else {
+            return "Premium gives you more time with Ari, Grove's plant expert."
+        }
+        return "\(subject.eyebrowLine) \(subject.supportingLine). Premium gives you more time with Ari, Grove's plant expert."
+    }
+
+    private var benefitsList: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            ForEach(PremiumBenefit.all()) { item in
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: item.symbol)
+                        .font(.footnote.weight(.bold))
+                        .foregroundStyle(GroveTheme.mapThriving)
+                        .frame(width: benefitSymbolWidth, alignment: .center)
+                    Text(item.text)
+                        .font(.body)
+                        .foregroundStyle(GroveTheme.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+        .padding(.horizontal, 4)
+    }
+
+    /// How the free week works, dated against the live product.
+    ///
+    /// The reminder date comes from `NotificationService.trialNoticeDate`, the
+    /// same function that schedules the notification when a trial starts, so it
+    /// is always the day before the charge — Day 6 of a 7-day trial.
+    @ViewBuilder
+    private var freeWeekTimeline: some View {
+        if let timeline = trialTimeline {
+            let reminderDate = timeline.reminderDate
+            VStack(alignment: .leading, spacing: 12) {
+                Text(timeline.days == 7 ? "How your free week works" : "How your free trial works")
+                    .font(.headline)
+                    .foregroundStyle(GroveTheme.ink)
+
+                timelineRow(
+                    date: "Today",
+                    text: "Ari's full help unlocks. No payment due now.",
+                    isToday: true,
+                    isLast: false
+                )
+
+                if let reminderDate {
+                    timelineRow(
+                        date: timelineDate(reminderDate),
+                        text: notifications.authorization != .denied
+                            ? "We'll send you a reminder that your trial ends tomorrow."
+                            : "Your trial ends tomorrow. Notifications are off, so set a reminder of your own.",
+                        isToday: false,
+                        isLast: false
+                    )
+                }
+
+                timelineRow(
+                    date: timelineDate(timeline.chargeDate),
+                    text: "Your \(selectedPlan == .yearly ? "yearly" : "monthly") plan starts at \(timeline.price) \(PremiumTerms.periodWord(selectedPlan)), unless you cancel before then.",
+                    isToday: false,
+                    isLast: true
+                )
+            }
+            .padding(16)
+            .background(
+                GroveTheme.ink.opacity(0.06),
+                in: RoundedRectangle(cornerRadius: GroveTheme.cardRadius, style: .continuous)
+            )
+        }
+    }
+
+    private func timelineDate(_ date: Date) -> String {
+        date.formatted(.dateTime.weekday(.wide).day().month(.wide))
+    }
+
+    private struct TrialTimeline {
+        let days: Int
+        let reminderDate: Date?
+        let chargeDate: Date
+        let price: String
+    }
+
+    private var trialTimeline: TrialTimeline? {
+        guard showsTrial,
+              let days = premium.freeTrialDays(for: selectedPlan),
+              let chargeDate = premium.trialChargeDate(for: selectedPlan),
+              let price = premium.displayPrice(for: selectedPlan) else { return nil }
+        return TrialTimeline(
+            days: days,
+            reminderDate: premium.trialReminderDate(
+                for: selectedPlan,
+                from: .now,
+                hour: reminderHour
+            ),
+            chargeDate: chargeDate,
+            price: price
+        )
+    }
+
+    private func timelineRow(
+        date: String,
+        text: String,
+        isToday: Bool,
+        isLast: Bool
+    ) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            VStack(spacing: 0) {
+                Circle()
+                    .fill(isToday ? GroveTheme.mapThriving : GroveTheme.ink.opacity(0.25))
+                    .frame(width: 8, height: 8)
+                    .padding(.top, 5)
+                if !isLast {
+                    Rectangle()
+                        .fill(GroveTheme.ink.opacity(0.25))
+                        .frame(width: 2)
+                        .frame(maxHeight: .infinity)
+                }
+            }
+            .frame(width: 10)
+            .frame(maxHeight: .infinity)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(date)
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(GroveTheme.ink)
+                Text(text)
+                    .font(.body)
+                    .foregroundStyle(GroveTheme.ink.opacity(0.85))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.bottom, isLast ? 0 : 16)
+        }
+        .accessibilityElement(children: .combine)
+    }
+
     private var storeOffer: some View {
         VStack(spacing: 10) {
+            if !premium.didLoadCatalogue {
+                Text(PremiumTerms.loadingMessage)
+                    .font(.subheadline)
+                    .foregroundStyle(GroveTheme.ink.opacity(0.8))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 4)
+            }
             ForEach([GrovePremiumStore.Plan.yearly, .monthly], id: \.self) { plan in
                 planRow(plan)
             }
         }
+    }
+
+    private var staysFreeBlock: some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: "checkmark.shield")
+                .font(.footnote.weight(.bold))
+                .foregroundStyle(GroveTheme.mapThriving)
+                .frame(width: benefitSymbolWidth, alignment: .center)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(PremiumBenefit.staysFree)
+                Text(PremiumBenefit.keepOnCancel)
+            }
+            .font(.subheadline)
+            .foregroundStyle(GroveTheme.ink.opacity(0.8))
+            .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, 4)
     }
 
     private func planRow(_ plan: GrovePremiumStore.Plan) -> some View {
@@ -627,11 +834,12 @@ struct GrovePremiumOfferView: View {
         } label: {
             PaywallPlanCard(
                 title: plan == .yearly ? "Yearly" : "Monthly",
-                price: premium.displayPrice(for: plan),
+                price: PremiumTerms.pricePeriodLabel(premium, plan: plan),
                 detail: planDetail(for: plan),
                 badge: plan == .yearly ? premium.yearlySavingsLabel : nil,
                 isSelected: isSelected,
-                isUnavailable: premium.didLoadCatalogue && premium.displayPrice(for: plan) == nil
+                isUnavailable: premium.didLoadCatalogue && premium.displayPrice(for: plan) == nil,
+                isFeatured: plan == .yearly
             )
         }
         .buttonStyle(GroveCardPressStyle(scale: 0.985, haptics: false))
@@ -642,17 +850,24 @@ struct GrovePremiumOfferView: View {
 
     /// The line under the plan's name. The trial leads when there is one for
     /// this plan and this Apple account; the yearly plan also says what it
-    /// works out to a month, from the live product.
+    /// works out to a week, from the live product.
     private func planDetail(for plan: GrovePremiumStore.Plan) -> String? {
-        // "7 days free, then $34.99 a year": the trial and what follows it,
-        // in the same words every Grove paywall uses.
-        if showsTrial, let trial = PremiumTerms.trialLine(premium, plan: plan) {
+        if plan == .yearly {
+            var lines: [String] = []
+            if showsTrial, let trial = PremiumTerms.trialLine(premium, plan: plan) {
+                lines.append(trial)
+            } else {
+                lines.append("Billed yearly")
+            }
+            if let weekly = PremiumTerms.weeklyLine(premium, plan: plan) {
+                lines.append(weekly)
+            }
+            return lines.joined(separator: "\n")
+        }
+        if let trial = PremiumTerms.trialLine(premium, plan: plan) {
             return trial
         }
-        if plan == .yearly, let perMonth = premium.monthlyEquivalentPrice(for: .yearly) {
-            return "\(perMonth) a month, billed yearly"
-        }
-        return nil
+        return showsTrial ? "Billed monthly · no free trial" : "Billed monthly"
     }
 
     private func message(_ text: String, colour: Color) -> some View {
@@ -665,10 +880,14 @@ struct GrovePremiumOfferView: View {
     }
 
     private var restoreButton: some View {
-        Button(isWorking ? "Working…" : "Restore") {
+        Button(isWorking ? "Working…" : "Restore purchases") {
             Task { await restorePurchases() }
         }
         .disabled(isWorking)
+    }
+
+    private var isEmptyCatalogue: Bool {
+        premium.didLoadCatalogue && !isPurchasable && !premium.hasPremium
     }
 
     private var footer: some View {
@@ -679,35 +898,28 @@ struct GrovePremiumOfferView: View {
                 message(restoreMessage, colour: GroveTheme.ink.opacity(0.7))
             }
 
-            Button {
-                Task { await primaryAction() }
-            } label: {
-                HStack(spacing: 10) {
-                    Text(primaryActionTitle)
-                        .font(.headline)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                    if isWorking {
-                        ProgressView()
-                            .tint(GroveTheme.mapGround)
-                    }
-                }
-                .foregroundStyle(GroveTheme.mapGround)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
-                .frame(maxWidth: .infinity, minHeight: 58)
-                .background(GroveTheme.ink, in: Capsule())
-                .contentShape(Capsule())
+            if isEmptyCatalogue {
+                Text(PremiumTerms.notAvailableMessage)
+                    .font(.subheadline)
+                    .foregroundStyle(GroveTheme.ink.opacity(0.85))
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(GrovePressStyle())
-            .disabled(isWorking)
-            .opacity(isWorking ? 0.7 : 1)
-            .accessibilityIdentifier("onboardingPaywallPrimary")
 
-            // Offline, the pill retries. The way past must not be only the
-            // small close icon, so say it in words under the retry.
-            if !premium.hasPremium && !premium.didLoadCatalogue {
-                Button("Continue without Premium") {
+            primaryButton(filled: !isEmptyCatalogue)
+
+            if let renewalNote {
+                Text(renewalNote)
+                    .font(.footnote)
+                    .foregroundStyle(GroveTheme.ink.opacity(0.85))
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            // The way past must not be only the small close icon.
+            if !premium.hasPremium {
+                Button(PremiumTerms.notNowTitle) {
                     OnboardingAnalytics.paywallAction("skipped")
                     onFinish()
                 }
@@ -729,16 +941,6 @@ struct GrovePremiumOfferView: View {
             }
             .foregroundStyle(GroveTheme.ink.opacity(0.7))
             .tint(GroveTheme.ink.opacity(0.7))
-            .padding(.top, -6)
-
-            if let renewalNote {
-                Text(renewalNote)
-                    .font(.caption)
-                    .foregroundStyle(GroveTheme.ink.opacity(0.5))
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, -10)
-            }
         }
         .padding(.horizontal, 16)
         .padding(.top, 14)
@@ -746,31 +948,59 @@ struct GrovePremiumOfferView: View {
         .background(GroveTheme.mapGround)
     }
 
+    private func primaryButton(filled: Bool) -> some View {
+        Button {
+            Task { await primaryAction() }
+        } label: {
+            HStack(spacing: 10) {
+                Text(primaryActionTitle)
+                    .font(.headline)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                if isWorking {
+                    ProgressView()
+                        .tint(filled ? GroveTheme.mapGround : GroveTheme.ink)
+                }
+            }
+            .foregroundStyle(filled ? GroveTheme.mapGround : GroveTheme.ink)
+            .padding(.horizontal, 24)
+            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity, minHeight: filled ? 58 : 50)
+            .background {
+                if filled {
+                    Capsule().fill(GroveTheme.ink)
+                } else {
+                    Capsule().stroke(GroveTheme.ink.opacity(0.4), lineWidth: 1.5)
+                }
+            }
+            .contentShape(Capsule())
+        }
+        .buttonStyle(GrovePressStyle())
+        .disabled(isWorking)
+        .opacity(isWorking ? 0.7 : 1)
+        .accessibilityIdentifier("onboardingPaywallPrimary")
+    }
+
     /// The renewal terms for the selected plan, said plainly. Nothing when
-    /// there is nothing to renew.
+    /// there is nothing to renew. The first-charge date is already in the note
+    /// and the timeline above, so there is no separate reminder sentence here.
     private var renewalNote: String? {
         guard !premium.hasPremium, isPurchasable else { return nil }
-        guard let terms = PremiumTerms.renewalNote(premium, plan: selectedPlan) else { return nil }
-        // The reminder is only promised to someone Grove can still reach.
-        if showsTrial, premium.freeTrialDays(for: selectedPlan) != nil,
-           notifications.authorization != .denied {
-            return "\(terms) You'll get a reminder before the trial ends."
-        }
-        return terms
+        return PremiumTerms.renewalNote(premium, plan: selectedPlan)
     }
 
     private var primaryActionTitle: String {
         if premium.hasPremium { return "Continue with Premium" }
         // The store answered with nothing to sell: the button only closes, so
         // it must not read as a purchase.
-        if premium.didLoadCatalogue && !isPurchasable { return "Continue to Grove" }
+        if premium.didLoadCatalogue && !isPurchasable { return "Continue" }
         // The store never answered: the prices are placeholders, so the
         // button retries rather than reading as a purchase that only closes.
         if !premium.didLoadCatalogue { return "Try again" }
         if showsTrial, let trial = PremiumTerms.trialButtonTitle(premium, plan: selectedPlan) {
             return trial
         }
-        return "Start Premium, \(selectedPlan == .yearly ? "yearly" : "monthly")"
+        return PremiumTerms.subscribeTitle(premium, plan: selectedPlan)
     }
 
     private func primaryAction() async {
@@ -919,6 +1149,7 @@ struct PostSignupSetupGate<Content: View>: View {
                 setupPage
             } else if let plant = dayOnePlant {
                 OnboardingFirstWeekView(plant: plant, reminderHour: reminderHour) {
+                    GrovePremiumOffer.markOnboardingFinished()
                     withAnimation(GroveMotion.settle) { dayOnePlant = nil }
                 }
                 .transition(.opacity)

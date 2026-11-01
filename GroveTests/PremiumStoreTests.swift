@@ -60,6 +60,18 @@ struct PremiumStoreTests {
         )
     }
 
+    private static func freeTrial(weeks: Int) -> TestStoreProductDiscount {
+        TestStoreProductDiscount(
+            identifier: "trial",
+            price: 0,
+            localizedPriceString: "$0.00",
+            paymentMode: .freeTrial,
+            subscriptionPeriod: SubscriptionPeriod(value: weeks, unit: .week),
+            numberOfPeriods: 1,
+            type: .introductory
+        )
+    }
+
     /// The catalogue Grove intends to launch with: $34.99 a year against
     /// $6.99 a month, with a three-day trial on the annual plan only.
     private static func launchCatalogue(trialDays: Int? = 3) -> [GrovePremiumStore.Plan: Package] {
@@ -129,6 +141,8 @@ struct PremiumStoreTests {
         #expect(store.freeTrialDays(for: .yearly) == 3)
         #expect(store.freeTrialLabel(for: .monthly) == nil)
         #expect(store.freeTrialDays(for: .monthly) == nil)
+        // The no-trial note still has to state the cancellation window.
+        #expect(PremiumTerms.renewalNote(store, plan: .monthly)?.contains("at least 24 hours before it renews") == true)
     }
 
     @Test("A product with a trial it cannot redeem shows no trial copy")
@@ -161,6 +175,17 @@ struct PremiumStoreTests {
         #expect(store.freeTrialDays(for: .yearly) == 7)
     }
 
+    @Test("A one-week introductory offer is labelled in days")
+    func oneWeekTrialIsLabelledInDays() {
+        let store = GrovePremiumStore()
+        store.seedCatalogueForTesting(
+            packages: Self.launchCatalogue(),
+            eligibleFreeTrials: [.yearly: Self.freeTrial(weeks: 1).toStoreProductDiscount()]
+        )
+        #expect(store.freeTrialLabel(for: .yearly) == "7-day free trial")
+        #expect(store.freeTrialDays(for: .yearly) == 7)
+    }
+
     // MARK: - Price copy
 
     @Test("The yearly card can state what the year works out to per month")
@@ -173,6 +198,39 @@ struct PremiumStoreTests {
         #expect(store.monthlyEquivalentPrice(for: .yearly) == "$2.92")
         #expect(store.displayPrice(for: .yearly) == "$34.99")
         #expect(store.priceLine(for: .monthly) == "$6.99 per month")
+    }
+
+    @Test("The yearly card can state what it costs a week")
+    func weeklyEquivalentIsDerivedFromTheBillingPeriod() {
+        let store = GrovePremiumStore()
+        store.seedCatalogueForTesting(packages: Self.launchCatalogue())
+        // $34.99 over 52 weeks is $0.6729, rounded up to the cent.
+        #expect(store.weeklyEquivalentPrice(for: .yearly) == "$0.68")
+        #expect(store.weeklyEquivalentPrice(for: .monthly) == nil)
+    }
+
+    // MARK: - Trial timeline
+
+    @Test("The trial charge and reminder dates match what the notifier schedules")
+    func trialDatesMatchTheScheduledReminder() {
+        let store = GrovePremiumStore()
+        let catalogue = Self.launchCatalogue()
+        store.seedCatalogueForTesting(
+            packages: catalogue,
+            eligibleFreeTrials: [.yearly: catalogue[.yearly]!.storeProduct.introductoryDiscount!]
+        )
+        let start = Date(timeIntervalSince1970: 1_700_000_000)
+        let calendar = Calendar.current
+        let hour = 9
+
+        let charge = store.trialChargeDate(for: .yearly, from: start, calendar: calendar)
+        #expect(charge == calendar.date(byAdding: .day, value: 3, to: start))
+
+        let reminder = store.trialReminderDate(for: .yearly, from: start, hour: hour)
+        #expect(reminder == NotificationService.trialNoticeDate(for: charge!, now: start, hour: hour))
+        let reminderDay = calendar.startOfDay(for: reminder!)
+        let chargeDay = calendar.startOfDay(for: charge!)
+        #expect(calendar.dateComponents([.day], from: reminderDay, to: chargeDay).day == 1)
     }
 
     // MARK: - Metering

@@ -51,15 +51,18 @@ struct GrovePremiumOfferSubject: Identifiable {
 
 /// Decides when Grove asks for money.
 ///
-/// The rule is one sentence: not until the person has done something useful
-/// twice. Grove used to present the offer between the finished setup and
-/// account creation, which meant asking someone who had seen a single screen,
-/// on behalf of a plant whose baseline was not saved yet, while their way to
-/// Today ran through the price. A trial started there is bought on impulse and
-/// cancelled on day seven. Two actions from the care loop — two guided
-/// check-ins, or a guided check-in and a second plant — are concrete evidence
-/// that Grove has joined the person's routine; reopening the app is not. The
-/// presenter adds the final context guard: Today must be at rest.
+/// The offer is a one-time moment at the end of onboarding: the first plant is
+/// saved and its first-week care plan has been seen. That is when the person
+/// has met Grove with a plant of their own, so the offer can name something
+/// real rather than a baseline that was never saved. Grove used to ask between
+/// the finished setup and account creation, before either existed, and a trial
+/// bought there is bought on impulse and cancelled on day seven.
+///
+/// Two meaningful care-loop actions — two guided check-ins, or a guided check-in
+/// and a second plant — remain a fallback trigger for the manual signup route,
+/// which creates no first plant, and for anyone who never saw their care plan.
+/// Reopening the app is not value. The presenter adds the final context guard:
+/// Today must be at rest.
 @MainActor
 enum GrovePremiumOffer {
     /// Onboarding finished. The offer remains dormant until useful work lands.
@@ -69,6 +72,19 @@ enum GrovePremiumOffer {
         guard !storage.bool(forKey: GroveDefaults.premiumOfferPending) else { return }
         storage.set(true, forKey: GroveDefaults.premiumOfferPending)
         storage.set(0, forKey: GroveDefaults.premiumOfferMeaningfulUseCount)
+    }
+
+    /// Marks the end of onboarding: the first plant is saved and its first-week
+    /// care plan has been seen. That is the moment the offer is about. Arming
+    /// here also covers the race where account preparation consumed the primer
+    /// marker before `arm` could run.
+    static func markOnboardingFinished(in storage: UserDefaults = .standard) {
+        // Answered already: a one-time offer must not return for a later plant.
+        guard !storage.bool(forKey: GroveDefaults.premiumOfferShown) else { return }
+        storage.set(true, forKey: GroveDefaults.premiumOfferPending)
+        // Deliberately does not reset the count. This trigger makes the count
+        // unnecessary; erasing work already earned would only be bookkeeping.
+        storage.set(true, forKey: GroveDefaults.premiumOfferOnboardingFinished)
     }
 
     /// Records an action that exercises Grove's actual care loop. Callers own
@@ -84,6 +100,10 @@ enum GrovePremiumOffer {
     /// loaded catalogue, a real plant, and an idle Today root.
     static func isDue(in storage: UserDefaults = .standard) -> Bool {
         guard storage.bool(forKey: GroveDefaults.premiumOfferPending) else { return false }
+        if storage.bool(forKey: GroveDefaults.premiumOfferOnboardingFinished) { return true }
+        // The fallback: the manual route creates no first plant, so there is no
+        // care-plan moment to end onboarding, and the care-loop path still
+        // applies.
         return storage.integer(forKey: GroveDefaults.premiumOfferMeaningfulUseCount) >= 2
     }
 
@@ -91,5 +111,7 @@ enum GrovePremiumOffer {
     /// and the daily question limit carry it from here.
     static func complete(in storage: UserDefaults = .standard) {
         storage.set(false, forKey: GroveDefaults.premiumOfferPending)
+        storage.set(false, forKey: GroveDefaults.premiumOfferOnboardingFinished)
+        storage.set(true, forKey: GroveDefaults.premiumOfferShown)
     }
 }

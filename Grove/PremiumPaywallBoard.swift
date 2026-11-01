@@ -24,12 +24,12 @@ struct PaywallComparison: Identifiable {
             PaywallComparison(
                 label: "Questions to Ari",
                 free: "\(AskSession.freeAsksPerDay) a day",
-                premium: "Unlimited"
+                premium: "Up to \(AskSession.premiumAsksPerDay) a day"
             ),
             PaywallComparison(
                 label: "Friends",
                 free: "\(GroveFriendAccess.freeFriendLimit)",
-                premium: "Unlimited"
+                premium: "As many as you like"
             ),
             PaywallComparison(
                 label: "Profile mascots",
@@ -57,6 +57,11 @@ struct PremiumBenefit: Identifiable {
     let symbol: String
     var id: Kind { kind }
 
+    /// Said on every paywall so the offer never implies Premium is the only way
+    /// to use Grove, and that cancelling keeps what was already built.
+    static let staysFree = "Free, with or without Premium: your plants, check-ins, photo diagnosis, reminders, care history and plant-sitting."
+    static let keepOnCancel = "If you ever cancel, you keep all of it."
+
     /// The three gated features, with the one that brought the user here
     /// first.
     @MainActor
@@ -64,17 +69,17 @@ struct PremiumBenefit: Identifiable {
         let benefits = [
             PremiumBenefit(
                 kind: .questions,
-                text: "Unlimited questions to Ari, instead of \(AskSession.freeAsksPerDay) a day",
+                text: "Ask Ari up to \(AskSession.premiumAsksPerDay) questions a day about watering, pests, light or a yellowing leaf. Free accounts get \(AskSession.freeAsksPerDay).",
                 symbol: "bubble.left.and.text.bubble.right.fill"
             ),
             PremiumBenefit(
                 kind: .friends,
-                text: "Unlimited friends, instead of \(GroveFriendAccess.freeFriendLimit)",
+                text: "Share your grove with as many friends as you like. Free accounts get \(GroveFriendAccess.freeFriendLimit).",
                 symbol: "person.2.fill"
             ),
             PremiumBenefit(
                 kind: .mascots,
-                text: "\(AvatarView.premiumImageNames.count) premium plant mascots",
+                text: "Unlock \(AvatarView.premiumImageNames.count) extra plant mascots for your profile.",
                 symbol: "sparkles"
             )
         ]
@@ -93,9 +98,19 @@ enum PremiumTerms {
     static let pendingMessage = "Waiting for approval. Premium turns on as soon as it's approved."
     static let unavailableMessage = "That plan isn't available. Choose the other plan or try again later."
     static let restoreNotFoundMessage = "No Premium purchase found for this Apple Account."
+    static let loadingMessage = "Checking the App Store for prices…"
+    static let notAvailableMessage = "Premium isn't available right now."
+    static let notNowTitle = "Not now, keep using Grove free"
 
     static func periodWord(_ plan: GrovePremiumStore.Plan) -> String {
         plan == .yearly ? "a year" : "a month"
+    }
+
+    /// The total price with its period, for a plan card's big figure — e.g.
+    /// "$34.99 / year". Nil until the catalogue has answered.
+    static func pricePeriodLabel(_ premium: GrovePremiumStore, plan: GrovePremiumStore.Plan) -> String? {
+        guard let price = premium.displayPrice(for: plan) else { return nil }
+        return "\(price) / \(plan == .yearly ? "year" : "month")"
     }
 
     /// "7 days free, then $34.99 a year", or nil when this Apple account has
@@ -114,12 +129,34 @@ enum PremiumTerms {
     }
 
     /// How the selected plan bills and renews. Nil until there is a price.
+    ///
+    /// With a trial the note states the exact first-charge date, built from the
+    /// same calendar arithmetic as `trialChargeDate`, and repeats that date in
+    /// the cancellation window so the two sentences cannot disagree.
     static func renewalNote(_ premium: GrovePremiumStore, plan: GrovePremiumStore.Plan) -> String? {
         guard !premium.hasPremium, let price = premium.displayPrice(for: plan) else { return nil }
-        if premium.freeTrialDays(for: plan) != nil {
-            return "After the free trial, \(price) \(periodWord(plan)), renewing automatically. Cancel any time in Settings at least a day before the trial ends and you won't be charged."
+        let renewUnit = plan == .yearly ? "year" : "month"
+        if let days = premium.freeTrialDays(for: plan),
+           let chargeDate = premium.trialChargeDate(for: plan) {
+            let date = chargeDate.formatted(.dateTime.day().month(.wide))
+            return "Free for \(days) days, then \(price) \(periodWord(plan)) from \(date), renewing automatically each \(renewUnit) until you cancel. Cancel any time in Settings › Apple Account › Subscriptions at least 24 hours before \(date) and you won't be charged."
         }
-        return "\(price) \(periodWord(plan)), renewing automatically until you cancel. Cancel any time in Settings."
+        return "\(price) \(periodWord(plan)), renewing automatically each \(renewUnit) until you cancel. Cancel any time in Settings › Apple Account › Subscriptions at least 24 hours before it renews to avoid the next charge."
+    }
+
+    /// The yearly plan's weekly figure, with the monthly figure it is derived
+    /// from. Nil unless both live prices prove the claim.
+    static func weeklyLine(_ premium: GrovePremiumStore, plan: GrovePremiumStore.Plan) -> String? {
+        guard plan == .yearly,
+              let weekly = premium.weeklyEquivalentPrice(for: plan),
+              let monthly = premium.monthlyEquivalentPrice(for: plan) else { return nil }
+        return "That's about \(weekly) a week (\(monthly) a month)"
+    }
+
+    /// The primary button's title when no trial leads it.
+    static func subscribeTitle(_ premium: GrovePremiumStore, plan: GrovePremiumStore.Plan) -> String {
+        guard let price = premium.displayPrice(for: plan) else { return "Subscribe" }
+        return "Subscribe for \(price) \(periodWord(plan))"
     }
 }
 
@@ -211,7 +248,7 @@ struct PaywallComparisonTable: View {
                     .foregroundStyle(GroveTheme.mapThriving)
                     .frame(width: columnWidth, alignment: .leading)
             }
-            .lineLimit(2)
+            .lineLimit(3)
             .minimumScaleFactor(0.85)
             .padding(.vertical, 14)
             .accessibilityElement(children: .ignore)
@@ -280,6 +317,8 @@ struct PaywallPlanCard: View {
     let isSelected: Bool
     /// True once the store has answered with no price for this plan.
     let isUnavailable: Bool
+    /// The plan the offer leads with, given a larger price figure.
+    var isFeatured: Bool = false
 
     private var shape: RoundedRectangle {
         RoundedRectangle(cornerRadius: GroveTheme.cardRadius, style: .continuous)
@@ -332,7 +371,7 @@ struct PaywallPlanCard: View {
     private var priceText: some View {
         if let price {
             Text(price)
-                .font(.title3.weight(.bold))
+                .font(isFeatured ? .title2.weight(.bold) : .title3.weight(.bold))
                 .monospacedDigit()
                 .foregroundStyle(GroveTheme.ink)
         } else if isUnavailable {

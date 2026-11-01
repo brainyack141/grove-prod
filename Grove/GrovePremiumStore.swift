@@ -168,13 +168,13 @@ final class GrovePremiumStore {
         return "\(product.localizedPriceString) per \(billingPeriod(for: product))"
     }
 
-    /// The free-trial label for this Apple account, for example
-    /// "7-day free trial". Nil means the CTA and plan row must talk about a
-    /// paid subscription, even if the product defines an introductory offer.
+    /// The free-trial label for this Apple account, always in whole days — a
+    /// one-week introductory offer reads "7-day free trial", never "1-week free
+    /// trial". Nil means the CTA and plan row must talk about a paid
+    /// subscription, even if the product defines an introductory offer.
     func freeTrialLabel(for plan: Plan) -> String? {
-        guard let offer = eligibleFreeTrials[plan] else { return nil }
-        let total = offer.subscriptionPeriod.value * max(offer.numberOfPeriods, 1)
-        return "\(total)-\(periodUnit(offer.subscriptionPeriod.unit, value: 1)) free trial"
+        guard let days = freeTrialDays(for: plan) else { return nil }
+        return "\(days)-day free trial"
     }
 
     /// A badge is only shown when the live prices prove the annual product is
@@ -226,6 +226,36 @@ final class GrovePremiumStore {
         return formatter.string(from: perMonth)
     }
 
+    /// About what the plan costs a week, for example a $34.99 yearly plan ->
+    /// $0.68 a week, so call sites can label it "about". Only yearly plans need
+    /// it; a monthly product returns nil.
+    ///
+    /// Rounded up to the cent for the same reason as `monthlyEquivalentPrice`:
+    /// a weekly figure the paywall states must be one Grove can stand behind.
+    func weeklyEquivalentPrice(for plan: Plan) -> String? {
+        guard let product = packages[plan]?.storeProduct,
+              let weeks = billingWeeks(for: product), weeks > 0 else { return nil }
+        let perWeek = NSDecimalNumber(decimal: product.price)
+            .dividing(
+                by: NSDecimalNumber(value: weeks),
+                withBehavior: NSDecimalNumberHandler(
+                    roundingMode: .up,
+                    scale: 2,
+                    raiseOnExactness: false,
+                    raiseOnOverflow: false,
+                    raiseOnUnderflow: false,
+                    raiseOnDivideByZero: false
+                )
+            )
+        let formatter = product.priceFormatter ?? {
+            let fallback = NumberFormatter()
+            fallback.numberStyle = .currency
+            fallback.currencyCode = product.currencyCode
+            return fallback
+        }()
+        return formatter.string(from: perWeek)
+    }
+
     /// How many months one billing period covers, or nil for a product billed in
     /// something months cannot express.
     private func billingMonths(for product: StoreProduct) -> Int? {
@@ -234,6 +264,17 @@ final class GrovePremiumStore {
         case .month: return period.value
         case .year: return period.value * 12
         case .day, .week: return nil
+        @unknown default: return nil
+        }
+    }
+
+    /// How many weeks one billing period covers, or nil for a product billed in
+    /// something weeks cannot express. Only yearly plans need a weekly figure.
+    private func billingWeeks(for product: StoreProduct) -> Int? {
+        guard let period = product.subscriptionPeriod else { return nil }
+        switch period.unit {
+        case .year: return period.value * 52
+        case .day, .week, .month: return nil
         @unknown default: return nil
         }
     }
@@ -250,6 +291,29 @@ final class GrovePremiumStore {
         case .year: return units * 365
         @unknown default: return nil
         }
+    }
+
+    /// When an eligible free trial converts to a paid charge, counted from
+    /// `start`. Nil when this Apple account has no trial to redeem.
+    func trialChargeDate(
+        for plan: Plan,
+        from start: Date = .now,
+        calendar: Calendar = .current
+    ) -> Date? {
+        guard let days = freeTrialDays(for: plan) else { return nil }
+        return calendar.date(byAdding: .day, value: days, to: start)
+    }
+
+    /// The instant the paywall promises a reminder before the first charge,
+    /// using exactly the function that schedules the real notification, so the
+    /// dated terms and the notification can never disagree.
+    func trialReminderDate(
+        for plan: Plan,
+        from start: Date = .now,
+        hour: Int = NotificationService.reminderHour
+    ) -> Date? {
+        guard let chargeDate = trialChargeDate(for: plan, from: start) else { return nil }
+        return NotificationService.trialNoticeDate(for: chargeDate, now: start, hour: hour)
     }
 
     /// Whether premium limits should apply to this account at all.

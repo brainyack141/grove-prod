@@ -4,10 +4,11 @@ import XCTest
 /// Covers when Grove is allowed to ask for money.
 ///
 /// The offer used to be a step in onboarding, then waited only for another app
-/// launch. Eligibility now requires evidence from Grove's care loop: reopening
-/// the app alone is not value, while two guided check-ins or a check-in and a
-/// second plant are. These tests cover that one-shot state machine
-/// independently of UI timing.
+/// launch. It is now due at the end of onboarding, once the first plant's
+/// first-week care plan has been seen, with two care-loop actions (two guided
+/// check-ins, or a check-in and a second plant) as the fallback for the manual
+/// route. Reopening the app alone is still not value. These tests cover that
+/// one-shot state machine independently of UI timing.
 @MainActor
 final class PremiumOfferTimingTests: XCTestCase {
     private func makeStorage(_ name: String) -> (defaults: UserDefaults, suiteName: String) {
@@ -174,6 +175,67 @@ final class PremiumOfferTimingTests: XCTestCase {
         GrovePremiumOffer.recordMeaningfulUse(in: storage)
         GrovePremiumOffer.arm(in: storage)
 
+        XCTAssertTrue(GrovePremiumOffer.isDue(in: storage))
+    }
+
+    /// The care plan dismissal is the moment the offer is about: the first
+    /// plant is saved and its first week is understood, so no additional
+    /// care-loop action is needed to make it due.
+    func testSeeingTheFirstCarePlanMakesTheOfferDueImmediately() {
+        let (storage, suiteName) = makeStorage("PremiumOfferOnboardingFinished")
+        defer { storage.removePersistentDomain(forName: suiteName) }
+
+        GrovePremiumOffer.markOnboardingFinished(in: storage)
+
+        XCTAssertEqual(storage.integer(forKey: GroveDefaults.premiumOfferMeaningfulUseCount), 0)
+        XCTAssertTrue(
+            GrovePremiumOffer.isDue(in: storage),
+            "The end of onboarding is itself the trigger"
+        )
+    }
+
+    func testMarkingOnboardingFinishedAfterAnsweringDoesNotReArmTheOffer() {
+        let (storage, suiteName) = makeStorage("PremiumOfferAnsweredThenFinished")
+        defer { storage.removePersistentDomain(forName: suiteName) }
+
+        GrovePremiumOffer.markOnboardingFinished(in: storage)
+        GrovePremiumOffer.complete(in: storage)
+        GrovePremiumOffer.markOnboardingFinished(in: storage)
+
+        XCTAssertFalse(
+            GrovePremiumOffer.isDue(in: storage),
+            "A one-time offer must stay answered for good"
+        )
+    }
+
+    func testMarkingOnboardingFinishedKeepsAnExistingMeaningfulUseCount() {
+        let (storage, suiteName) = makeStorage("PremiumOfferFinishedKeepsCount")
+        defer { storage.removePersistentDomain(forName: suiteName) }
+
+        GrovePremiumOffer.arm(in: storage)
+        GrovePremiumOffer.recordMeaningfulUse(in: storage)
+        GrovePremiumOffer.recordMeaningfulUse(in: storage)
+        GrovePremiumOffer.markOnboardingFinished(in: storage)
+
+        XCTAssertEqual(
+            storage.integer(forKey: GroveDefaults.premiumOfferMeaningfulUseCount),
+            2,
+            "Finishing onboarding must not erase work already earned"
+        )
+        XCTAssertTrue(GrovePremiumOffer.isDue(in: storage))
+    }
+
+    /// The manual route creates no first plant, so its care plan never ends
+    /// onboarding; the count trigger has to keep working on its own.
+    func testTheCountPathStillWorksWithoutOnboardingFinished() {
+        let (storage, suiteName) = makeStorage("PremiumOfferCountOnly")
+        defer { storage.removePersistentDomain(forName: suiteName) }
+
+        GrovePremiumOffer.arm(in: storage)
+        GrovePremiumOffer.recordMeaningfulUse(in: storage)
+        GrovePremiumOffer.recordMeaningfulUse(in: storage)
+
+        XCTAssertFalse(storage.bool(forKey: GroveDefaults.premiumOfferOnboardingFinished))
         XCTAssertTrue(GrovePremiumOffer.isDue(in: storage))
     }
 

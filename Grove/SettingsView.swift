@@ -367,6 +367,9 @@ struct SettingsView: View {
             return trial
         }
         if let yearly = premium.displayPrice(for: .yearly) {
+            if let weekly = premium.weeklyEquivalentPrice(for: .yearly) {
+                return "\(yearly) a year (about \(weekly) a week)"
+            }
             return "\(yearly) a year"
         }
         if let monthly = premium.displayPrice(for: .monthly) {

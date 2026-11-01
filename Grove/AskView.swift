@@ -3279,33 +3279,47 @@ struct AskPaywallSheet: View {
                     }
                     .disabled(isWorking)
 
+                    // A visible way back. The swipe and the toolbar still work,
+                    // but someone who hit a limit should not need to hunt for a
+                    // gesture to leave.
+                    Button(PremiumTerms.notNowTitle) { dismiss() }
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(GroveTheme.mutedInk)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .contentShape(Rectangle())
+                        .padding(.top, 4)
+                        .disabled(isWorking)
+                        .accessibilityIdentifier("askPaywallNotNow")
+
                     if isPurchasable {
                         // 3.1.2: a button that can start a trial sits next to
                         // what the trial turns into and how it renews.
                         if let renewal = PremiumTerms.renewalNote(premium, plan: effectivePlan) {
                             Text(renewal)
-                                .font(.caption)
+                                .font(.footnote)
                                 .foregroundStyle(GroveTheme.mutedInk)
                                 .multilineTextAlignment(.center)
                                 .fixedSize(horizontal: false, vertical: true)
                                 .frame(maxWidth: .infinity)
                         }
-
-                        Button("Restore purchases") {
-                            Task { await restore() }
-                        }
-                        .font(.footnote.weight(.semibold))
-                        .foregroundStyle(GroveTheme.mutedInk)
-                        .frame(maxWidth: .infinity, minHeight: 44)
-                        .disabled(isWorking)
-
-                        // App Review 3.1.2 requires a functional link to the
-                        // terms and the privacy policy on every screen that
-                        // sells a subscription, not just the one in
-                        // onboarding. This sheet had neither.
-                        OnboardingLegalFooter(tint: GroveTheme.mutedInk)
-                            .frame(maxWidth: .infinity)
                     }
+
+                    // Restore and the legal links are not part of "something is
+                    // for sale": an unreachable or unsold store still owes a
+                    // subscriber a way to restore and everyone the terms.
+                    Button("Restore purchases") {
+                        Task { await restore() }
+                    }
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(GroveTheme.mutedInk)
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .disabled(isWorking)
+
+                    // App Review 3.1.2 requires a functional link to the
+                    // terms and the privacy policy on every screen that
+                    // sells a subscription, not just the one in onboarding.
+                    OnboardingLegalFooter(tint: GroveTheme.mutedInk)
+                        .frame(maxWidth: .infinity)
                 }
                 .padding(.horizontal, GroveTheme.pagePadding)
                 .padding(.top, 12)
@@ -3381,6 +3395,12 @@ struct AskPaywallSheet: View {
                         Text(caption)
                             .font(.caption)
                             .foregroundStyle(GroveTheme.accentStrong)
+                    }
+                    if plan == .yearly, let weekly = PremiumTerms.weeklyLine(premium, plan: plan) {
+                        Text(weekly)
+                            .font(.caption)
+                            .foregroundStyle(GroveTheme.mutedInk)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
                 Spacer(minLength: 8)
@@ -3465,8 +3485,8 @@ struct AskPaywallSheet: View {
         // in the day, so its opening sentence reports the allowance that is
         // actually left instead of borrowing the exhausted-state copy.
         // Nothing is metered while Premium isn't on sale, so there is no
-        // allowance to report, and counting one beside "every question is
-        // unlimited" contradicted itself.
+        // allowance to report, and counting one beside "there's no daily
+        // limit" contradicted itself.
         let allowance: String = if isUnmetered {
             ""
         } else {
@@ -3489,7 +3509,7 @@ struct AskPaywallSheet: View {
         // and stop. Said once, beside the allowance, before the upsell.
         let safety = allowanceIsSpent ? " \(AskAllowance.safetyStillAnswered)" : ""
         if isPurchasable {
-            return "\(allowance)\(reset)\(safety) Grove Premium lifts the daily limit."
+            return "\(allowance)\(reset)\(safety) Premium gives you up to \(AskSession.premiumAsksPerDay) questions a day."
         }
         if isStoreUnreachable {
             return "\(allowance)\(reset)\(safety) Grove couldn't reach the App Store to check what's available."
@@ -3497,7 +3517,7 @@ struct AskPaywallSheet: View {
         // "The rest are on us" only means anything to someone who has run out.
         let unsold = reason == .limitReached
             ? "\(allowance)\(safety) Grove Premium isn't on sale yet, so the rest are on us."
-            : "\(allowance)\(safety) Grove Premium isn't on sale yet, so every question is unlimited in the meantime."
+            : "\(allowance)\(safety) Grove Premium isn't on sale yet, so there's no daily limit in the meantime."
         return unsold.trimmingCharacters(in: .whitespaces)
     }
 
@@ -3512,7 +3532,7 @@ struct AskPaywallSheet: View {
     private var primaryActionTitle: String {
         if isPurchasable {
             if let trial = PremiumTerms.trialButtonTitle(premium, plan: effectivePlan) { return trial }
-            return "Get Premium"
+            return PremiumTerms.subscribeTitle(premium, plan: effectivePlan)
         }
         if isStoreUnreachable { return "Try again" }
         if reason == .profileAvatar { return "Close" }
