@@ -698,6 +698,21 @@ struct GrovePremiumOfferView: View {
             .opacity(isWorking ? 0.7 : 1)
             .accessibilityIdentifier("onboardingPaywallPrimary")
 
+            // Offline, the pill retries. The way past must not be only the
+            // small close icon, so say it in words under the retry.
+            if !premium.hasPremium && !premium.didLoadCatalogue {
+                Button("Continue without Premium") {
+                    OnboardingAnalytics.paywallAction("skipped")
+                    onFinish()
+                }
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(GroveTheme.ink.opacity(0.8))
+                .frame(maxWidth: .infinity, minHeight: 44)
+                .contentShape(Rectangle())
+                .disabled(isWorking)
+                .accessibilityIdentifier("onboardingPaywallSkip")
+            }
+
             OnboardingLinkRow {
                 restoreButton
                     .frame(minHeight: 44)
