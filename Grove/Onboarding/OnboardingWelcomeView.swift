@@ -59,12 +59,12 @@ struct OnboardingWelcomeView: View {
         .task { await scanSession.activateForOnboarding() }
     }
 
-    /// The scene takes the width it can while the promise and both capsules
+    /// The scene takes the width it can while the promise and all three capsules
     /// still share the first view; on a 4.7-inch phone or at accessibility
     /// sizes it shrinks rather than pushing the buttons below the fold.
     private func sceneWidth(for size: CGSize) -> CGFloat {
         if dynamicTypeSize.isAccessibilitySize { return min(size.width, 160) }
-        let reserved: CGFloat = 330
+        let reserved: CGFloat = 390
         let available = max(220, size.height - reserved)
         let widthForHeight = available * WindowsillScene.designSize.width / WindowsillScene.designSize.height
         return min(size.width, widthForHeight)
@@ -94,16 +94,17 @@ struct OnboardingWelcomeView: View {
             .accessibilityLabel("Sign in to an existing Grove")
             .accessibilityIdentifier("onboardingSignIn")
 
-            OnboardingLinkRow {
-                Button("No plant nearby?") {
-                    Haptics.tap()
-                    model.beginManualSetup()
-                }
-                .foregroundStyle(OnboardingTheme.ink)
-                .tint(OnboardingTheme.ink)
-                .frame(minHeight: 44)
-                .accessibilityIdentifier("onboardingExplore")
+            Button {
+                Haptics.tap()
+                model.beginManualSetup()
+            } label: {
+                OnboardingOutlineCapsuleLabel(title: "I'll add a plant later")
+            }
+            .buttonStyle(GrovePressStyle())
+            .accessibilityHint("Set up Grove without scanning a plant now")
+            .accessibilityIdentifier("onboardingExplore")
 
+            OnboardingLinkRow {
                 HStack(spacing: 18) {
                     Link("Privacy", destination: OnboardingLegal.privacyURL)
                         .foregroundStyle(OnboardingTheme.mutedInk)
