@@ -4028,18 +4028,13 @@ struct AddPlantView: View {
                 .groveActionBar()
             }
             .task {
-                // At accessibility sizes the nickname field can still take focus on
-                // appear (the selection-binding TextField does this on its own), and
-                // the keyboard scroll hides the plant card under the bar. Drop the
-                // focus and bring the card back before anyone sees the first frame
-                // settle; the name stays prefilled and one tap away.
-                guard dynamicTypeSize.isAccessibilitySize else { return }
+                // `dynamicTypeSize` can still read the default size on the
+                // first frame, so check it only after the screen has settled.
                 try? await Task.sleep(for: .milliseconds(350))
-                focusedField = nil
-                // The focus can sit in UIKit without `focusedField` ever
-                // having been set, so nil alone would change nothing.
-                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                proxy.scrollTo(AddPlantScrollAnchor.hero, anchor: .top)
+                releaseNicknameFocusIfAccessibilitySize(proxy)
+            }
+            .onChange(of: dynamicTypeSize) { _, _ in
+                releaseNicknameFocusIfAccessibilitySize(proxy)
             }
         }
         .groveBackground()
@@ -4181,6 +4176,23 @@ struct AddPlantView: View {
         nicknameSelection = suggestedName.isEmpty
             ? nil
             : TextSelection(range: suggestedName.startIndex..<suggestedName.endIndex)
+    }
+
+    /// At accessibility sizes the nickname field must not hold the keyboard
+    /// on arrival: the keyboard's scroll-to-field pushes the plant card under
+    /// the bar before anyone has seen it. The name stays prefilled.
+    private func releaseNicknameFocusIfAccessibilitySize(_ proxy: ScrollViewProxy) {
+        guard dynamicTypeSize.isAccessibilitySize else { return }
+        focusedField = nil
+        // The focus can sit in UIKit without `focusedField` ever having been
+        // set, so nil alone would change nothing.
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        proxy.scrollTo(AddPlantScrollAnchor.hero, anchor: .top)
+        Task { @MainActor in
+            // Once the keyboard has gone, its inset change can scroll again.
+            try? await Task.sleep(for: .milliseconds(400))
+            proxy.scrollTo(AddPlantScrollAnchor.hero, anchor: .top)
+        }
     }
 
     private func chooseRandomPunnyName() {
