@@ -447,6 +447,7 @@ struct GrovePremiumOfferView: View {
     @State private var isWorking = false
     @State private var failure: String?
     @State private var restoreMessage: String?
+    @State private var isCompactHeight = false
 
     private var isPurchasable: Bool {
         premium.displayPrice(for: .yearly) != nil || premium.displayPrice(for: .monthly) != nil
@@ -465,12 +466,13 @@ struct GrovePremiumOfferView: View {
             && (premium.freeTrialDays(for: .yearly) != nil || premium.freeTrialDays(for: .monthly) != nil)
     }
 
-    /// The photo gives way on shorter phones so the title, the comparison
-    /// and the mascots all sit above the footer at rest. On a 402x874 phone
-    /// the full 380pt photo pushed the mascot caption under the footer.
+    /// The photo gives way to 212pt on shorter phones so the title, the
+    /// comparison and the mascots all sit above the footer at rest, because
+    /// at 240 the mascot caption still sat under the footer on a 402x874
+    /// phone.
     private func heroHeight(available height: CGFloat) -> CGFloat {
         if dynamicTypeSize.isAccessibilitySize { return 200 }
-        return height < 820 ? 240 : 320
+        return height < 820 ? 212 : 320
     }
 
     var body: some View {
@@ -488,7 +490,7 @@ struct GrovePremiumOfferView: View {
                                 )
                                 .clipped()
 
-                            VStack(alignment: .leading, spacing: 24) {
+                            VStack(alignment: .leading, spacing: isCompactHeight ? 18 : 24) {
                                 introduction
                                 PaywallComparisonTable(rows: PaywallComparison.rows)
                                 storeOffer
@@ -530,6 +532,10 @@ struct GrovePremiumOfferView: View {
                     .ignoresSafeArea(edges: .top)
 
                     if !dynamicTypeSize.isAccessibilitySize { footer }
+                }
+                .onAppear { isCompactHeight = proxy.size.height < 820 && !dynamicTypeSize.isAccessibilitySize }
+                .onChange(of: proxy.size.height) { _, newHeight in
+                    isCompactHeight = newHeight < 820 && !dynamicTypeSize.isAccessibilitySize
                 }
             }
 
