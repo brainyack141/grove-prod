@@ -215,7 +215,8 @@ struct ScanView: View {
                 onDecline: {
                     aiConsentOutcome = .declined
                     showsAIConsent = false
-                }
+                },
+                declineTitle: onManualSetup == nil ? "Not now" : "Add it by hand instead"
             )
         }
         .sheet(item: $speciesSearchPresentation) { _ in
@@ -791,11 +792,16 @@ struct ScanView: View {
         }
     }
 
-    /// Declining leaves the camera closed and returns the person to wherever
-    /// they came from, using the same exit as the chrome's close button.
+    /// In onboarding, declining routes to manual setup so the person can add
+    /// the plant by hand without a photo instead of being ejected to Welcome.
+    /// Elsewhere it leaves the camera closed and returns the person to
+    /// wherever they came from, using the same exit as the chrome's close
+    /// button.
     private func closeForDeclinedAIConsent() {
         model.stop()
-        if let onOnboardingCancel {
+        if let onManualSetup {
+            onManualSetup()
+        } else if let onOnboardingCancel {
             onOnboardingCancel()
         } else {
             dismiss()
