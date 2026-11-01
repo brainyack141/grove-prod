@@ -72,28 +72,7 @@ struct CareTaskDetailView: View {
                 }
                 .safeAreaInset(edge: .bottom) {
                     VStack(spacing: 10) {
-                        Button {
-                            complete(task)
-                        } label: {
-                            GroveCTALabel(
-                                title: task.isCompleted ? "Done" : "Mark as done",
-                                systemImage: "checkmark"
-                            )
-                        }
-                        .buttonStyle(GrovePressStyle())
-                        // A burst of leaves off the button itself, so the
-                        // confirmation starts where the finger was.
-                        .changeEffect(
-                            .spray(origin: UnitPoint(x: 0.5, y: 0.4)) {
-                                Image(systemName: "leaf.fill")
-                                    .foregroundStyle(GroveTheme.accent)
-                            },
-                            value: completionTick
-                        )
-                        .disabled(task.isCompleted)
-                        .opacity(task.isCompleted ? 0.5 : 1)
-                        .animation(GroveMotion.settle, value: task.isCompleted)
-                        .accessibilityIdentifier("completeCareTask")
+                        primaryActions(for: task, plant: plant)
 
                         Button {
                             Haptics.tap()
@@ -135,6 +114,63 @@ struct CareTaskDetailView: View {
             }
         }
         .groveBackground()
+    }
+
+    @ViewBuilder
+    private func primaryActions(for task: CareTask, plant: Plant) -> some View {
+        if task.kind == .checkIn && !task.isCompleted {
+            // A check-in is a photograph, and the card above says to take it
+            // before touching the plant. Leading with "Mark as done" invited
+            // ticking it off with no photo at all, so the camera comes first
+            // and completing without one is quietly demoted.
+            NavigationLink(value: AppRoute.checkIn(plant.id)) {
+                GroveCTALabel(title: "Take today's photo", systemImage: "camera.fill")
+            }
+            .buttonStyle(GrovePressStyle())
+            .accessibilityIdentifier("startCheckInFromTask")
+
+            Button {
+                complete(task)
+            } label: {
+                Text("Mark as done without a photo")
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
+            }
+            .font(.subheadline.weight(.semibold))
+            // A burst of leaves off the button itself, so the confirmation
+            // starts where the finger was.
+            .changeEffect(
+                .spray(origin: UnitPoint(x: 0.5, y: 0.4)) {
+                    Image(systemName: "leaf.fill")
+                        .foregroundStyle(GroveTheme.accent)
+                },
+                value: completionTick
+            )
+            .accessibilityIdentifier("completeCareTask")
+        } else {
+            Button {
+                complete(task)
+            } label: {
+                GroveCTALabel(
+                    title: task.isCompleted ? "Done" : "Mark as done",
+                    systemImage: "checkmark"
+                )
+            }
+            .buttonStyle(GrovePressStyle())
+            // A burst of leaves off the button itself, so the confirmation
+            // starts where the finger was.
+            .changeEffect(
+                .spray(origin: UnitPoint(x: 0.5, y: 0.4)) {
+                    Image(systemName: "leaf.fill")
+                        .foregroundStyle(GroveTheme.accent)
+                },
+                value: completionTick
+            )
+            .disabled(task.isCompleted)
+            .opacity(task.isCompleted ? 0.5 : 1)
+            .animation(GroveMotion.settle, value: task.isCompleted)
+            .accessibilityIdentifier("completeCareTask")
+        }
     }
 
     private func complete(_ task: CareTask) {
