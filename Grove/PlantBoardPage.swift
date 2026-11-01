@@ -27,8 +27,9 @@ struct PlantBoardPage<Alerts: View>: View {
                 .overlay(alignment: .bottomLeading) {
                     HStack(spacing: 8) {
                         Circle().fill(facts.status.tone.tint).frame(width: 8, height: 8)
-                        Caps("\(facts.room) · \(facts.code)", color: .white.opacity(0.85))
+                        Caps("\(facts.room) · \(facts.code)", color: .white)
                     }
+                    .shadow(color: .black.opacity(0.5), radius: 3, x: 0, y: 1)
                     .padding(.horizontal, GroveTheme.pagePadding)
                     .padding(.bottom, PlantSheetFrame<EmptyView, EmptyView>.overlap + 16)
                 }
@@ -439,8 +440,11 @@ private struct PhotoScrim: View {
     var body: some View {
         LinearGradient(
             stops: [
-                .init(color: .black.opacity(0), location: 0.4),
-                .init(color: .black.opacity(0.68), location: 1)
+                .init(color: .black.opacity(0.55), location: 0),
+                .init(color: .black.opacity(0.22), location: 0.22),
+                .init(color: .black.opacity(0), location: 0.42),
+                .init(color: .black.opacity(0.45), location: 0.68),
+                .init(color: .black.opacity(0.78), location: 1)
             ],
             startPoint: .top,
             endPoint: .bottom
