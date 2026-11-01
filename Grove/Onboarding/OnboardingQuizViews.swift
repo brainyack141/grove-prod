@@ -481,12 +481,17 @@ struct GrovePremiumOfferView: View {
             && (premium.freeTrialDays(for: .yearly) != nil || premium.freeTrialDays(for: .monthly) != nil)
     }
 
-    /// The photo gives way to 212pt on shorter phones so the title and the
-    /// benefits sit above the footer at rest; at 240 the offer still sat under
-    /// the footer on a 402x874 phone.
+    /// The photo's height, and with it how much of the offer can sit above the
+    /// pinned footer before anyone scrolls. The plans lead the content now, so
+    /// the photo only has to carry the title: 250pt on a standard phone, 170pt
+    /// when the screen is compact (<820) so the yearly price clears the footer
+    /// on a 375x667 phone, and 200pt at accessibility sizes, where the footer
+    /// sits in the scroll content instead. The title overlap scales with the
+    /// hero so the headline keeps sitting on the faded photo rather than under
+    /// the close X.
     private func heroHeight(available height: CGFloat) -> CGFloat {
         if dynamicTypeSize.isAccessibilitySize { return 200 }
-        return height < 820 ? 212 : 320
+        return height < 820 ? 170 : 250
     }
 
     var body: some View {
@@ -494,26 +499,27 @@ struct GrovePremiumOfferView: View {
             GroveTheme.mapGround.ignoresSafeArea()
 
             GeometryReader { proxy in
+                let heroFrameHeight = heroHeight(available: proxy.size.height)
                 VStack(spacing: 0) {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 0) {
                             hero
                                 .frame(
                                     width: proxy.size.width,
-                                    height: heroHeight(available: proxy.size.height) + proxy.safeAreaInsets.top
+                                    height: heroFrameHeight + proxy.safeAreaInsets.top
                                 )
                                 .clipped()
 
-                            VStack(alignment: .leading, spacing: isCompactHeight ? 18 : 24) {
+                            VStack(alignment: .leading, spacing: isCompactHeight ? 14 : 24) {
                                 introduction
+                                storeOffer
                                 benefitsList
                                 freeWeekTimeline
-                                storeOffer
                                 staysFreeBlock
                             }
                             .padding(.horizontal, 16)
                             // The title sits on the faded lower part of the photo.
-                            .padding(.top, dynamicTypeSize.isAccessibilitySize ? -70 : -150)
+                            .padding(.top, dynamicTypeSize.isAccessibilitySize ? -70 : -min(150, heroFrameHeight * 0.5))
                             .padding(.bottom, 24)
 
                             if dynamicTypeSize.isAccessibilitySize { footer }

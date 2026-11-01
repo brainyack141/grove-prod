@@ -247,6 +247,7 @@ final class SimScreenshotTests: XCTestCase {
             wait: 3
         )
         capture("40b-paywall-plant")
+        await captureScrolled("40g-paywall-plant-scrolled")
 
         resetRouter()
         let (monthlySession, monthlyStore) = makeDemoContext()
@@ -336,6 +337,7 @@ final class SimScreenshotTests: XCTestCase {
             wait: 8
         )
         capture("40f-onboarding-end-offer")
+        await captureScrolled("40h-onboarding-end-offer-scrolled")
         GrovePremiumOffer.complete()
         UserDefaults.standard.set(0, forKey: GroveDefaults.premiumOfferMeaningfulUseCount)
 
@@ -639,6 +641,38 @@ final class SimScreenshotTests: XCTestCase {
         missingLines.append(line)
         print("SIMSHOT-NOTE \(line)")
         writeManifest()
+    }
+
+    /// Captures the current screen after scrolling its first overflowing
+    /// scroll view to the bottom, without animation, so the capture shows what
+    /// sits below the pinned footer at rest.
+    private func captureScrolled(_ name: String) async {
+        guard let window else {
+            noteMissing(name, reason: "no window scene")
+            return
+        }
+        guard let scrollView = firstScrollView(in: window) else {
+            noteMissing(name, reason: "no scroll view")
+            return
+        }
+        let bottom = max(
+            0,
+            scrollView.contentSize.height - scrollView.bounds.height + scrollView.adjustedContentInset.bottom
+        )
+        scrollView.setContentOffset(CGPoint(x: scrollView.contentOffset.x, y: bottom), animated: false)
+        try? await Task.sleep(for: .seconds(1))
+        capture(name)
+    }
+
+    private func firstScrollView(in view: UIView) -> UIScrollView? {
+        if let scrollView = view as? UIScrollView,
+           scrollView.contentSize.height > scrollView.bounds.height {
+            return scrollView
+        }
+        for subview in view.subviews {
+            if let found = firstScrollView(in: subview) { return found }
+        }
+        return nil
     }
 
     private func writeManifest() {
