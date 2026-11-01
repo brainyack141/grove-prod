@@ -402,6 +402,7 @@ struct PlantHealthSheet: View {
     @Environment(GroveStore.self) private var store
     @Environment(IntentRouter.self) private var intentRouter
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     /// Held until the sheet has gone, then pushed, so the destination never
     /// lands underneath a sheet that is still animating away.
@@ -659,23 +660,44 @@ struct PlantHealthSheet: View {
         let first = progress.readings.first?.score
         return VStack(alignment: .leading, spacing: 12) {
             sectionTitle("So far")
-            Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 18) {
-                GridRow {
-                    GroveStatCell(
-                        label: "In your grove",
-                        value: since.map { $0.formatted(.dateTime.day().month(.abbreviated).year()) } ?? "New"
-                    )
-                    GroveStatCell(label: "Check-ins", value: "\(checkIns)")
-                }
-                if let first, progress.readings.count >= 2 {
-                    GridRow {
-                        GroveStatCell(label: "First health", value: "\(first)")
+            Group {
+                if dynamicTypeSize.isAccessibilitySize {
+                    VStack(alignment: .leading, spacing: 18) {
                         GroveStatCell(
-                            label: "Health now",
-                            value: "\(plant.healthScore)",
-                            tint: plant.healthScore < first ? GroveTheme.danger
-                                : plant.healthScore > first ? GroveTheme.healthThriving : GroveTheme.ink
+                            label: "In your grove",
+                            value: since.map { $0.formatted(.dateTime.day().month(.abbreviated).year()) } ?? "New"
                         )
+                        GroveStatCell(label: "Check-ins", value: "\(checkIns)")
+                        if let first, progress.readings.count >= 2 {
+                            GroveStatCell(label: "First health", value: "\(first)")
+                            GroveStatCell(
+                                label: "Health now",
+                                value: "\(plant.healthScore)",
+                                tint: plant.healthScore < first ? GroveTheme.danger
+                                    : plant.healthScore > first ? GroveTheme.healthThriving : GroveTheme.ink
+                            )
+                        }
+                    }
+                } else {
+                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 18) {
+                        GridRow {
+                            GroveStatCell(
+                                label: "In your grove",
+                                value: since.map { $0.formatted(.dateTime.day().month(.abbreviated).year()) } ?? "New"
+                            )
+                            GroveStatCell(label: "Check-ins", value: "\(checkIns)")
+                        }
+                        if let first, progress.readings.count >= 2 {
+                            GridRow {
+                                GroveStatCell(label: "First health", value: "\(first)")
+                                GroveStatCell(
+                                    label: "Health now",
+                                    value: "\(plant.healthScore)",
+                                    tint: plant.healthScore < first ? GroveTheme.danger
+                                        : plant.healthScore > first ? GroveTheme.healthThriving : GroveTheme.ink
+                                )
+                            }
+                        }
                     }
                 }
             }

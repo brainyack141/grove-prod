@@ -215,6 +215,8 @@ extension CareKind {
 
 /// Small caps over a large value: the board's only typographic idea.
 struct GroveStatCell: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     let label: String
     let value: String
     var tint: Color = GroveTheme.ink
@@ -227,16 +229,18 @@ struct GroveStatCell: View {
                 .font(.caption2.weight(.semibold))
                 .tracking(0.6)
                 .foregroundStyle(GroveTheme.subtleInk)
-                .lineLimit(1)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 1)
                 .minimumScaleFactor(0.85)
+                .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: 5) {
                 trendMark
                 Text(value)
                     .font(large ? .title2.weight(.semibold) : .body.weight(.medium))
                     .monospacedDigit()
                     .foregroundStyle(tint)
-                    .lineLimit(1)
+                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 1)
                     .minimumScaleFactor(0.75)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

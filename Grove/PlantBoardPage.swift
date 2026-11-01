@@ -10,6 +10,7 @@ import SwiftUI
 
 struct PlantBoardPage<Alerts: View>: View {
     @Environment(GroveStore.self) private var store
+    @Environment(\.dynamicTypeSize) private var typeSize
     let plant: Plant
     @Binding var collapsed: Bool
     /// Logs a watering. The page owns the check-the-soil-first question a
@@ -60,24 +61,24 @@ struct PlantBoardPage<Alerts: View>: View {
 
                 Rectangle().fill(GroveTheme.separator).frame(height: 1)
 
-                Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 18) {
-                    GridRow {
-                        GroveStatCell(label: facts.entry.nextLabel, value: facts.entry.nextValue, tint: facts.entry.nextTint, large: true)
-                        if facts.knowsWatering {
-                            PlantWateringCell(plant: plant, estimate: facts.watering)
-                        } else {
-                            // No species, no cadence. A number here would be
-                            // the guess the identity card says isn't made.
-                            GroveStatCell(label: "Water", value: "When it's dry", tint: GroveTheme.hydration, large: true)
-                        }
+                if typeSize.isAccessibilitySize {
+                    // One column at accessibility sizes: two columns clipped every
+                    // label to its first word, and the labels explain the numbers.
+                    VStack(alignment: .leading, spacing: 18) {
+                        nextCell(facts)
+                        waterCell(facts)
+                        sinceCell(facts)
                     }
-                    GridRow {
-                        GroveStatCell(
-                            label: "In your grove",
-                            value: facts.since.map { $0.formatted(.dateTime.month(.abbreviated).year()) } ?? "New",
-                            large: true
-                        )
-                        Color.clear.gridCellUnsizedAxes([.horizontal, .vertical])
+                } else {
+                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 18) {
+                        GridRow {
+                            nextCell(facts)
+                            waterCell(facts)
+                        }
+                        GridRow {
+                            sinceCell(facts)
+                            Color.clear.gridCellUnsizedAxes([.horizontal, .vertical])
+                        }
                     }
                 }
 
@@ -93,6 +94,29 @@ struct PlantBoardPage<Alerts: View>: View {
             PlantNeighborCard(previous: previous, next: next)
         }
     }
+
+    private func nextCell(_ facts: PlantPageFacts) -> some View {
+        GroveStatCell(label: facts.entry.nextLabel, value: facts.entry.nextValue, tint: facts.entry.nextTint, large: true)
+    }
+
+    @ViewBuilder
+    private func waterCell(_ facts: PlantPageFacts) -> some View {
+        if facts.knowsWatering {
+            PlantWateringCell(plant: plant, estimate: facts.watering)
+        } else {
+            // No species, no cadence. A number here would be
+            // the guess the identity card says isn't made.
+            GroveStatCell(label: "Water", value: "When it's dry", tint: GroveTheme.hydration, large: true)
+        }
+    }
+
+    private func sinceCell(_ facts: PlantPageFacts) -> some View {
+        GroveStatCell(
+            label: "In your grove",
+            value: facts.since.map { $0.formatted(.dateTime.month(.abbreviated).year()) } ?? "New",
+            large: true
+        )
+    }
 }
 
 /// The headline and the number behind it. "Urgent" alone says which way, not
@@ -102,6 +126,7 @@ struct PlantBoardPage<Alerts: View>: View {
 private struct BoardStatus: View {
     let facts: PlantPageFacts
 
+    @Environment(\.dynamicTypeSize) private var typeSize
     @State private var isShowingWorking = false
 
     private var plant: Plant { facts.plant }
@@ -112,13 +137,16 @@ private struct BoardStatus: View {
                 Haptics.tap()
                 isShowingWorking = true
             } label: {
-                HStack(alignment: .firstTextBaseline, spacing: 12) {
+                let layout = typeSize.isAccessibilitySize
+                    ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+                    : AnyLayout(HStackLayout(alignment: .firstTextBaseline, spacing: 12))
+                layout {
                     VStack(alignment: .leading, spacing: 5) {
                         Caps("Status", color: facts.status.tone.tint)
                         Text(facts.status.text)
                             .font(.title2.weight(.bold))
                             .foregroundStyle(facts.status.tone.tint)
-                            .lineLimit(2)
+                            .lineLimit(typeSize.isAccessibilitySize ? 4 : 2)
                             .minimumScaleFactor(0.8)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -212,6 +240,8 @@ private struct BoardStatus: View {
 private struct BoardJourney: View {
     let facts: PlantPageFacts
 
+    @Environment(\.dynamicTypeSize) private var typeSize
+
     private struct Leg {
         let fromLabel: String
         let from: String
@@ -255,14 +285,18 @@ private struct BoardJourney: View {
             // Labels first, so the bar reads as a timeline before it can be
             // mistaken for a health meter sitting under the status.
             VStack(alignment: .leading, spacing: 10) {
-                HStack(alignment: .top) {
+                let labelsLayout = typeSize.isAccessibilitySize
+                    ? AnyLayout(VStackLayout(alignment: .leading, spacing: 12))
+                    : AnyLayout(HStackLayout(alignment: .top))
+                labelsLayout {
                     GroveStatCell(label: leg.fromLabel, value: leg.from)
-                    VStack(alignment: .trailing, spacing: 5) {
+                    VStack(alignment: typeSize.isAccessibilitySize ? .leading : .trailing, spacing: 5) {
                         Caps(leg.toLabel)
                         Text(leg.to)
                             .font(.body.weight(.medium))
                             .monospacedDigit()
                             .foregroundStyle(leg.late ? GroveTheme.warning : GroveTheme.ink)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                     .accessibilityElement(children: .combine)
                 }
