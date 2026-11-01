@@ -318,6 +318,112 @@ final class SimScreenshotTests: XCTestCase {
         )
         capture("42b-friend-slots-priced")
 
+        // The four-step free-trial flow, hosted one step at a time so each
+        // screen is captured at rest.
+        resetRouter()
+        let (trialTryFreeSession, trialTryFreeStore) = makeDemoContext()
+        await show(
+            hosted(
+                GroveTrialFlowView(
+                    subject: offerSubject(for: trialTryFreeStore),
+                    initialStep: .tryFree,
+                    onFinish: {}
+                ),
+                session: trialTryFreeSession,
+                store: trialTryFreeStore,
+                premium: seededPremium()
+            ),
+            wait: 3
+        )
+        capture("40t-trial-try-free")
+
+        resetRouter()
+        let (trialReminderSession, trialReminderStore) = makeDemoContext()
+        await show(
+            hosted(
+                GroveTrialFlowView(
+                    subject: offerSubject(for: trialReminderStore),
+                    initialStep: .reminder,
+                    onFinish: {}
+                ),
+                session: trialReminderSession,
+                store: trialReminderStore,
+                premium: seededPremium()
+            ),
+            wait: 3
+        )
+        capture("40u-trial-reminder")
+
+        resetRouter()
+        let (trialTimelineSession, trialTimelineStore) = makeDemoContext()
+        await show(
+            hosted(
+                GroveTrialFlowView(
+                    subject: offerSubject(for: trialTimelineStore),
+                    initialStep: .timeline,
+                    onFinish: {}
+                ),
+                session: trialTimelineSession,
+                store: trialTimelineStore,
+                premium: seededPremium()
+            ),
+            wait: 3
+        )
+        capture("40v-trial-timeline")
+        await captureScrolled("40v2-trial-timeline-scrolled")
+
+        resetRouter()
+        let (trialBeforeGoSession, trialBeforeGoStore) = makeDemoContext()
+        await show(
+            hosted(
+                GroveTrialFlowView(
+                    subject: offerSubject(for: trialBeforeGoStore),
+                    initialStep: .beforeYouGo,
+                    onFinish: {}
+                ),
+                session: trialBeforeGoSession,
+                store: trialBeforeGoStore,
+                premium: seededPremium()
+            ),
+            wait: 3
+        )
+        capture("40w-trial-before-you-go")
+
+        resetRouter()
+        let (trialNoTrialSession, trialNoTrialStore) = makeDemoContext()
+        await show(
+            hosted(
+                GroveTrialFlowView(
+                    subject: offerSubject(for: trialNoTrialStore),
+                    initialStep: .timeline,
+                    onFinish: {}
+                ),
+                session: trialNoTrialSession,
+                store: trialNoTrialStore,
+                premium: seededPremium(trial: false)
+            ),
+            wait: 3
+        )
+        capture("40x-trial-timeline-notrial")
+
+        resetRouter()
+        let (trialMonthlySession, trialMonthlyStore) = makeDemoContext()
+        await show(
+            hosted(
+                GroveTrialFlowView(
+                    subject: offerSubject(for: trialMonthlyStore),
+                    initialStep: .timeline,
+                    initialPlan: .monthly,
+                    onFinish: {}
+                ),
+                session: trialMonthlySession,
+                store: trialMonthlyStore,
+                premium: seededPremium()
+            ),
+            wait: 3
+        )
+        capture("40y-trial-monthly")
+
         // The end-of-onboarding offer, through the real gate. Setup already
         // called `complete()`, which sets the shown flag that makes
         // `markOnboardingFinished` refuse, so clear it first. RootView's gate

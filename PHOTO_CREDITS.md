@@ -12,3 +12,7 @@ All images come from Wikimedia Commons under CC0 or CC BY. EXIF metadata was str
 | `Grove/Assets.xcassets/DemoPlantStringOfPearls.imageset/DemoPlantStringOfPearls.jpg` | Pearl — Curio rowleyanus (demo grove) | [File:Erbse am Band (Senecio rowleyanus) (31772262164).jpg](https://commons.wikimedia.org/wiki/File:Erbse_am_Band_(Senecio_rowleyanus)_(31772262164).jpg) | Maja Dumat from Deutschland (Germany) | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) | cropped to 3:4, resized to 900×1200 |
 
 CC BY works require attribution. Keep this file with the assets, and list these credits on any in-app acknowledgements screen.
+
+## Illustrations
+
+- `TrialReminderBell` — decorative illustration generated for Grove; not a photograph of a real plant.
