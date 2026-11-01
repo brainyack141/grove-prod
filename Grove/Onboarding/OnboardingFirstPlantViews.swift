@@ -256,12 +256,16 @@ struct OnboardingFirstPlantResultView: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var plant: OnboardingFirstPlantPresentation?
     @State private var isLeaving = false
+    @State private var nicknameDraft = ""
+    @State private var isSaving = false
+    @FocusState private var nicknameFocused: Bool
 
     var body: some View {
         OnboardingSproutPage(step: 1, isBackEnabled: !isLeaving, onBack: abandonAndReturnToScan) {
             if let plant {
                 VStack(alignment: .leading, spacing: 18) {
                     title(plant)
+                    nicknameField
                     photo(plant)
                     facts(plant)
                     careBasics(plant)
@@ -278,13 +282,14 @@ struct OnboardingFirstPlantResultView: View {
             }
         } footer: {
             VStack(spacing: 4) {
-                OnboardingPrimaryButton(title: "Keep this plant", isEnabled: plant != nil && !isLeaving) {
-                    Haptics.commit()
-                    model.advance()
-                }
+                OnboardingPrimaryButton(
+                    title: isSaving ? "Saving…" : "Keep this plant",
+                    isEnabled: plant != nil && !isLeaving && !isSaving,
+                    action: keepPlant
+                )
                 .accessibilityIdentifier("onboardingKeepFirstPlant")
                 OnboardingQuietButton(title: "Scan a different plant", action: abandonAndReturnToScan)
-                    .disabled(isLeaving)
+                    .disabled(isLeaving || isSaving)
             }
         }
         .task { await restore() }
@@ -302,18 +307,47 @@ struct OnboardingFirstPlantResultView: View {
         } else if plant.identificationIsProvisional {
             // "an Aloe", "a Monstera": the article follows the name's sound.
             OnboardingQuestionTitle(
-                lead: "Possibly \(SpeciesPhrase.article(for: plant.displayName)) ",
-                accent: plant.displayName,
+                lead: "Possibly \(SpeciesPhrase.article(for: headlineName(plant))) ",
+                accent: headlineName(plant),
                 trail: ".",
                 subtitle: "You can confirm the species from its page later."
             )
         } else {
             OnboardingQuestionTitle(
-                lead: "It’s \(SpeciesPhrase.article(for: plant.displayName)) ",
-                accent: plant.displayName,
+                lead: "It’s \(SpeciesPhrase.article(for: headlineName(plant))) ",
+                accent: headlineName(plant),
                 trail: ".",
                 subtitle: healthLine(plant)
             )
+        }
+    }
+
+    /// The result is where someone learns what the plant is, so the headline
+    /// names the species; their own name for it goes in the field below.
+    private func headlineName(_ plant: OnboardingFirstPlantPresentation) -> String {
+        let species = plant.commonName.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !plant.isUnknownIdentity, !species.isEmpty { return species }
+        return plant.displayName
+    }
+
+    private var nicknameField: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Call it…")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(OnboardingTheme.mutedInk)
+            OnboardingRuleField(isFocused: nicknameFocused) {
+                TextField("", text: $nicknameDraft, prompt: Text("A name, if you like").foregroundColor(OnboardingTheme.mutedInk))
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(OnboardingTheme.ink)
+                    .tint(OnboardingTheme.accentStrong)
+                    .textInputAutocapitalization(.words)
+                    .autocorrectionDisabled()
+                    .submitLabel(.done)
+                    .focused($nicknameFocused)
+                    .disabled(isLeaving || isSaving)
+                    .accessibilityLabel("Plant nickname, optional")
+                    .accessibilityIdentifier("onboardingFirstPlantNickname")
+            }
         }
     }
 
@@ -449,12 +483,41 @@ struct OnboardingFirstPlantResultView: View {
             return
         }
         plant = loaded
+        let nickname = loaded.nickname.trimmingCharacters(in: .whitespacesAndNewlines)
+        let species = loaded.commonName.trimmingCharacters(in: .whitespacesAndNewlines)
+        nicknameDraft = !nickname.isEmpty && nickname.caseInsensitiveCompare(species) != .orderedSame ? nickname : ""
         // The pending handoff now owns a protected copy of the same JPEG.
         // Cleaning the scanner only after that copy exists closes both crash
         // windows: a relaunch can restore this screen, and this screen then
         // removes any source draft left by a kill between advance/discard.
         await scanSession.activateForOnboarding()
         await scanSession.discard()
+    }
+
+    private func keepPlant() {
+        guard !isSaving else { return }
+        let name = nicknameDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        nicknameFocused = false
+        guard !name.isEmpty else {
+            Haptics.commit()
+            model.advance()
+            return
+        }
+        isSaving = true
+        Task {
+            // A failed nickname save must not trap someone on this screen; the
+            // plant is kept either way and can be renamed from its page.
+            if let draft = try? await PendingFirstPlantStore.shared.loadUnclaimed() {
+                _ = try? await PendingFirstPlantStore.shared.updateDetails(
+                    nickname: name,
+                    location: draft.location,
+                    lightPlacement: draft.lightPlacement
+                )
+            }
+            isSaving = false
+            Haptics.commit()
+            model.advance()
+        }
     }
 
     /// "Scan a different plant" discards both copies of the abandoned
