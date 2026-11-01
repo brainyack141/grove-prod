@@ -253,6 +253,12 @@ struct SettingsView: View {
                 }
             } else if premium.isUnmetered {
                 premiumStatusLabel(showsDisclosure: false)
+                Text("Every Premium feature is included while Grove is in early access. You're not being charged.")
+                    .font(.caption)
+                    .foregroundStyle(GroveTheme.mutedInk)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.leading, textColumnInset)
+                    .accessibilityIdentifier("premiumEarlyAccessNote")
                 // Shown even in early access. There is nothing to restore
                 // then, and it says so — but a restore button that appears
                 // only once a catalogue loads is one a reviewer on a bad
@@ -342,9 +348,9 @@ struct SettingsView: View {
             return "Active"
         }
         // The catalogue answered and was empty: onboarding promised these users
-        // everything while Grove is in early access, and "Free" would read as a
-        // limit they do not have.
-        return "Early access"
+        // everything while Grove is in early access. The row names both facts
+        // people ask about: it is free, and why.
+        return "Free in early access"
     }
 
     /// Names the trial only when this Apple account can redeem it. Until the
