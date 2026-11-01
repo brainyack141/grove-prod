@@ -777,7 +777,7 @@ private struct AppShellView: View {
         // Premium is offered here rather than inside onboarding, after a real
         // care-loop action. See `GrovePremiumOffer`.
         .fullScreenCover(item: $premiumOffer) { subject in
-            GrovePremiumOfferView(subject: subject) {
+            GroveTrialFlowView(subject: subject) {
                 GrovePremiumOffer.complete()
                 premiumOffer = nil
             }

@@ -91,6 +91,12 @@ enum OnboardingAnalytics {
         forward("onboarding_paywall_action", params)
     }
 
+    /// Why someone walked away from the trial screen. Recorded only: no reason
+    /// ever changes a price or reopens a purchase step.
+    static func paywallDeclineReason(_ reason: String) {
+        forward("paywall_decline_reason", ["reason": reason])
+    }
+
     static func notificationsDecision(_ outcome: NotificationOutcome) {
         var params = [
             "outcome": outcome.rawValue,

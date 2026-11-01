@@ -1033,69 +1033,41 @@ struct GrovePremiumOfferView: View {
         isWorking = true
         defer { isWorking = false }
         let startsTrial = showsTrial && premium.freeTrialDays(for: selectedPlan) != nil
-        OnboardingAnalytics.paywallAction("purchase_started", plan: selectedPlan)
-        switch await premium.purchase(selectedPlan) {
+        switch await GroveTrialPurchase.start(
+            premium: premium,
+            notifications: notifications,
+            plan: selectedPlan,
+            startsTrial: startsTrial
+        ) {
         case .unlocked:
-            Haptics.celebrate()
-            OnboardingAnalytics.paywallAction("purchase_completed", plan: selectedPlan)
-            if startsTrial { await armTrialReminder() }
             onFinish()
         case .pending:
             // Ask to Buy: nothing is charged or unlocked yet. Say so, and
             // leave the close button as the way on.
-            OnboardingAnalytics.paywallAction("purchase_pending", plan: selectedPlan)
             restoreMessage = PremiumTerms.pendingMessage
         case .cancelled:
-            OnboardingAnalytics.paywallAction("purchase_cancelled", plan: selectedPlan)
+            break
         case .unavailable:
             failure = PremiumTerms.unavailableMessage
-            OnboardingAnalytics.paywallAction("purchase_unavailable", plan: selectedPlan)
         case .failed(let message):
             failure = message
-            OnboardingAnalytics.paywallAction("purchase_failed", plan: selectedPlan)
         }
-    }
-
-    /// Asks for the permission the footer has just promised to use.
-    ///
-    /// "You'll get a reminder before the trial ends" was unkeepable copy: the
-    /// notice is a local notification, and nothing on the onboarding path had
-    /// asked for permission yet, so the one Grove notification with money
-    /// attached to it was silently dropped for anyone who started a trial before
-    /// their first plant. A trial start is the moment the ask explains itself,
-    /// so it happens here rather than three screens later. Only while the answer
-    /// is still open — re-asking a denied user does nothing but lose a launch to
-    /// a dialog iOS will not show.
-    private func armTrialReminder() async {
-        // Read it first. Nothing on the signed-out path had ever asked iOS, so
-        // the status sits at `.unknown` here — guarding on `.notDetermined`
-        // without this would skip the ask for every single trial.
-        await notifications.refreshAuthorization()
-        guard notifications.authorization == .notDetermined else { return }
-        await notifications.requestAuthorization()
-        OnboardingAnalytics.notificationsDecision(
-            .system(authorization: notifications.authorization)
-        )
     }
 
     private func restorePurchases() async {
         failure = nil
         restoreMessage = nil
         isWorking = true
-        let outcome = await premium.restorePurchases()
+        let outcome = await GroveTrialPurchase.restore(premium: premium)
         isWorking = false
         switch outcome {
         case .restored:
-            Haptics.celebrate()
-            OnboardingAnalytics.paywallAction("restored")
             onFinish()
         case .notFound:
             restoreMessage = PremiumTerms.restoreNotFoundMessage
-            OnboardingAnalytics.paywallAction("restore_not_found")
         case .failed(let message):
             // An unreachable store is not "you never bought it".
             failure = message
-            OnboardingAnalytics.paywallAction("restore_failed")
         }
     }
 
