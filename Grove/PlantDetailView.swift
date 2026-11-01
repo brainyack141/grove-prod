@@ -4,6 +4,7 @@ import UIKit
 /// Condition, the next useful action, and evidence of progress for this plant.
 /// Once the inline action scrolls away, the footer preserves the same route.
 struct PlantDetailView: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(GroveStore.self) private var store
     @Environment(SyncEngine.self) private var syncEngine
     @Environment(ConnectivityMonitor.self) private var connectivity
@@ -281,7 +282,8 @@ struct PlantDetailView: View {
     @ViewBuilder
     private func dockedActionBar(for plant: Plant, task: CareTask?) -> some View {
         if Self.docksAction(plant: plant, task: task) {
-            HStack(spacing: 10) {
+            let layout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(spacing: 6)) : AnyLayout(HStackLayout(spacing: 10))
+            layout {
                 NavigationLink(value: AppRoute.checkIn(plant.id)) {
                     GroveInkLabel(title: "Check in", systemImage: "camera.fill")
                 }
@@ -309,6 +311,7 @@ struct PlantDetailView: View {
             }
             .padding(.horizontal, GroveTheme.pagePadding)
             .padding(.vertical, 10)
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .groveActionBar()
         }
     }
@@ -2430,6 +2433,8 @@ enum PlantStoryCheckIns {
 private struct PlantStoryCheckInRow: View {
     let checkIn: PlantObservation
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     private var delta: Int { checkIn.score - checkIn.previousScore }
 
     var body: some View {
@@ -2440,23 +2445,30 @@ private struct PlantStoryCheckInRow: View {
                 diameter: 56,
                 lineWidth: 4
             )
+            .dynamicTypeSize(...DynamicTypeSize.xLarge)
 
             VStack(alignment: .leading, spacing: 5) {
-                Text(checkIn.createdAt.formatted(.dateTime.day().month(.wide).year()))
+                Text(dynamicTypeSize.isAccessibilitySize ? checkIn.createdAt.formatted(.dateTime.day().month(.abbreviated).year()) : checkIn.createdAt.formatted(.dateTime.day().month(.wide).year()))
                     .font(.headline)
                     .foregroundStyle(GroveTheme.ink)
+                    .fixedSize(horizontal: false, vertical: true)
 
-                HStack(spacing: 7) {
+                let bandLayout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 2)) : AnyLayout(HStackLayout(spacing: 7))
+                bandLayout {
                     Text(checkIn.band.shortTitle)
                         .foregroundStyle(checkIn.band.color)
 
-                    Text("·")
+                    if !dynamicTypeSize.isAccessibilitySize {
+                        Text("·")
+                    }
 
                     Text(deltaText)
                         .monospacedDigit()
 
                     if checkIn.isEstimated {
-                        Text("·")
+                        if !dynamicTypeSize.isAccessibilitySize {
+                            Text("·")
+                        }
                         Text("Estimated")
                     }
                 }
@@ -2695,11 +2707,15 @@ private struct PlantHero: View {
             // photo, and a photo shot against a bright window would swallow
             // both of them.
             LinearGradient(
-                colors: [.black.opacity(0.45), .clear],
+                stops: [
+                    .init(color: .black.opacity(0.62), location: 0),
+                    .init(color: .black.opacity(0.38), location: 0.55),
+                    .init(color: .clear, location: 1)
+                ],
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .frame(height: 168)
+            .frame(height: 220)
             .frame(maxHeight: .infinity, alignment: .top)
             .allowsHitTesting(false)
 
@@ -2865,7 +2881,7 @@ private struct PlantChromeIcon: View {
             .foregroundStyle(onPhoto ? AnyShapeStyle(Color.white) : AnyShapeStyle(GroveTheme.ink))
             .frame(width: 44, height: 44)
             .background {
-                Circle().fill(onPhoto ? AnyShapeStyle(Color.black.opacity(0.35)) : AnyShapeStyle(GroveTheme.surface))
+                Circle().fill(onPhoto ? AnyShapeStyle(Color.black.opacity(0.5)) : AnyShapeStyle(GroveTheme.surface))
             }
             .overlay {
                 Circle().stroke(

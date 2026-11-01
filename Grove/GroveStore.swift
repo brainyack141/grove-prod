@@ -4724,7 +4724,7 @@ private extension PlantObservation {
                     appearance: index == 0 ? .same : .better,
                     soilMoisture: .comfortable,
                     hasNewGrowth: index != 0,
-                    photoURL: nil,
+                    photoURL: index == 1 ? DemoPlantPhotos.photoURL(for: plant.id) : nil,
                     actorName: "You"
                 )
             }

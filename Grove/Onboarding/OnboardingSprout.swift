@@ -271,6 +271,7 @@ struct RaisedPlateButtonStyle: ButtonStyle {
 /// the committing action docked at the foot. Scrolls on a 4.7" screen and at
 /// accessibility sizes rather than clipping.
 struct OnboardingSproutPage<Content: View, Footer: View>: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     var step: Int?
     var isBackEnabled: Bool = true
     var onBack: (() -> Void)?
@@ -284,21 +285,31 @@ struct OnboardingSproutPage<Content: View, Footer: View>: View {
                 OnboardingSegmentBar(step: step, isBackEnabled: isBackEnabled, onBack: onBack, trailing: trailing)
             }
             ScrollView {
-                content()
-                    .padding(.horizontal, GroveTheme.pagePadding + 4)
-                    .padding(.top, 14)
-                    .padding(.bottom, 24)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                VStack(alignment: .leading, spacing: 0) {
+                    content()
+                        .padding(.horizontal, GroveTheme.pagePadding + 4)
+                        .padding(.top, 14)
+                        .padding(.bottom, 24)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    if dynamicTypeSize.isAccessibilitySize {
+                        footer()
+                            .padding(.horizontal, GroveTheme.pagePadding + 4)
+                            .padding(.top, 12)
+                            .padding(.bottom, 8)
+                    }
+                }
             }
             .scrollIndicators(.hidden)
             .scrollBounceBehavior(.basedOnSize)
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            footer()
-                .padding(.horizontal, GroveTheme.pagePadding + 4)
-                .padding(.top, 12)
-                .padding(.bottom, 8)
-                .background(GroveTheme.background)
+            if !dynamicTypeSize.isAccessibilitySize {
+                footer()
+                    .padding(.horizontal, GroveTheme.pagePadding + 4)
+                    .padding(.top, 12)
+                    .padding(.bottom, 8)
+                    .background(GroveTheme.background)
+            }
         }
         .background(GroveTheme.background.ignoresSafeArea())
     }
@@ -348,6 +359,7 @@ struct OnboardingFactTile: View {
 /// The object first run builds. It appears with the scan and gains a tag with
 /// every answer, so each question visibly adds something to the plant.
 struct OnboardingPlantCard: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let plant: OnboardingFirstPlantPresentation?
     var detail: String?
     var room: OnboardingRoom?
@@ -375,7 +387,8 @@ struct OnboardingPlantCard: View {
                             Text(line)
                                 .font(.footnote)
                                 .foregroundStyle(GroveTheme.mutedInk)
-                                .lineLimit(1)
+                                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
                     }
                     if room != nil || home != nil {

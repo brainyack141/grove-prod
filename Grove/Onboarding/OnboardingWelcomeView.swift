@@ -33,6 +33,13 @@ struct OnboardingWelcomeView: View {
                         )
                         .padding(.horizontal, GroveTheme.pagePadding + 4)
                         .padding(.top, 18)
+
+                        if dynamicTypeSize.isAccessibilitySize {
+                            welcomeActions
+                                .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+                                .padding(.horizontal, GroveTheme.pagePadding + 4)
+                                .padding(.top, 24)
+                        }
                     }
                     .padding(.bottom, 24)
                 }
@@ -40,11 +47,13 @@ struct OnboardingWelcomeView: View {
                 .scrollBounceBehavior(.basedOnSize)
             }
 
-            welcomeActions
-                .padding(.horizontal, GroveTheme.pagePadding + 4)
-                .padding(.top, 10)
-                .padding(.bottom, 4)
-                .background(GroveTheme.background)
+            if !dynamicTypeSize.isAccessibilitySize {
+                welcomeActions
+                    .padding(.horizontal, GroveTheme.pagePadding + 4)
+                    .padding(.top, 10)
+                    .padding(.bottom, 4)
+                    .background(GroveTheme.background)
+            }
         }
         .background(GroveTheme.background.ignoresSafeArea())
         .task { await scanSession.activateForOnboarding() }
@@ -54,7 +63,7 @@ struct OnboardingWelcomeView: View {
     /// still share the first view; on a 4.7-inch phone or at accessibility
     /// sizes it shrinks rather than pushing the buttons below the fold.
     private func sceneWidth(for size: CGSize) -> CGFloat {
-        if dynamicTypeSize.isAccessibilitySize { return min(size.width, 240) }
+        if dynamicTypeSize.isAccessibilitySize { return min(size.width, 160) }
         let reserved: CGFloat = 330
         let available = max(220, size.height - reserved)
         let widthForHeight = available * WindowsillScene.designSize.width / WindowsillScene.designSize.height
@@ -95,15 +104,17 @@ struct OnboardingWelcomeView: View {
                 .frame(minHeight: 44)
                 .accessibilityIdentifier("onboardingExplore")
 
-                Link("Privacy", destination: OnboardingLegal.privacyURL)
-                    .foregroundStyle(OnboardingTheme.mutedInk)
-                    .tint(OnboardingTheme.mutedInk)
-                    .frame(minHeight: 44)
+                HStack(spacing: 18) {
+                    Link("Privacy", destination: OnboardingLegal.privacyURL)
+                        .foregroundStyle(OnboardingTheme.mutedInk)
+                        .tint(OnboardingTheme.mutedInk)
+                        .frame(minHeight: 44)
 
-                Link("Terms", destination: OnboardingLegal.termsURL)
-                    .foregroundStyle(OnboardingTheme.mutedInk)
-                    .tint(OnboardingTheme.mutedInk)
-                    .frame(minHeight: 44)
+                    Link("Terms", destination: OnboardingLegal.termsURL)
+                        .foregroundStyle(OnboardingTheme.mutedInk)
+                        .tint(OnboardingTheme.mutedInk)
+                        .frame(minHeight: 44)
+                }
             }
             .padding(.top, 2)
         }
@@ -137,6 +148,7 @@ struct OnboardingWelcomeView: View {
 /// same windowsill, an empty pot's worth of reassurance, and two ways on.
 struct OnboardingExploreView: View {
     let model: OnboardingModel
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(ScanSession.self) private var scanSession
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var isImporting = false
@@ -152,7 +164,7 @@ struct OnboardingExploreView: View {
                     subtitle: "Make your account now and scan a plant when you’re next to one, or use a photo you already have."
                 )
                 WindowsillScene()
-                    .frame(maxWidth: 300)
+                    .frame(maxWidth: dynamicTypeSize.isAccessibilitySize ? 160 : 300)
                     .frame(maxWidth: .infinity)
                 if let importError {
                     Text(importError)

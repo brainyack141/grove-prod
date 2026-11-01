@@ -469,8 +469,8 @@ struct GrovePremiumOfferView: View {
     /// and the mascots all sit above the footer at rest. On a 402x874 phone
     /// the full 380pt photo pushed the mascot caption under the footer.
     private func heroHeight(available height: CGFloat) -> CGFloat {
-        if dynamicTypeSize.isAccessibilitySize { return 240 }
-        return height < 820 ? 290 : 380
+        if dynamicTypeSize.isAccessibilitySize { return 200 }
+        return height < 820 ? 240 : 320
     }
 
     var body: some View {
@@ -491,14 +491,16 @@ struct GrovePremiumOfferView: View {
                             VStack(alignment: .leading, spacing: 24) {
                                 introduction
                                 PaywallComparisonTable(rows: PaywallComparison.rows)
+                                storeOffer
                                 PaywallMascotRow()
                                     .padding(.horizontal, 4)
-                                storeOffer
                             }
                             .padding(.horizontal, 16)
                             // The title sits on the faded lower part of the photo.
                             .padding(.top, dynamicTypeSize.isAccessibilitySize ? -70 : -150)
                             .padding(.bottom, 24)
+
+                            if dynamicTypeSize.isAccessibilitySize { footer }
                         }
                         .animation(reduceMotion ? nil : GroveMotion.snap, value: selectedPlan)
                     }
@@ -527,7 +529,7 @@ struct GrovePremiumOfferView: View {
                     // bar, rather than sitting under a flat band.
                     .ignoresSafeArea(edges: .top)
 
-                    footer
+                    if !dynamicTypeSize.isAccessibilitySize { footer }
                 }
             }
 
@@ -538,6 +540,7 @@ struct GrovePremiumOfferView: View {
                 .padding(.trailing, 16)
         }
         .accessibilityIdentifier("onboardingPaywall")
+        .environment(\.colorScheme, .dark)
         .preferredColorScheme(.dark)
         .task { await premium.load() }
         // So the trial promise below is written against what iOS will actually

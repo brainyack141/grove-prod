@@ -789,6 +789,9 @@ private struct PlantRun: Identifiable {
 private struct PlantRunTile: View {
     let run: PlantRun
 
+    @ScaledMetric(relativeTo: .caption) private var tileWidth: CGFloat = 80
+    @ScaledMetric(relativeTo: .caption) private var thumbSize: CGFloat = 66
+
     private var band: HealthBand { run.plant.healthBand }
 
     var body: some View {
@@ -797,8 +800,8 @@ private struct PlantRunTile: View {
             // plant in Grove. This shelf was the last place a plant was drawn as
             // a circle, which made a run tile read as an avatar — a person —
             // rather than as the same object the rows above it show.
-            PlantThumbnail(plant: run.plant, height: 66, maxDimension: 200)
-                .frame(width: 66, height: 66)
+            PlantThumbnail(plant: run.plant, height: thumbSize, maxDimension: 200)
+                .frame(width: thumbSize, height: thumbSize)
                 .clipShape(RoundedRectangle(cornerRadius: GroveTheme.compactRadius, style: .continuous))
                 .overlay {
                     RoundedRectangle(cornerRadius: GroveTheme.compactRadius, style: .continuous)
@@ -808,7 +811,9 @@ private struct PlantRunTile: View {
             Text(run.plant.nickname)
                 .font(.caption.weight(.bold))
                 .foregroundStyle(GroveTheme.ink)
-                .lineLimit(1)
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
+                .multilineTextAlignment(.center)
 
             HStack(spacing: 4) {
                 Image(systemName: "leaf.fill")
@@ -819,7 +824,7 @@ private struct PlantRunTile: View {
             }
             .foregroundStyle(band.color)
         }
-        .frame(width: 80)
+        .frame(width: tileWidth)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(run.plant.nickname), steady for \(run.days == 1 ? "1 day" : "\(run.days) days")")
     }

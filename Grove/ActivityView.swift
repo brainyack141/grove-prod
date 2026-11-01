@@ -170,9 +170,16 @@ private enum ActivityFilter: CaseIterable, Identifiable, Hashable {
 
 private struct ActivityRow: View {
     @Environment(GroveStore.self) private var store
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let event: ActivityEvent
     var showsDate = false
     var isLast = false
+
+    private var timeLayout: AnyLayout {
+        dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
+            : AnyLayout(HStackLayout(alignment: .firstTextBaseline, spacing: 10))
+    }
 
     private var plant: Plant? {
         event.plantID.flatMap { store.plant(id: $0) }
@@ -203,7 +210,7 @@ private struct ActivityRow: View {
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 4) {
-                HStack(alignment: .firstTextBaseline, spacing: 10) {
+                timeLayout {
                     Text(sentence)
                         .font(.body)
                         .foregroundStyle(GroveTheme.ink)

@@ -46,6 +46,7 @@ struct GroveEmptyState<Actions: View>: View {
 
             Text(message)
                 .font(.subheadline)
+                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                 .foregroundStyle(GroveTheme.mutedInk)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)

@@ -204,6 +204,7 @@ struct ScanView: View {
                     leaveTips(perform: resumeSavedScan)
                 } : nil
             )
+            .presentationDetents([.large])
         }
         .sheet(isPresented: $showsAIConsent, onDismiss: finishAIConsent) {
             AIProcessingConsentView(
@@ -583,10 +584,12 @@ struct ScanView: View {
     private func reviewContent(image: UIImage) -> some View {
         GeometryReader { proxy in
             ZStack(alignment: .top) {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: proxy.size.width, height: proxy.size.height)
+                Color.clear
+                    .overlay {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                    }
                     .clipped()
                     .ignoresSafeArea()
 
@@ -1806,6 +1809,7 @@ private struct ScanCardHalfPerimeter: Shape {
 }
 
 private func demoScanImage() -> UIImage {
+    if let photo = DemoPlantPhotos.sampleScanImage() { return photo }
     let size = CGSize(width: 900, height: 1200)
     return UIGraphicsImageRenderer(size: size).image { context in
         UIColor(red: 0.09, green: 0.34, blue: 0.18, alpha: 1).setFill()
@@ -3805,6 +3809,7 @@ struct AddPlantView: View {
     @Environment(ConnectivityMonitor.self) private var connectivity
     @Environment(NotificationService.self) private var notifications
     @Environment(GroveToastCenter.self) private var toasts: GroveToastCenter?
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @AppStorage(GroveDefaults.firstPlantActivationPending) private var firstPlantActivationPending = false
     @AppStorage(GroveDefaults.reminderHour) private var reminderHour = NotificationService.reminderHour
     @State private var nickname = ""
@@ -3825,6 +3830,8 @@ struct AddPlantView: View {
     @FocusState private var focusedField: Field?
 
     private enum Field { case nickname, customLocation }
+
+    private enum AddPlantScrollAnchor: Hashable { case hero }
 
     /// Sensible fallbacks for where a plant might live, keyed to where the
     /// person said their plants are during onboarding. The picker used to offer
@@ -3989,37 +3996,51 @@ struct AddPlantView: View {
     // MARK: - Form
 
     private var formView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: GroveTheme.sectionSpacing) {
-                heroCard
-                nameSection
-                locationSection
-                lightSection
-                promiseCard
-                safetyNote
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: GroveTheme.sectionSpacing) {
+                    heroCard
+                        .id(AddPlantScrollAnchor.hero)
+                    nameSection
+                    locationSection
+                    lightSection
+                    promiseCard
+                    safetyNote
+                }
+                .padding(.horizontal, GroveTheme.pagePadding)
+                .padding(.top, 8)
+                .padding(.bottom, 16)
             }
-            .padding(.horizontal, GroveTheme.pagePadding)
-            .padding(.top, 8)
-            .padding(.bottom, 16)
-        }
-        .scrollDismissesKeyboard(.interactively)
-        .safeAreaInset(edge: .bottom) {
-            Button {
-                addPlant()
-            } label: {
-                GroveCTALabel(
-                    title: isAddingPlant ? "Planting…" : addCTATitle,
-                    systemImage: isAddingPlant ? "hourglass" : "arrow.right"
-                )
+            .scrollDismissesKeyboard(.interactively)
+            .safeAreaInset(edge: .bottom) {
+                Button {
+                    addPlant()
+                } label: {
+                    GroveCTALabel(
+                        title: isAddingPlant ? "Planting…" : addCTATitle,
+                        systemImage: isAddingPlant ? "hourglass" : "arrow.right"
+                    )
+                }
+                .buttonStyle(GrovePressStyle())
+                .disabled(isAddingPlant)
+                .opacity(isAddingPlant ? 0.6 : 1)
+                .accessibilityIdentifier("confirmAddPlant")
+                .groveActionBar()
             }
-            .buttonStyle(GrovePressStyle())
-            .disabled(isAddingPlant)
-            .opacity(isAddingPlant ? 0.6 : 1)
-            .accessibilityIdentifier("confirmAddPlant")
-            .groveActionBar()
+            .task {
+                // `dynamicTypeSize` can still read the default size on the
+                // first frame, so check it only after the screen has settled.
+                try? await Task.sleep(for: .milliseconds(350))
+                releaseNicknameFocusIfAccessibilitySize(proxy)
+            }
+            .onChange(of: dynamicTypeSize) { _, _ in
+                releaseNicknameFocusIfAccessibilitySize(proxy)
+            }
         }
         .groveBackground()
-        .groveEditorialPage("Add to my grove")
+        .grovePageTitle("Add to my grove")
+        .toolbarBackground(GroveTheme.background, for: .navigationBar)
+        .toolbarBackground(.automatic, for: .navigationBar)
         .onAppear(perform: prepareNickname)
         .task {
             if heroImage == nil, let url = scanSession.draft?.fileURL {
@@ -4089,17 +4110,16 @@ struct AddPlantView: View {
 
     private var nameSection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack(spacing: 12) {
-                GroveEyebrow(text: "What will you call it?")
-                Spacer(minLength: 0)
-                Button {
-                    chooseRandomPunnyName()
-                } label: {
-                    GrovePill(text: "Surprise me", systemImage: "dice.fill", style: .softGreen)
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 12) {
+                    nameSectionEyebrow
+                    Spacer(minLength: 0)
+                    surpriseNameButton
                 }
-                .buttonStyle(GrovePressStyle())
-                .accessibilityLabel("Choose a random funny plant name")
-                .accessibilityIdentifier("randomPlantNickname")
+                VStack(alignment: .leading, spacing: 8) {
+                    nameSectionEyebrow
+                    surpriseNameButton
+                }
             }
             TextField(
                 "Plant nickname",
@@ -4122,6 +4142,22 @@ struct AddPlantView: View {
         }
     }
 
+    private var nameSectionEyebrow: some View {
+        GroveEyebrow(text: "What will you call it?")
+    }
+
+    private var surpriseNameButton: some View {
+        Button {
+            chooseRandomPunnyName()
+        } label: {
+            GrovePill(text: "Surprise me", systemImage: "dice.fill", style: .softGreen)
+                .fixedSize()
+        }
+        .buttonStyle(GrovePressStyle())
+        .accessibilityLabel("Choose a random funny plant name")
+        .accessibilityIdentifier("randomPlantNickname")
+    }
+
     /// Put the identified name in the field rather than using it as placeholder
     /// copy, then select it so typing a nickname replaces the suggestion in one
     /// step. Unknown plants still start with an empty, focused field.
@@ -4131,10 +4167,32 @@ struct AddPlantView: View {
 
         let suggestedName = defaultNickname
         nickname = suggestedName
-        focusedField = .nickname
+        // At accessibility sizes the keyboard and the scroll-to-field it
+        // triggers push the plant card under the bar before it is seen; the
+        // name is still prefilled and one tap away.
+        if !dynamicTypeSize.isAccessibilitySize {
+            focusedField = .nickname
+        }
         nicknameSelection = suggestedName.isEmpty
             ? nil
             : TextSelection(range: suggestedName.startIndex..<suggestedName.endIndex)
+    }
+
+    /// At accessibility sizes the nickname field must not hold the keyboard
+    /// on arrival: the keyboard's scroll-to-field pushes the plant card under
+    /// the bar before anyone has seen it. The name stays prefilled.
+    private func releaseNicknameFocusIfAccessibilitySize(_ proxy: ScrollViewProxy) {
+        guard dynamicTypeSize.isAccessibilitySize else { return }
+        focusedField = nil
+        // The focus can sit in UIKit without `focusedField` ever having been
+        // set, so nil alone would change nothing.
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        proxy.scrollTo(AddPlantScrollAnchor.hero, anchor: .top)
+        Task { @MainActor in
+            // Once the keyboard has gone, its inset change can scroll again.
+            try? await Task.sleep(for: .milliseconds(400))
+            proxy.scrollTo(AddPlantScrollAnchor.hero, anchor: .top)
+        }
     }
 
     private func chooseRandomPunnyName() {
@@ -4665,7 +4723,7 @@ private struct DiagnosisQuestionsCard: View {
                     .multilineTextAlignment(.leading)
                 Spacer(minLength: 8)
                 Image(systemName: chosen ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(chosen ? GroveTheme.accent : GroveTheme.separator)
+                    .foregroundStyle(chosen ? GroveTheme.accent : GroveTheme.subtleInk)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 11)

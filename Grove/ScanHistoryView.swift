@@ -60,6 +60,7 @@ struct ScanHistoryView: View {
         }
         .groveGroupedContent()
         .searchable(text: $searchText, prompt: "Plant, species or finding")
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         .grovePageTitle("Scan history")
         // Reached by push from the dark camera now, and this is a cream
         // grouped screen — same restoration JourneyQuests does when pushed

@@ -124,7 +124,7 @@ struct GrovePrimaryActionButton: View {
                     .opacity(showsGlyph ? 1 : 0)
             }
             .frame(width: Self.side, height: Self.side)
-            .modifier(GrovePrimaryActionButtonSurface())
+            .modifier(GrovePrimaryActionButtonSurface(usesGlass: isEntered && showsGlyph))
             // The whole square answers, not only the leaf: a thumb that lands
             // just past a tip on the app's primary action is still a scan.
             .contentShape(.rect)
@@ -357,9 +357,13 @@ struct GroveScanReticleGlyph: View {
 
 private struct GrovePrimaryActionButtonSurface: ViewModifier {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    let usesGlass: Bool
 
     func body(content: Content) -> some View {
-        if !reduceTransparency, #available(iOS 26.0, *) {
+        // Glass waits for the leaf to finish opening. The system draws it
+        // outside the button's opacity, so a half-open leaf's squeeze came
+        // out as a dark wedge across the screen; plain ink unfurls cleanly.
+        if usesGlass, !reduceTransparency, #available(iOS 26.0, *) {
             // Tinted, interactive Liquid Glass — and deliberately no shadow and
             // no background of our own. The system draws both from what is
             // behind the button; the soft drop shadow the first pass hung under

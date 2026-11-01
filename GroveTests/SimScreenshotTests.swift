@@ -143,6 +143,10 @@ final class SimScreenshotTests: XCTestCase {
         // 21–29 — pushed destinations, each from a fresh root.
         await capturePushed("21-care-queue", route: .care)
         await capturePushed("22-plant-detail", route: .plant(UUID(uuidString: "10000000-0000-0000-0000-000000000004")!))
+        // The same page at the bottom of its sheet: the docked Check in bar
+        // must leave the last card readable rather than sitting on it.
+        await scrollMainScrollView(toBottom: true)
+        capture("22-plant-detail-bottom")
         await capturePushed("23-plant-detail-monty", route: .plant(UUID(uuidString: "10000000-0000-0000-0000-000000000001")!))
         await capturePushed("24-add-plant", route: .addPlant)
         await capturePushed("25-settings", route: .settings)
@@ -273,6 +277,10 @@ final class SimScreenshotTests: XCTestCase {
     private func show<V: View>(_ view: V, wait: Double) async {
         guard let window = ensureWindow() else { return }
         window.overrideUserInterfaceStyle = variant.style
+        // The large-text variant must be large text to UIKit as well, not
+        // only to the SwiftUI environment, or pushed screens start at the
+        // default size and change size after they first appear.
+        window.traitOverrides.preferredContentSizeCategory = variant.dynamicType == nil ? .large : .accessibilityExtraLarge
         window.rootViewController = UIHostingController(rootView: view)
         window.makeKeyAndVisible()
         window.layoutIfNeeded()
@@ -517,7 +525,7 @@ final class SimScreenshotTests: XCTestCase {
 
     private func stageDemoFirstPlant() async {
         let size = CGSize(width: 800, height: 800)
-        let image = UIGraphicsImageRenderer(size: size).image { context in
+        let image = UIImage(named: "DemoPlantMonstera") ?? UIGraphicsImageRenderer(size: size).image { context in
             UIColor.systemGreen.setFill()
             context.fill(CGRect(origin: .zero, size: size))
         }
@@ -552,8 +560,8 @@ final class SimScreenshotTests: XCTestCase {
             mode: .add,
             createdAt: Date(),
             fileURL: photoURL,
-            pixelWidth: 800,
-            pixelHeight: 800
+            pixelWidth: Int(image.size.width * image.scale),
+            pixelHeight: Int(image.size.height * image.scale)
         )
         _ = try? await PendingFirstPlantStore.shared.stage(
             scanID: UUID(),

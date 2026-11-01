@@ -12,6 +12,7 @@ struct GroveLocationPickerView: View {
     @Environment(ConnectivityMonitor.self) private var connectivity
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     @State private var cameraPosition: MapCameraPosition
     @State private var centerCoordinate: CLLocationCoordinate2D
@@ -202,6 +203,35 @@ struct GroveLocationPickerView: View {
     // MARK: - Bottom card
 
     private var locationCard: some View {
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                // Stay a compact card when it fits; only scroll when the
+                // text no longer fits under the search bar.
+                ViewThatFits(in: .vertical) {
+                    locationCardContent
+                        .padding(18)
+                    ScrollView {
+                        locationCardContent
+                            .padding(18)
+                    }
+                    .scrollBounceBehavior(.basedOnSize)
+                }
+            } else {
+                locationCardContent
+                    .padding(18)
+            }
+        }
+        .background(GroveTheme.surface, in: RoundedRectangle(cornerRadius: GroveTheme.heroRadius, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: GroveTheme.heroRadius, style: .continuous)
+                .stroke(GroveTheme.separator, lineWidth: 1)
+        }
+        .groveShadow(.floating)
+        .padding(.horizontal, GroveTheme.pagePadding)
+        .padding(.bottom, 12)
+    }
+
+    private var locationCardContent: some View {
         VStack(spacing: 14) {
             if onboardingModel != nil {
                 VStack(alignment: .leading, spacing: 7) {
@@ -236,11 +266,13 @@ struct GroveLocationPickerView: View {
                     Text(displayLabel)
                         .font(.headline)
                         .foregroundStyle(GroveTheme.ink)
-                        .lineLimit(2)
+                        .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
+                        .fixedSize(horizontal: false, vertical: true)
                     Text(coordinateSummary)
                         .font(.caption)
                         .foregroundStyle(GroveTheme.mutedInk)
                         .monospacedDigit()
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 0)
                 if isResolving {
@@ -279,15 +311,6 @@ struct GroveLocationPickerView: View {
                 onboardingModel == nil ? "saveGroveLocation" : "onboardingSaveLocation"
             )
         }
-        .padding(18)
-        .background(GroveTheme.surface, in: RoundedRectangle(cornerRadius: GroveTheme.heroRadius, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: GroveTheme.heroRadius, style: .continuous)
-                .stroke(GroveTheme.separator, lineWidth: 1)
-        }
-        .groveShadow(.floating)
-        .padding(.horizontal, GroveTheme.pagePadding)
-        .padding(.bottom, 12)
     }
 
     /// What went wrong with the last "use my current location", and the way out.
