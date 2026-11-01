@@ -10,7 +10,7 @@ struct OnboardingNotificationPrimerView: View {
     @Environment(GroveStore.self) private var store
     let plant: Plant
     let task: CareTask?
-    let reminderHour: Int
+    @Binding var reminderHour: Int
     let isRequesting: Bool
     var enableTitle: String = "Enable reminders"
     let onEnable: () -> Void
@@ -22,6 +22,31 @@ struct OnboardingNotificationPrimerView: View {
             task: task,
             reminderHour: reminderHour
         )
+    }
+
+    private var reminderTimeLabel: some View {
+        Label(preview.deliveryDescription, systemImage: "clock.fill")
+            .font(.footnote.weight(.semibold))
+            .foregroundStyle(GroveTheme.accentStrong)
+    }
+
+    private var reminderHourPicker: some View {
+        Picker("Reminder time", selection: $reminderHour) {
+            ForEach(0..<24, id: \.self) { hour in
+                Text(Self.hourLabel(hour)).tag(hour)
+            }
+        }
+        .pickerStyle(.menu)
+        .tint(GroveTheme.accentStrong)
+        .disabled(isRequesting)
+        .accessibilityIdentifier("primerReminderHourPicker")
+    }
+
+    private static func hourLabel(_ hour: Int) -> String {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: .now)
+        let date = calendar.date(bySettingHour: hour, minute: 0, second: 0, of: startOfDay) ?? startOfDay
+        return date.formatted(date: .omitted, time: .shortened)
     }
 
     var body: some View {
@@ -79,9 +104,20 @@ struct OnboardingNotificationPrimerView: View {
 
                         Divider()
 
-                        Label(preview.deliveryDescription, systemImage: "clock.fill")
-                            .font(.footnote.weight(.semibold))
-                            .foregroundStyle(GroveTheme.accentStrong)
+                        // The time is chosen here, where the person decides about
+                        // reminders, not buried in Settings; it writes the same
+                        // stored preference Settings uses.
+                        ViewThatFits(in: .horizontal) {
+                            HStack(spacing: 8) {
+                                reminderTimeLabel
+                                Spacer(minLength: 8)
+                                reminderHourPicker
+                            }
+                            VStack(alignment: .leading, spacing: 6) {
+                                reminderTimeLabel
+                                reminderHourPicker
+                            }
+                        }
                     }
                     .padding(16)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -206,7 +242,7 @@ struct OnboardingReminderPreview: Equatable {
     OnboardingNotificationPrimerView(
         plant: .notificationPreview,
         task: nil,
-        reminderHour: 9,
+        reminderHour: .constant(9),
         isRequesting: false,
         onEnable: {},
         onSkip: {}

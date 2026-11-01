@@ -17,6 +17,7 @@ struct PlantDetailView: View {
     @Environment(GrovePremiumStore.self) private var premium
     @Environment(\.openURL) private var openURL
     @AppStorage(GroveDefaults.careReminders) private var careReminders = true
+    @AppStorage(GroveDefaults.reminderHour) private var reminderHour = NotificationService.reminderHour
     @State private var showingReminderPrimer = false
     @State private var requestingReminder = false
     @State private var reminderError: String?
@@ -112,7 +113,7 @@ struct PlantDetailView: View {
                 OnboardingNotificationPrimerView(
                     plant: plant,
                     task: OnboardingReminderPreview.firstTask(for: plant, in: store.tasks),
-                    reminderHour: UserDefaults.standard.object(forKey: GroveDefaults.reminderHour) as? Int ?? NotificationService.reminderHour,
+                    reminderHour: $reminderHour,
                     isRequesting: requestingReminder,
                     enableTitle: notifications.authorization == .denied ? "Open Settings" : "Turn on reminders",
                     onEnable: { enableReminder() },

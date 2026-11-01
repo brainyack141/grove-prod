@@ -4516,7 +4516,7 @@ struct AddPlantView: View {
         OnboardingNotificationPrimerView(
             plant: plant,
             task: firstReminderTask(for: plant),
-            reminderHour: reminderHour,
+            reminderHour: $reminderHour,
             isRequesting: isRequestingNotifications,
             onEnable: { requestFirstPlantNotifications(for: plant) },
             onSkip: { completeFirstPlantActivation(for: plant, outcome: .primerSkipped) }
