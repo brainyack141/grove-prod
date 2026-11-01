@@ -197,8 +197,10 @@ struct AskView: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                GroveHeaderStreak().groveHeaderChip()
+            if store.displayStreak > 0 {
+                ToolbarItem(placement: .topBarLeading) {
+                    GroveHeaderStreak().groveHeaderChip()
+                }
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {

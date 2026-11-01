@@ -197,7 +197,9 @@ struct ProfileView: View {
         .sheet(isPresented: $showCreateCollection) { CreateCollectionView() }
         .navigationTitle("My Grove")
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) { GroveHeaderStreak().groveHeaderChip() }
+            if store.displayStreak > 0 {
+                ToolbarItem(placement: .topBarLeading) { GroveHeaderStreak().groveHeaderChip() }
+            }
             ToolbarItemGroup(placement: .topBarTrailing) {
                 NavigationLink(value: AppRoute.liveScan(.add, nil)) {
                     GroveHeaderIcon(symbol: "plus")
