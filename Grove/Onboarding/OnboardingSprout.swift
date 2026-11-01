@@ -441,7 +441,7 @@ extension OnboardingFirstPlantPresentation {
         var parts: [String] = []
         if showsScientificName { parts.append(scientificName) }
         if !isUnknownIdentity, !identificationIsProvisional, let identificationConfidence {
-            parts.append("\(identificationConfidence)% match")
+            parts.append("\(identificationConfidence)% ID match")
         }
         return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }

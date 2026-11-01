@@ -1568,7 +1568,7 @@ private struct ScanLiveResultCard: View {
                 HStack(spacing: 18) {
                     if let onChangeIdentity {
                         Button(action: onChangeIdentity) {
-                            Text("Not right?")
+                            Text("Change species")
                                 .frame(minHeight: 44)
                                 .contentShape(Rectangle())
                         }
@@ -3539,28 +3539,38 @@ private struct ScanResultHero: View {
     }
 }
 
-/// The animated match-confidence ring that sits on the hero photo. The ring
-/// sweep and the rolling number make certainty feel earned rather than
-/// asserted — and a short ring is honest about a weak match.
+/// The animated identification-confidence ring that sits on the hero photo.
+/// The number is the species-identification confidence, not plant health, so
+/// it carries an explicit "ID match" caption and an accessibility label to
+/// keep it from being read as a health score. The ring sweep and the rolling
+/// number make certainty feel earned rather than asserted — and a short ring
+/// is honest about a weak match.
 private struct ConfidenceRing: View {
     let value: Int
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var shown = 0
 
     var body: some View {
-        ZStack {
-            Circle().stroke(.white.opacity(0.28), lineWidth: 4)
-            Circle()
-                .trim(from: 0, to: CGFloat(shown) / 100)
-                .stroke(.white, style: StrokeStyle(lineWidth: 4, lineCap: .round))
-                .rotationEffect(.degrees(-90))
-            Text("\(shown)%")
-                .font(.system(size: 12, weight: .heavy, design: .rounded))
-                .foregroundStyle(.white)
-                .minimumScaleFactor(0.7)
-                .contentTransition(.numericText(value: Double(shown)))
+        VStack(spacing: 3) {
+            ZStack {
+                Circle().stroke(.white.opacity(0.28), lineWidth: 4)
+                Circle()
+                    .trim(from: 0, to: CGFloat(shown) / 100)
+                    .stroke(.white, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                Text("\(shown)%")
+                    .font(.system(size: 12, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+                    .minimumScaleFactor(0.7)
+                    .contentTransition(.numericText(value: Double(shown)))
+            }
+            .frame(width: 48, height: 48)
+            Text("ID match")
+                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                .foregroundStyle(.white.opacity(0.72))
+                .lineLimit(1)
+                .fixedSize()
         }
-        .frame(width: 48, height: 48)
         .onAppear {
             if reduceMotion {
                 shown = value
@@ -3568,7 +3578,8 @@ private struct ConfidenceRing: View {
                 withAnimation(.easeOut(duration: 0.9).delay(0.25)) { shown = value }
             }
         }
-        .accessibilityHidden(true)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(value)% identification match")
     }
 }
 
