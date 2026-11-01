@@ -223,6 +223,10 @@ private struct FriendHeaderCard: View {
             }
             Spacer(minLength: 0)
             GrovePill(text: "Connected", systemImage: "checkmark", style: .outline)
+                // One line always: a status pill broken over two lines reads
+                // as two words. The name column wraps instead.
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
         }
         .groveCard()
     }
