@@ -1,6 +1,7 @@
 import XCTest
 import SwiftUI
 import UIKit
+import RevenueCat
 @testable import Grove
 
 /// TEMPORARY (branch icp-fixes): renders real screens from inside the hosted
@@ -230,6 +231,113 @@ final class SimScreenshotTests: XCTestCase {
             wait: 3
         )
         capture("42-friend-slots-paywall")
+
+        // The App Store catalogue does not exist in CI, so these priced states
+        // are seeded with the fixture catalogue below instead of waiting for a
+        // network offering that never arrives.
+        resetRouter()
+        let (plantOfferSession, plantOfferStore) = makeDemoContext()
+        await show(
+            hosted(
+                GrovePremiumOfferView(subject: offerSubject(for: plantOfferStore), onFinish: {}),
+                session: plantOfferSession,
+                store: plantOfferStore,
+                premium: seededPremium()
+            ),
+            wait: 3
+        )
+        capture("40b-paywall-plant")
+
+        resetRouter()
+        let (monthlySession, monthlyStore) = makeDemoContext()
+        await show(
+            hosted(
+                GrovePremiumOfferView(
+                    subject: offerSubject(for: monthlyStore),
+                    initialPlan: .monthly,
+                    onFinish: {}
+                ),
+                session: monthlySession,
+                store: monthlyStore,
+                premium: seededPremium()
+            ),
+            wait: 3
+        )
+        capture("40c-paywall-monthly")
+
+        resetRouter()
+        let (noTrialSession, noTrialStore) = makeDemoContext()
+        await show(
+            hosted(
+                GrovePremiumOfferView(subject: offerSubject(for: noTrialStore), onFinish: {}),
+                session: noTrialSession,
+                store: noTrialStore,
+                premium: seededPremium(trial: false)
+            ),
+            wait: 3
+        )
+        capture("40d-paywall-notrial")
+
+        resetRouter()
+        let (emptyOfferSession, emptyOfferStore) = makeDemoContext()
+        await show(
+            hosted(
+                GrovePremiumOfferView(subject: nil, onFinish: {}),
+                session: emptyOfferSession,
+                store: emptyOfferStore,
+                premium: seededPremium(empty: true)
+            ),
+            wait: 3
+        )
+        capture("40e-paywall-empty")
+
+        resetRouter()
+        let (askPricedSession, askPricedStore) = makeDemoContext()
+        await show(
+            hosted(
+                AskPaywallSheet(reason: .limitReached),
+                session: askPricedSession,
+                store: askPricedStore,
+                premium: seededPremium()
+            ),
+            wait: 3
+        )
+        capture("41b-ask-paywall-priced")
+
+        resetRouter()
+        let (slotsPricedSession, slotsPricedStore) = makeDemoContext()
+        await show(
+            hosted(
+                FriendSlotsPaywallSheet(),
+                session: slotsPricedSession,
+                store: slotsPricedStore,
+                premium: seededPremium()
+            ),
+            wait: 3
+        )
+        capture("42b-friend-slots-priced")
+
+        // The end-of-onboarding offer, through the real gate. Setup already
+        // called `complete()`, which sets the shown flag that makes
+        // `markOnboardingFinished` refuse, so clear it first. RootView's gate
+        // presents this as a fullScreenCover only after its 900 ms settle,
+        // which is why this wait is longer than the hosted paywalls'.
+        resetRouter()
+        UserDefaults.standard.removeObject(forKey: GroveDefaults.premiumOfferShown)
+        GrovePremiumOffer.markOnboardingFinished()
+        let (offerSession, offerStore) = makeDemoContext()
+        await show(
+            hosted(
+                RootView(pendingFirstPlantStore: .shared),
+                session: offerSession,
+                store: offerStore,
+                premium: seededPremium()
+            ),
+            wait: 8
+        )
+        capture("40f-onboarding-end-offer")
+        GrovePremiumOffer.complete()
+        UserDefaults.standard.set(0, forKey: GroveDefaults.premiumOfferMeaningfulUseCount)
 
         // 50 — a signed-in non-demo account with no plants. A fresh defaults
         // suite means no account snapshot and no demo fixtures; activation for
@@ -641,7 +749,12 @@ final class SimScreenshotTests: XCTestCase {
 
     // MARK: - Environment
 
-    private func hosted<V: View>(_ view: V, session: SessionService, store: GroveStore) -> some View {
+    private func hosted<V: View>(
+        _ view: V,
+        session: SessionService,
+        store: GroveStore,
+        premium: GrovePremiumStore = GrovePremiumStore()
+    ) -> some View {
         view
             .environment(router)
             .environment(store)
@@ -654,7 +767,7 @@ final class SimScreenshotTests: XCTestCase {
             .environment(ConnectivityMonitor())
             .environment(NotificationService())
             .environment(AskSession(client: GroveServiceFactory.makeBotanistClient(session: session)))
-            .environment(GrovePremiumStore())
+            .environment(premium)
             .environment(WeatherService())
             // `GrovePrimaryActionButton` stays at opacity 0 until the scene is
             // active. A hosted window in the test run reports an inactive
@@ -663,6 +776,35 @@ final class SimScreenshotTests: XCTestCase {
             .environment(\.scenePhase, .active)
             .environment(\.dynamicTypeSize, variant.dynamicType ?? .large)
             .preferredColorScheme(variant == .dark ? .dark : .light)
+    }
+
+    /// A catalogue that renders the priced paywall without RevenueCat. Marking
+    /// the trial eligible the way `PremiumStoreTests` does means the trial copy
+    /// appears only when the fixture product actually carries the offer.
+    private func seededPremium(trial: Bool = true, empty: Bool = false) -> GrovePremiumStore {
+        let premium = GrovePremiumStore()
+        guard !empty else {
+            // "The store answered, and there is nothing for sale."
+            premium.seedCatalogueForTesting(
+                packages: [:],
+                eligibleFreeTrials: [:],
+                didLoadCatalogue: true
+            )
+            return premium
+        }
+        let catalogue = PaywallFixture.catalogue(trial: trial)
+        premium.seedCatalogueForTesting(
+            packages: catalogue,
+            eligibleFreeTrials: PaywallFixture.eligibleFreeTrials(in: catalogue)
+        )
+        return premium
+    }
+
+    /// The demo store starts from `Plant.fixtures`, so its first plant is
+    /// available without a network load; nil still renders the general offer.
+    private func offerSubject(for store: GroveStore) -> GrovePremiumOfferSubject? {
+        guard let plant = store.plants.first else { return nil }
+        return GrovePremiumOfferSubject(plant: plant, plantCount: store.plants.count, image: nil)
     }
 
     private func makeSignedOutContext() -> (SessionService, GroveStore) {
@@ -790,5 +932,85 @@ private struct PushedScanResultHost: View {
                 .navigationTitle("Scan")
                 .withAppDestinations(path: $path)
         }
+    }
+}
+
+/// Test-only stand-in for the launch catalogue: GBP, en_GB, £34.99 a year with
+/// a seven-day free trial against £6.99 a month with none. Never app data.
+private enum PaywallFixture {
+    static func catalogue(trial: Bool) -> [GrovePremiumStore.Plan: Package] {
+        [
+            .yearly: package(.yearly, product(
+                id: GrovePremiumStore.Plan.yearly.defaultProductID,
+                price: 34.99,
+                display: "£34.99",
+                period: SubscriptionPeriod(value: 1, unit: .year),
+                trial: trial ? freeTrial(days: 7) : nil
+            )),
+            .monthly: package(.monthly, product(
+                id: GrovePremiumStore.Plan.monthly.defaultProductID,
+                price: 6.99,
+                display: "£6.99",
+                period: SubscriptionPeriod(value: 1, unit: .month)
+            ))
+        ]
+    }
+
+    /// Eligibility mirrors `PremiumStoreTests`: the discount the product
+    /// carries is the one this Apple account can redeem.
+    static func eligibleFreeTrials(
+        in catalogue: [GrovePremiumStore.Plan: Package]
+    ) -> [GrovePremiumStore.Plan: StoreProductDiscount] {
+        guard let trial = catalogue[.yearly]?.storeProduct.introductoryDiscount else { return [:] }
+        return [.yearly: trial]
+    }
+
+    private static func product(
+        id: String,
+        price: Decimal,
+        display: String,
+        period: SubscriptionPeriod,
+        trial: TestStoreProductDiscount? = nil
+    ) -> StoreProduct {
+        TestStoreProduct(
+            localizedTitle: "Grove Premium",
+            price: price,
+            currencyCode: "GBP",
+            localizedPriceString: display,
+            productIdentifier: id,
+            productType: .autoRenewableSubscription,
+            localizedDescription: "Grove Premium",
+            subscriptionGroupIdentifier: "grove.premium",
+            subscriptionPeriod: period,
+            isFamilyShareable: false,
+            introductoryDiscount: trial,
+            discounts: [],
+            locale: Locale(identifier: "en_GB")
+        ).toStoreProduct()
+    }
+
+    private static func package(
+        _ plan: GrovePremiumStore.Plan,
+        _ product: StoreProduct
+    ) -> Package {
+        Package(
+            identifier: plan.rawValue,
+            packageType: plan.packageType,
+            storeProduct: product,
+            presentedOfferingContext: PresentedOfferingContext(offeringIdentifier: "default"),
+            webCheckoutUrl: nil
+        )
+    }
+
+    private static func freeTrial(days: Int) -> TestStoreProductDiscount {
+        TestStoreProductDiscount(
+            identifier: "trial",
+            price: 0,
+            localizedPriceString: "£0.00",
+            paymentMode: .freeTrial,
+            subscriptionPeriod: SubscriptionPeriod(value: days, unit: .day),
+            numberOfPeriods: 1,
+            type: .introductory
+        )
     }
 }
