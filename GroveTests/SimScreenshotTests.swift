@@ -459,6 +459,10 @@ final class SimScreenshotTests: XCTestCase {
     private func show<V: View>(_ view: V, wait: Double) async {
         guard let window = ensureWindow() else { return }
         window.overrideUserInterfaceStyle = variant.style
+        // The large-text variant must be large text to UIKit as well, not
+        // only to the SwiftUI environment, or pushed screens start at the
+        // default size and change size after they first appear.
+        window.traitOverrides.preferredContentSizeCategory = variant.dynamicType == nil ? .large : .accessibilityExtraLarge
         window.rootViewController = UIHostingController(rootView: view)
         window.makeKeyAndVisible()
         window.layoutIfNeeded()
