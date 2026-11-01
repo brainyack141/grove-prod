@@ -206,7 +206,7 @@ struct OnboardingHomeStepView: View {
 
     @ViewBuilder
     private var footer: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 10) {
             if model.location == nil {
                 Button {
                     Haptics.commit()
@@ -218,8 +218,22 @@ struct OnboardingHomeStepView: View {
                 .buttonStyle(GrovePressStyle())
                 .disabled(isLocating)
                 .accessibilityIdentifier("onboardingUseLocation")
-                OnboardingQuietButton(title: "Type a town instead", color: SproutWorld.onSky) { showsTownSearch = true }
-                    .accessibilityIdentifier("onboardingTypeTown")
+                Button {
+                    Haptics.tap()
+                    showsTownSearch = true
+                } label: {
+                    skyOutlineCapsule("Type a town instead")
+                }
+                .buttonStyle(GrovePressStyle())
+                .disabled(isLocating)
+                .accessibilityIdentifier("onboardingTypeTown")
+                Label("Used only for local weather and daylight. Never shown to friends.", systemImage: "lock.fill")
+                    .font(.footnote)
+                    .foregroundStyle(SproutWorld.onSky.opacity(0.85))
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 2)
             } else {
                 Button {
                     Haptics.commit()
@@ -241,6 +255,17 @@ struct OnboardingHomeStepView: View {
             .foregroundStyle(GroveTheme.inkOnLight)
             .frame(maxWidth: .infinity, minHeight: OnboardingTheme.controlHeight)
             .background(SproutWorld.onSky, in: Capsule())
+            .contentShape(Capsule())
+    }
+
+    /// The secondary choice drawn as an outline so it reads as an equal option,
+    /// not a footnote.
+    private func skyOutlineCapsule(_ title: String) -> some View {
+        Text(title)
+            .font(.headline)
+            .foregroundStyle(SproutWorld.onSky)
+            .frame(maxWidth: .infinity, minHeight: OnboardingTheme.controlHeight)
+            .overlay { Capsule().stroke(SproutWorld.onSky.opacity(0.85), lineWidth: 1.5) }
             .contentShape(Capsule())
     }
 

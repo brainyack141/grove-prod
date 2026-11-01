@@ -62,8 +62,11 @@ struct TodayView: View {
         .refreshable { await refresh() }
         .grovePreparesHaptics()
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                GroveHeaderStreak().groveHeaderChip()
+            // No streak yet: leave the slot empty rather than show a "0" flame.
+            if store.displayStreak > 0 {
+                ToolbarItem(placement: .topBarLeading) {
+                    GroveHeaderStreak().groveHeaderChip()
+                }
             }
             if let location = store.profile.location {
                 ToolbarItem(placement: .topBarTrailing) {

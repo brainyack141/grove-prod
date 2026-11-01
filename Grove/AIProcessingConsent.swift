@@ -35,6 +35,7 @@ struct AIProcessingConsentView: View {
     @Environment(\.dismiss) private var dismiss
     let onAgree: () -> Void
     let onDecline: () -> Void
+    var declineTitle: String = "Not now"
 
     var body: some View {
         ScrollView {
@@ -57,7 +58,7 @@ struct AIProcessingConsentView: View {
                     .buttonStyle(GrovePressStyle())
                     .accessibilityIdentifier("aiConsentAgree")
 
-                    Button("Not now", action: decline)
+                    Button(declineTitle, action: decline)
                         .font(.subheadline.weight(.semibold))
                         .tint(GroveTheme.mutedInk)
                         .frame(maxWidth: .infinity, minHeight: 44)

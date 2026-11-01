@@ -687,6 +687,17 @@ struct OnboardingVerificationView: View {
 
                 codeBoxes
 
+                // The address is printed above so a typo is visible; this is the
+                // way to fix it without hunting for the back chevron.
+                if !model.normalizedEmail.isEmpty {
+                    Button("Wrong address? Change email") { model.back() }
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(OnboardingTheme.accentStrong)
+                        .frame(minHeight: 44)
+                        .disabled(isVerifying || isResending)
+                        .accessibilityIdentifier("changeEmail")
+                }
+
                 // An error outranks the confirmation: if the code was just
                 // rejected, "New code sent." underneath it would be answering a
                 // question the user is no longer asking.

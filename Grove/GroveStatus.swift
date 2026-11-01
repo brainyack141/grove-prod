@@ -92,12 +92,23 @@ struct GroveStatusLabel: View {
     let status: GroveStatus
     var lineLimit: Int? = 2
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 6) {
-            GroveStatusDot(tone: status.tone)
-                // Nudged onto the text's optical centre: a 7pt circle sitting on
-                // the first baseline hangs below the x-height it belongs to.
-                .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 3 }
+            if dynamicTypeSize.isAccessibilitySize && status.tone.isPressing {
+                // At accessibility sizes a shape, not only a colour, separates
+                // late from due today.
+                Image(systemName: "exclamationmark.circle.fill")
+                    .font(.footnote.weight(.bold))
+                    .foregroundStyle(status.tone.tint)
+                    .accessibilityHidden(true)
+            } else {
+                GroveStatusDot(tone: status.tone)
+                    // Nudged onto the text's optical centre: a 7pt circle sitting on
+                    // the first baseline hangs below the x-height it belongs to.
+                    .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 3 }
+            }
             Text(status.text)
                 .font(.footnote.weight(status.tone.isPressing ? .semibold : .regular))
                 .foregroundStyle(status.tone.tint)

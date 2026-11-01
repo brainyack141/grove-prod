@@ -5,7 +5,7 @@ import SwiftUI
 /// Someone who tapped "Add friend" hit a limit; they did not ask to read about
 /// Premium. So this is the smallest interruption that can sell honestly: who
 /// already holds the free spots, one sentence of price, one pill, and the way
-/// back to Friends is the swipe they already know.
+/// back to Friends is a plain "Not now" under the pill as well as the swipe.
 ///
 /// An unreachable App Store is not this sheet's headline. It used to replace
 /// the pitch with "couldn't reach the App Store" and a "Try again" pill, which
@@ -74,6 +74,17 @@ struct FriendSlotsPaywallSheet: View {
                     Task { await primaryAction() }
                 }
                 .disabled(isWorking)
+
+                // A visible way back. The swipe still works, but people who
+                // hit a limit should not have to know a gesture to leave.
+                Button("Not now") { dismiss() }
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(GroveTheme.mutedInk)
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .contentShape(Rectangle())
+                    .padding(.top, 4)
+                    .disabled(isWorking)
+                    .accessibilityIdentifier("friendPaywallNotNow")
 
                 if isPurchasable {
                     if let renewal = PremiumTerms.renewalNote(premium, plan: plan) {

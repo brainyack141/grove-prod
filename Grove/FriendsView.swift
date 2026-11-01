@@ -140,8 +140,10 @@ struct FriendsView: View {
             await syncEngine.synchronize(store: store, isConnected: connectivity.isConnected)
         }
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                GroveHeaderStreak().groveHeaderChip()
+            if store.displayStreak > 0 {
+                ToolbarItem(placement: .topBarLeading) {
+                    GroveHeaderStreak().groveHeaderChip()
+                }
             }
             // Two trailing chips, like My Grove. Invitations used to be a text
             // link under the title — the only root whose header carried a

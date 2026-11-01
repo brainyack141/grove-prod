@@ -179,21 +179,32 @@ struct WatchStreakRow: View {
     let isShielded: Bool
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 6) {
-            Image(systemName: "flame.fill")
-                .foregroundStyle(WatchTheme.streak)
-            Text("\(streak)-day streak")
-                .font(.headline)
-                .lineLimit(dynamicTypeSize.isAccessibilitySize ? 2 : 1)
-                .minimumScaleFactor(0.7)
-                .layoutPriority(1)
+        VStack(alignment: .leading, spacing: 2) {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Image(systemName: "flame.fill")
+                    .foregroundStyle(WatchTheme.streak)
+                Text("\(streak)-day streak")
+                    .font(.headline)
+                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? 2 : 1)
+                    .minimumScaleFactor(0.7)
+                    .layoutPriority(1)
+                if isShielded {
+                    Image(systemName: "shield.fill")
+                        .font(.footnote)
+                        .foregroundStyle(WatchTheme.subtleInk)
+                        .fixedSize()
+                        .accessibilityHidden(true)
+                }
+            }
             if isShielded {
-                Image(systemName: "shield.fill")
+                Text("Saved by a shield yesterday")
                     .font(.footnote)
-                    .foregroundStyle(WatchTheme.subtleInk)
-                    .fixedSize()
+                    .foregroundStyle(WatchTheme.mutedInk)
+                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 2)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
+        .accessibilityElement(children: .combine)
         .listRowBackground(Color.clear)
     }
 }

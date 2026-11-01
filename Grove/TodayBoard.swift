@@ -166,11 +166,27 @@ struct TodayBoardEntry: Identifiable {
     }
 
     /// The second cell is the plant's own rhythm, not the schedule's opinion.
-    /// Until three intervals exist there is no rhythm to report, and the cell
-    /// says so rather than inventing one.
+    /// Until three intervals exist there is no rhythm to report, so the cell
+    /// counts down the waterings still to come rather than inventing one.
     var rhythmValue: String {
-        guard rhythm.isReadable, let days = rhythm.typicalDays else { return "Learning" }
+        guard rhythm.isReadable, let days = rhythm.typicalDays else {
+            let n = wateringsUntilRhythm ?? 1
+            return n == 1 ? "1 watering" : "\(n) waterings"
+        }
         return days == 1 ? "Daily" : "\(days) days"
+    }
+
+    /// Waterings still needed before a rhythm can be read: three gaps take
+    /// four waterings. Nil once the rhythm is readable.
+    var wateringsUntilRhythm: Int? {
+        guard !(rhythm.isReadable && rhythm.typicalDays != nil) else { return nil }
+        return max(1, WateringRhythm.minimumIntervals + 1 - rhythm.waterings.count)
+    }
+
+    /// The middle cell's label: the rhythm once there is one, otherwise how
+    /// far off it is, so the cell never reads as an unexplained state.
+    var rhythmLabel: String {
+        wateringsUntilRhythm == nil ? "Waters every" : "Rhythm in"
     }
 }
 
@@ -199,6 +215,8 @@ extension CareKind {
 
 /// Small caps over a large value: the board's only typographic idea.
 struct GroveStatCell: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     let label: String
     let value: String
     var tint: Color = GroveTheme.ink
@@ -211,16 +229,18 @@ struct GroveStatCell: View {
                 .font(.caption2.weight(.semibold))
                 .tracking(0.6)
                 .foregroundStyle(GroveTheme.subtleInk)
-                .lineLimit(1)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 1)
                 .minimumScaleFactor(0.85)
+                .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: 5) {
                 trendMark
                 Text(value)
                     .font(large ? .title2.weight(.semibold) : .body.weight(.medium))
                     .monospacedDigit()
                     .foregroundStyle(tint)
-                    .lineLimit(1)
+                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 1)
                     .minimumScaleFactor(0.75)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -310,7 +330,7 @@ struct TodayBoardRow: View {
                     : AnyLayout(HStackLayout(alignment: .top, spacing: 10))
                 layout {
                     GroveStatCell(label: entry.nextLabel, value: entry.nextValue, tint: entry.nextTint)
-                    GroveStatCell(label: "Waters every", value: entry.rhythmValue)
+                    GroveStatCell(label: entry.rhythmLabel, value: entry.rhythmValue)
                     GroveStatCell(label: "Health", value: "\(entry.plant.healthScore)", trend: entry.plant.trend)
                 }
             }
@@ -667,9 +687,10 @@ struct PlantTimetableCard: View {
         let hasWater = nextWaterDate != nil || lastWater != nil
 
         // Only facts Grove actually has, and only ones the board above does
-        // not already say. A timetable of "Not set", "Learning" and dashes is a
-        // form, not a board; with nothing left to show the card does not
-        // appear at all. The running totals moved to the Health sheet.
+        // not already say. A timetable of "Not set", a rhythm still being
+        // learned and dashes is a form, not a board; with nothing left to show
+        // the card does not appear at all. The running totals moved to the
+        // Health sheet.
         if hasWater || lastCheckIn != nil {
             VStack(alignment: .leading, spacing: 0) {
                 VStack(alignment: .leading, spacing: 3) {
