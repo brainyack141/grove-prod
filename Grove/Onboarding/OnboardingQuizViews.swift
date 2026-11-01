@@ -598,7 +598,7 @@ struct GrovePremiumOfferView: View {
                 .font(.caption.weight(.semibold))
                 .tracking(0.6)
                 .foregroundStyle(GroveTheme.mapCaption)
-            Text("Unlimited questions to Ari and as many friends as you like.")
+            Text("Ask Ari up to \(AskSession.premiumAsksPerDay) questions a day and keep as many friends as you like.")
                 .font(.largeTitle.weight(.bold))
                 .foregroundStyle(GroveTheme.ink)
                 .fixedSize(horizontal: false, vertical: true)
@@ -627,7 +627,7 @@ struct GrovePremiumOfferView: View {
         } label: {
             PaywallPlanCard(
                 title: plan == .yearly ? "Yearly" : "Monthly",
-                price: premium.displayPrice(for: plan),
+                price: PremiumTerms.pricePeriodLabel(premium, plan: plan),
                 detail: planDetail(for: plan),
                 badge: plan == .yearly ? premium.yearlySavingsLabel : nil,
                 isSelected: isSelected,

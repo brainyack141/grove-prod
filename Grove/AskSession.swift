@@ -18,6 +18,10 @@ final class AskSession {
     /// follow-up and a second plant; the wall lands on the fourth question,
     /// which is a real conversation, not the daily habit.
     static let freeAsksPerDay = 3
+    /// Premium's daily ceiling. Mirrors `dailyAskCeiling` in
+    /// supabase/functions/_shared/botanist-entitlement.mjs; the server enforces
+    /// it, this only lets the paywalls state it honestly.
+    static let premiumAsksPerDay = 60
     /// Matches the Edge Function's JavaScript string-length boundary. Count
     /// UTF-16 units rather than Swift graphemes so emoji and composed characters
     /// cannot pass locally and then fail at the gateway.

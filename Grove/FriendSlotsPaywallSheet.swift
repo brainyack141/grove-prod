@@ -77,7 +77,7 @@ struct FriendSlotsPaywallSheet: View {
 
                 // A visible way back. The swipe still works, but people who
                 // hit a limit should not have to know a gesture to leave.
-                Button("Not now") { dismiss() }
+                Button(PremiumTerms.notNowTitle) { dismiss() }
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(GroveTheme.mutedInk)
                     .frame(maxWidth: .infinity, minHeight: 44)
@@ -86,14 +86,18 @@ struct FriendSlotsPaywallSheet: View {
                     .disabled(isWorking)
                     .accessibilityIdentifier("friendPaywallNotNow")
 
-                if isPurchasable {
-                    if let renewal = PremiumTerms.renewalNote(premium, plan: plan) {
-                        Text(renewal)
-                            .font(.caption)
-                            .foregroundStyle(GroveTheme.subtleInk)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .padding(.top, 12)
-                    }
+                if isPurchasable, let renewal = PremiumTerms.renewalNote(premium, plan: plan) {
+                    Text(renewal)
+                        .font(.footnote)
+                        .foregroundStyle(GroveTheme.mutedInk)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 12)
+                }
+
+                // Restore and the legal links must outlive the price list: an
+                // unreachable store still owes a subscriber a way back in, and
+                // everyone on a selling screen the terms.
+                if !isUnsold {
                     footer
                         .padding(.top, 6)
                     OnboardingLegalFooter(tint: GroveTheme.subtleInk)
@@ -204,12 +208,18 @@ struct FriendSlotsPaywallSheet: View {
         guard let price = premium.displayPrice(for: plan) else {
             if premium.didLoadCatalogue { return "This plan isn't available right now." }
             return isRetrying
-                ? "Checking the App Store for prices…"
+                ? PremiumTerms.loadingMessage
                 : "Prices didn't load. Trying again shortly."
         }
         // How cancelling works is the renewal note's job, under the pill.
         if let trial = PremiumTerms.trialLine(premium, plan: plan) {
+            if plan == .yearly, let weekly = premium.weeklyEquivalentPrice(for: plan) {
+                return "\(trial) (about \(weekly) a week)."
+            }
             return "\(trial)."
+        }
+        if plan == .yearly, let weekly = premium.weeklyEquivalentPrice(for: plan) {
+            return "\(price) \(PremiumTerms.periodWord(plan)) (about \(weekly) a week)."
         }
         return "\(price) \(PremiumTerms.periodWord(plan))."
     }
@@ -218,7 +228,7 @@ struct FriendSlotsPaywallSheet: View {
         if isUnsold { return "Carry on inviting" }
         if isWorking { return "One moment…" }
         if let trial = PremiumTerms.trialButtonTitle(premium, plan: plan) { return trial }
-        return "Get Premium"
+        return PremiumTerms.subscribeTitle(premium, plan: plan)
     }
 
     // MARK: - Footer
@@ -228,7 +238,7 @@ struct FriendSlotsPaywallSheet: View {
     private var footer: some View {
         let other: GrovePremiumStore.Plan = plan == .yearly ? .monthly : .yearly
         return HStack {
-            if let price = premium.displayPrice(for: other) {
+            if isPurchasable, let price = premium.displayPrice(for: other) {
                 Button {
                     Haptics.selection()
                     failure = nil
