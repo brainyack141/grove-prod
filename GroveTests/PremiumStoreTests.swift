@@ -141,6 +141,8 @@ struct PremiumStoreTests {
         #expect(store.freeTrialDays(for: .yearly) == 3)
         #expect(store.freeTrialLabel(for: .monthly) == nil)
         #expect(store.freeTrialDays(for: .monthly) == nil)
+        // The no-trial note still has to state the cancellation window.
+        #expect(PremiumTerms.renewalNote(store, plan: .monthly)?.contains("at least 24 hours before it renews") == true)
     }
 
     @Test("A product with a trial it cannot redeem shows no trial copy")

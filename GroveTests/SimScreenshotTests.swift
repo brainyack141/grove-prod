@@ -651,7 +651,12 @@ final class SimScreenshotTests: XCTestCase {
             noteMissing(name, reason: "no window scene")
             return
         }
-        guard let scrollView = firstScrollView(in: window) else {
+        // A full-screen cover is its own presented controller, mounted above
+        // the window's root. Searching the window first would find the root's
+        // scroll view underneath and capture that instead of the offer.
+        let presented = topMostPresentedViewController(from: window.rootViewController)
+        let scrollView = presented.map { firstScrollView(in: $0.view) } ?? firstScrollView(in: window)
+        guard let scrollView else {
             noteMissing(name, reason: "no scroll view")
             return
         }
@@ -662,6 +667,18 @@ final class SimScreenshotTests: XCTestCase {
         scrollView.setContentOffset(CGPoint(x: scrollView.contentOffset.x, y: bottom), animated: false)
         try? await Task.sleep(for: .seconds(1))
         capture(name)
+    }
+
+    /// The last controller in the presentation chain, or nil when the root is
+    /// showing nothing over itself.
+    private func topMostPresentedViewController(from root: UIViewController?) -> UIViewController? {
+        var topMost: UIViewController?
+        var current = root?.presentedViewController
+        while let controller = current {
+            topMost = controller
+            current = controller.presentedViewController
+        }
+        return topMost
     }
 
     private func firstScrollView(in view: UIView) -> UIScrollView? {

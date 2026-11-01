@@ -141,7 +141,7 @@ enum PremiumTerms {
             let date = chargeDate.formatted(.dateTime.day().month(.wide))
             return "Free for \(days) days, then \(price) \(periodWord(plan)) from \(date), renewing automatically each \(renewUnit) until you cancel. Cancel any time in Settings › Apple Account › Subscriptions at least 24 hours before \(date) and you won't be charged."
         }
-        return "\(price) \(periodWord(plan)), renewing automatically each \(renewUnit) until you cancel. Cancel any time in Settings › Apple Account › Subscriptions."
+        return "\(price) \(periodWord(plan)), renewing automatically each \(renewUnit) until you cancel. Cancel any time in Settings › Apple Account › Subscriptions at least 24 hours before it renews to avoid the next charge."
     }
 
     /// The yearly plan's weekly figure, with the monthly figure it is derived
